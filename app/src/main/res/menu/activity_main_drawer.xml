@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_catalogue"
+        android:icon="@drawable/ic_book_black_24dp"
+        android:title="@string/catalogue" />
+    <item
+        android:id="@+id/nav_stash"
+        android:icon="@drawable/ic_turned_in_white_24dp"
+        android:title="@string/stash" />
+    <item
+        android:id="@+id/books_map"
+        android:icon="@drawable/ic_room_white_24dp"
+        android:title="@string/books_map"/>
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:title="@string/user_profile"/>
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="@string/action_settings"/>
+</menu>
