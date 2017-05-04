@@ -22,4 +22,8 @@ public class BookPresenter extends BasePresenter<BookView> {
                 });
         unsubscribeOnDestroy(bookSubscription);
     }
+
+    public void handleBookStashing() {
+
+    }
 }

@@ -11,6 +11,7 @@ import com.arellomobile.mvp.MvpView;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.modules.App;
+import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.FirebaseWrapper;
 import com.bookcrossing.mobile.util.SystemServicesWrapper;
 import com.google.firebase.database.DatabaseReference;
@@ -75,18 +76,18 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
     public Uri buildBookUri(String key) {
         return new Uri.Builder()
                 .scheme("bookcrossing")
-                .authority("com.bookcrossing.mobile")
+                .authority(Constants.PACKAGE_NAME)
                 .path("book")
-                .appendQueryParameter("key", key)
+                .appendQueryParameter(Constants.EXTRA_KEY, key)
                 .build();
     }
 
     protected String getCity() {
-        return systemServicesWrapper.getPreferences().getString("city", getDefaultCity());
+        return systemServicesWrapper.getPreferences().getString(Constants.EXTRA_CITY, getDefaultCity());
     }
 
     private String getDefaultCity() {
-        return systemServicesWrapper.getPreferences().getString("defaultCity", systemServicesWrapper.getApp().getString(R.string.default_city));
+        return systemServicesWrapper.getPreferences().getString(Constants.EXTRA_DEFAULT_CITY, systemServicesWrapper.getApp().getString(R.string.default_city));
     }
 
     private void subscribeToCity() {
@@ -108,7 +109,7 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
     private void saveCity(@io.reactivex.annotations.NonNull List<Address> addresses) {
         city = addresses.get(0).getLocality();
         SharedPreferences.Editor editor = systemServicesWrapper.getPreferences().edit();
-        editor.putString("city", city);
+        editor.putString(Constants.EXTRA_CITY, city);
         editor.apply();
     }
 }

@@ -13,6 +13,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.presenters.BookPresenter;
+import com.bookcrossing.mobile.util.Constants;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -24,8 +25,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
 public class BookActivity extends MvpAppCompatActivity implements BookView {
-
-    private static final String EXTRA_KEY = "key";
 
     @InjectPresenter
     BookPresenter presenter;
@@ -68,7 +67,7 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
         }
 
         if (getIntent() != null) {
-            this.key = getIntent().getStringExtra(EXTRA_KEY);
+            this.key = getIntent().getStringExtra(Constants.EXTRA_KEY);
             presenter.subscribeToBookReference(key);
         }
 
