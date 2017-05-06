@@ -9,4 +9,6 @@ import com.bookcrossing.mobile.models.Book;
 
 public interface BookView extends MvpView {
     void onBookLoaded(Book book);
+    void onBookStashed();
+    void onBookUnstashed();
 }

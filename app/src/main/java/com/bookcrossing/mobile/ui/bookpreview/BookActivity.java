@@ -69,13 +69,14 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
         if (getIntent() != null) {
             this.key = getIntent().getStringExtra(Constants.EXTRA_KEY);
             presenter.subscribeToBookReference(key);
+            presenter.checkStashingState(key);
         }
 
         fabSubscription = RxView.clicks(favorite)
                 .subscribe(new Consumer<Object>() {
             @Override
             public void accept(@NonNull Object o) throws Exception {
-                favorite.setImageResource(R.drawable.ic_turned_in_white_24dp);
+                presenter.handleBookStashing(key);
             }
         });
 
@@ -113,5 +114,15 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
         author.setText(book.getAuthor());
         position.setText(book.getPosition());
         description.setText(book.getDescription());
+    }
+
+    @Override
+    public void onBookStashed() {
+        favorite.setImageResource(R.drawable.ic_turned_in_white_24dp);
+    }
+
+    @Override
+    public void onBookUnstashed() {
+        favorite.setImageResource(R.drawable.ic_turned_in_not_white_24dp);
     }
 }

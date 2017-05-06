@@ -13,6 +13,6 @@ import com.google.firebase.database.DatabaseReference;
 public class MainPresenter extends BasePresenter<MainView> {
 
     public DatabaseReference getBooks() {
-        return getBooksReference();
+        return books();
     }
 }

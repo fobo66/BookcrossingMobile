@@ -12,12 +12,12 @@ public class BookAcquirePresenter extends BasePresenter<BookAcquireView> {
     private boolean keyExists;
 
     public void handleAcquisition(String key) {
-        getBooksReference().child(key).child("free").setValue(false);
+        books().child(key).child("free").setValue(false);
     }
 
     public boolean isKeyValid(final String key) {
         keyExists = false;
-        getBooksReference().addListenerForSingleValueEvent(new ValueEventListener() {
+        books().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(key)) {

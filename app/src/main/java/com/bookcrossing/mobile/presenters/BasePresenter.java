@@ -65,8 +65,20 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
         citySubscription.dispose();
     }
 
-    protected DatabaseReference getBooksReference() {
+    protected DatabaseReference books() {
         return firebaseWrapper.getDatabase().getReference("books").child(getCity());
+    }
+
+    protected DatabaseReference stash() {
+        return firebaseWrapper.getDatabase().getReference("stash").child(getUserId());
+    }
+
+    private String getUserId() {
+        if (firebaseWrapper.getAuth().getCurrentUser() != null) {
+            return firebaseWrapper.getAuth().getCurrentUser().getUid();
+        }
+
+        return Constants.DEFAULT_USER;
     }
 
     public StorageReference resolveCover(Book book) {

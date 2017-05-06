@@ -11,6 +11,7 @@ import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.presenters.BookAcquirePresenter;
+import com.bookcrossing.mobile.util.Constants;
 import com.jakewharton.rxbinding2.view.RxView;
 
 import butterknife.BindView;
@@ -50,7 +51,7 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
         setSupportActionBar(toolbar);
 
         if (getIntent() != null) {
-            keyToAcquire = getIntent().getData().getQueryParameter("key");
+            keyToAcquire = getIntent().getData().getQueryParameter(Constants.EXTRA_KEY);
             isInnerAppRequest = getIntent().getBooleanExtra(getString(R.string.extra_insideAppRequest), false);
             if (!isInnerAppRequest) {
                 codeInput.setText(keyToAcquire);

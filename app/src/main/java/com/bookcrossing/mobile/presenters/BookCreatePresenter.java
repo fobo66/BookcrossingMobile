@@ -119,7 +119,7 @@ public class BookCreatePresenter extends BasePresenter<BookCreateView> {
 
     public void publishBook() {
         setPublicationDate();
-        DatabaseReference newBookReference = getBooksReference().push();
+        DatabaseReference newBookReference = books().push();
         newBookReference.setValue(book);
         getViewState().OnReleased(newBookReference.getKey());
     }
