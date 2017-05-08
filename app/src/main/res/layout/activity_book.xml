@@ -32,7 +32,8 @@
                 android:scaleType="centerCrop"
                 android:fitsSystemWindows="true"
                 app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
-                app:layout_collapseMode="parallax"/>
+                app:layout_collapseMode="parallax"
+                android:contentDescription="@string/cover_description" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -91,6 +92,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/acquire_button"
             android:elevation="4dp"
+            android:enabled="false"
             android:layout_marginTop="48dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"

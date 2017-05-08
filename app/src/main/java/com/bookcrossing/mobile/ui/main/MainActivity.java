@@ -18,6 +18,7 @@ import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.ui.base.BaseActivity;
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 import com.bookcrossing.mobile.ui.create.BookCreateFragment;
+import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.listeners.BookListener;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
@@ -33,7 +34,6 @@ import butterknife.ButterKnife;
 public class MainActivity extends BaseActivity implements BookListener {
 
     private static final int RC_SIGN_IN = 1236;
-    private static final String EXTRA_KEY = "key";
 
     @BindView(R.id.coord_layout)
     CoordinatorLayout coordinatorLayout;
@@ -146,7 +146,7 @@ public class MainActivity extends BaseActivity implements BookListener {
     @Override
     public void onBookSelected(String bookKey) {
         Intent bookIntent = new Intent(this, BookActivity.class);
-        bookIntent.putExtra(EXTRA_KEY, bookKey);
+        bookIntent.putExtra(Constants.EXTRA_KEY, bookKey);
         startActivity(bookIntent);
     }
 

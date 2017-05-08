@@ -73,6 +73,10 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
         return firebaseWrapper.getDatabase().getReference("stash").child(getUserId());
     }
 
+    protected DatabaseReference acquiredBooks() {
+        return firebaseWrapper.getDatabase().getReference("acquiredBooks").child(getUserId());
+    }
+
     private String getUserId() {
         if (firebaseWrapper.getAuth().getCurrentUser() != null) {
             return firebaseWrapper.getAuth().getCurrentUser().getUid();

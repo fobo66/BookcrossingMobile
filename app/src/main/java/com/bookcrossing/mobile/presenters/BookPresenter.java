@@ -13,7 +13,7 @@ import rx.functions.Func1;
 @InjectViewState
 public class BookPresenter extends BasePresenter<BookView> {
 
-    boolean stashed = false;
+    private boolean stashed = false;
 
     public void subscribeToBookReference(String key) {
         Subscription bookSubscription = RxFirebaseDatabase.observeSingleValueEvent(

@@ -1,5 +1,6 @@
 package com.bookcrossing.mobile.ui.acquire;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -11,6 +12,7 @@ import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.presenters.BookAcquirePresenter;
+import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 import com.bookcrossing.mobile.util.Constants;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -83,5 +85,12 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
     @Override
     public void onIncorrectKey() {
         Snackbar.make(coordinatorLayout, R.string.incorrect_key_message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onAcquired() {
+        Intent intent = new Intent(this, BookActivity.class);
+        intent.putExtra(Constants.EXTRA_KEY, keyToAcquire);
+        startActivity(intent);
     }
 }
