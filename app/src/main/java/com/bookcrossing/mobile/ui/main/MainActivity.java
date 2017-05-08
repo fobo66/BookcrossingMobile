@@ -3,6 +3,7 @@ package com.bookcrossing.mobile.ui.main;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -57,6 +58,26 @@ public class MainActivity extends BaseActivity implements BookListener {
 
         drawerToggle = setupDrawerToggle();
         drawer.addDrawerListener(drawerToggle);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_catalogue:
+                        push(new MainFragment());
+                        return true;
+                    case R.id.nav_stash:
+                        return true;
+                    case R.id.nav_books_map:
+                        return true;
+                    case R.id.nav_profile:
+                        return true;
+                    case R.id.nav_settings:
+                        return true;
+                }
+
+                return false;
+            }
+        });
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
