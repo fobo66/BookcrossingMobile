@@ -22,8 +22,6 @@ import com.bookcrossing.mobile.util.listeners.BookListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.jakewharton.rxbinding2.view.RxView;
 
-import java.util.List;
-
 import butterknife.BindView;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
@@ -40,7 +38,7 @@ public class MainFragment extends BaseFragment implements MainView {
     @InjectPresenter
     MainPresenter mainPresenter;
 
-    private BookListener mListener;
+    private BookListener listener;
     private FirebaseRecyclerAdapter<Book, BooksViewHolder> adapter;
 
     Disposable fabSubscription;
@@ -66,7 +64,7 @@ public class MainFragment extends BaseFragment implements MainView {
 
         if (context instanceof BookListener)
         {
-            mListener = (BookListener) context;
+            listener = (BookListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement BookListener");
@@ -76,7 +74,7 @@ public class MainFragment extends BaseFragment implements MainView {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        listener = null;
     }
 
     @Override
@@ -101,13 +99,8 @@ public class MainFragment extends BaseFragment implements MainView {
         fabSubscription = RxView.clicks(fab).subscribe(new Consumer<Object>() {
             @Override
             public void accept(@NonNull Object o) throws Exception {
-                mListener.onBookAdd();
+                listener.onBookAdd();
             }
         });
-    }
-
-    @Override
-    public void onItems(List<Book> items) {
-
     }
 }

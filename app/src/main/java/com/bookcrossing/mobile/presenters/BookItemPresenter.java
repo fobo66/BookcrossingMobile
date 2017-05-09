@@ -4,6 +4,8 @@ import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.ui.bookpreview.BookItemView;
 
+//TODO: Appears that we don't need this presenter, I'll left it as is for some time, but it appears that we need to remove it
+
 @InjectViewState
 public class BookItemPresenter extends BasePresenter<BookItemView> {
 

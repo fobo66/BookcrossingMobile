@@ -9,5 +9,4 @@ import com.bookcrossing.mobile.models.Book;
 
 public interface BookItemView extends MvpView {
     void bind(Book book);
-    void updateLikes();
 }

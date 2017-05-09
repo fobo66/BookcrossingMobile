@@ -1,9 +1,6 @@
 package com.bookcrossing.mobile.ui.main;
 
 import com.arellomobile.mvp.MvpView;
-import com.bookcrossing.mobile.models.Book;
-
-import java.util.List;
 
 /**
  * (c) 2016 Andrey Mukamolow aka fobo66 <fobo66@protonmail.com>
@@ -11,5 +8,4 @@ import java.util.List;
  */
 
 public interface MainView extends MvpView {
-    void onItems(List<Book> items);
 }

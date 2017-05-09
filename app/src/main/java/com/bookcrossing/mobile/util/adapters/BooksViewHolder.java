@@ -1,11 +1,9 @@
 package com.bookcrossing.mobile.util.adapters;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.arellomobile.mvp.MvpDelegate;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
@@ -17,7 +15,6 @@ import com.bookcrossing.mobile.ui.bookpreview.BookItemView;
 import com.bookcrossing.mobile.util.listeners.BookListener;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.firebase.storage.FirebaseStorage;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -27,15 +24,18 @@ import butterknife.OnClick;
  * Created by fobo66 on 04.01.2017.
  */
 
-public class BooksViewHolder extends BaseViewHolder implements BookItemView {
+public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
 
     private static final String TAG = "BooksViewHolder";
 
     @InjectPresenter(type = PresenterType.GLOBAL, tag = BookItemPresenter.TAG)
     BookItemPresenter itemPresenter;
 
-    private MvpDelegate<? extends BaseViewHolder> mMvpDelegate;
     private String key;
+
+    public BooksViewHolder(View view) {
+        super(view);
+    }
 
     @ProvidePresenterTag(presenterClass = BookItemPresenter.class, type = PresenterType.GLOBAL)
     String provideRepositoryPresenterTag() {
@@ -63,11 +63,6 @@ public class BooksViewHolder extends BaseViewHolder implements BookItemView {
 
     private Book book;
 
-    public BooksViewHolder(View view) {
-        super(view);
-        getMvpDelegate().onCreate();
-    }
-
     @Override
     public void bind(Book item) {
         this.book = item;
@@ -82,19 +77,6 @@ public class BooksViewHolder extends BaseViewHolder implements BookItemView {
         bookName.setText(book.getName());
         bookPlace.setText(book.getPosition());
         author.setText(book.getAuthor());
-    }
-
-    @Override
-    public void updateLikes() {
-
-    }
-
-    public MvpDelegate getMvpDelegate() {
-        if(this.mMvpDelegate == null) {
-            this.mMvpDelegate = new MvpDelegate<>(this);
-        }
-
-        return this.mMvpDelegate;
     }
 
     @OnClick(R.id.card)
