@@ -19,6 +19,7 @@ import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.ui.base.BaseActivity;
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 import com.bookcrossing.mobile.ui.create.BookCreateFragment;
+import com.bookcrossing.mobile.ui.profile.ProfileFragment;
 import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.listeners.BookListener;
 import com.firebase.ui.auth.AuthUI;
@@ -70,6 +71,7 @@ public class MainActivity extends BaseActivity implements BookListener {
                     case R.id.nav_books_map:
                         return true;
                     case R.id.nav_profile:
+                        push(new ProfileFragment());
                         return true;
                     case R.id.nav_settings:
                         return true;
