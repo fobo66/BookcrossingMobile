@@ -65,6 +65,7 @@ public class MainActivity extends BaseActivity implements BookListener {
                 switch (item.getItemId()) {
                     case R.id.nav_catalogue:
                         push(new MainFragment());
+                        drawer.closeDrawer(navigationView);
                         return true;
                     case R.id.nav_stash:
                         return true;
@@ -72,6 +73,7 @@ public class MainActivity extends BaseActivity implements BookListener {
                         return true;
                     case R.id.nav_profile:
                         push(new ProfileFragment());
+                        drawer.closeDrawer(navigationView);
                         return true;
                     case R.id.nav_settings:
                         return true;
