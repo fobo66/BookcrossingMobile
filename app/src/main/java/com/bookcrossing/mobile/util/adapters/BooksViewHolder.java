@@ -1,5 +1,6 @@
 package com.bookcrossing.mobile.util.adapters;
 
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,9 +30,9 @@ public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
     private static final String TAG = "BooksViewHolder";
 
     @InjectPresenter(type = PresenterType.GLOBAL, tag = BookItemPresenter.TAG)
-    BookItemPresenter itemPresenter;
+    public BookItemPresenter itemPresenter;
 
-    private String key;
+    protected String key;
 
     public BooksViewHolder(View view) {
         super(view);
@@ -44,11 +45,10 @@ public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
 
     @ProvidePresenter(type = PresenterType.GLOBAL)
     BookItemPresenter providePresenter() {
-        BookItemPresenter presenter = new BookItemPresenter();
-        presenter.setBook(this.book);
-        return presenter;
+        return new BookItemPresenter();
     }
 
+    @Nullable
     @BindView(R.id.cover)
     ImageView cover;
 
@@ -58,6 +58,7 @@ public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
     @BindView(R.id.author)
     TextView author;
 
+    @Nullable
     @BindView(R.id.current_place)
     TextView bookPlace;
 
@@ -66,7 +67,6 @@ public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
     @Override
     public void bind(Book item) {
         this.book = item;
-        itemPresenter.setBook(book);
 
         Glide.with(itemView.getContext())
                 .using(new FirebaseImageLoader())

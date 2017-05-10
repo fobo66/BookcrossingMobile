@@ -10,11 +10,7 @@ import com.bookcrossing.mobile.ui.bookpreview.BookItemView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-/**
- * Created by fobo66 on 09.05.17.
- */
-
-public class AcquiredBooksViewHolder extends BaseViewHolder implements BookItemView {
+public class AcquiredBooksViewHolder extends BooksViewHolder implements BookItemView {
 
     @BindView(R.id.book_name)
     TextView bookName;
@@ -34,6 +30,6 @@ public class AcquiredBooksViewHolder extends BaseViewHolder implements BookItemV
 
     @OnClick(R.id.release_button)
     public void onClick() {
-
+        itemPresenter.releaseCurrentBook(key);
     }
 }
