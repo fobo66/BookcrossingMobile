@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -118,7 +119,7 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
         position.setText(book.getPosition());
         description.setText(book.getDescription());
         if (book.isFree()) {
-            acquireButton.setEnabled(true);
+            acquireButton.setVisibility(View.VISIBLE);
         }
     }
 
