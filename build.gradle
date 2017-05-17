@@ -5,12 +5,9 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
+        classpath 'com.android.tools.build:gradle:2.3.2'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         classpath 'com.google.gms:google-services:3.0.0'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
 }
 
@@ -30,6 +27,7 @@ configurations.all {
     resolutionStrategy {
         force 'com.android.support:appcompat-v7:25.3.0'
         force 'com.android.support:support-v13:25.3.0'
+        force 'com.android.support:support-cardview-v7:25.3.0'
         force 'com.android.support:animated-vector-drawable:25.3.0'
     }
 }
