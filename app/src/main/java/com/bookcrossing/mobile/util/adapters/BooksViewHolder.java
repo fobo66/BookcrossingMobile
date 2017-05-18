@@ -70,7 +70,7 @@ public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
 
         Glide.with(itemView.getContext())
                 .using(new FirebaseImageLoader())
-                .load(itemPresenter.resolveCover(book))
+                .load(itemPresenter.resolveCover(key))
                 .crossFade()
                 .thumbnail(0.6f)
                 .into(cover);

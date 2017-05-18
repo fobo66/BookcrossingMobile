@@ -2,7 +2,6 @@ package com.bookcrossing.mobile.presenters;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.models.Book;
@@ -10,24 +9,16 @@ import com.bookcrossing.mobile.models.Date;
 import com.bookcrossing.mobile.ui.create.BookCreateView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.kelvinapps.rxfirebase.RxFirebaseStorage;
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Calendar;
 import java.util.EnumMap;
 import java.util.Map;
-
-import rx.Subscription;
-import rx.functions.Action1;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
@@ -39,6 +30,7 @@ public class BookCreatePresenter extends BasePresenter<BookCreateView> {
     private static final String TAG = "BookCreatePresenter";
 
     private Book book;
+    private Uri tempCoverUri;
 
 
     public BookCreatePresenter() {
@@ -47,28 +39,19 @@ public class BookCreatePresenter extends BasePresenter<BookCreateView> {
         book.setFree(true);
     }
 
-    public void uploadCover(FileData result) throws FileNotFoundException {
-        Subscription coverSubscription;
-        final File coverFile = result.getFile();
-        StorageMetadata metadata = new StorageMetadata.Builder()
-                .setContentType("image/jpeg")
-                .build();
-        if (firebaseWrapper.getAuth().getCurrentUser() != null) {
-            coverSubscription = RxFirebaseStorage.putFile(resolveCover(book), Uri.fromFile(coverFile), metadata)
-                    .subscribe(new Action1<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void call(UploadTask.TaskSnapshot taskSnapshot) {
-                            getViewState().OnUpload();
-                        }
-                    }, new Action1<Throwable>() {
-                        @Override
-                        public void call(Throwable throwable) {
-                            Log.e(TAG, "Cannot resolve book cover", throwable);
-                        }
-                    });
-
-            unsubscribeOnDestroy(coverSubscription);
+    private void uploadCover(String key) {
+        if (tempCoverUri != null && firebaseWrapper.getAuth().getCurrentUser() != null) {
+            StorageMetadata metadata = new StorageMetadata.Builder()
+                    .setContentType("image/jpeg")
+                    .build();
+            resolveCover(key).putFile(tempCoverUri, metadata);
         }
+
+    }
+
+    public void saveCoverTemporarly(FileData result) {
+        tempCoverUri = Uri.fromFile(result.getFile());
+        getViewState().OnCoverChosen(tempCoverUri);
     }
 
     private Bitmap encodeBookAsQrCode(String contents, BarcodeFormat format, int img_width, int img_height) throws WriterException {
@@ -121,7 +104,9 @@ public class BookCreatePresenter extends BasePresenter<BookCreateView> {
         setPublicationDate();
         DatabaseReference newBookReference = books().push();
         newBookReference.setValue(book);
-        getViewState().OnReleased(newBookReference.getKey());
+        String key = newBookReference.getKey();
+        uploadCover(key);
+        getViewState().OnReleased(key);
     }
 
     private void setPublicationDate() {
@@ -132,10 +117,6 @@ public class BookCreatePresenter extends BasePresenter<BookCreateView> {
                 calendar.get(Calendar.DAY_OF_MONTH),
                 new java.util.Date().getTime());
         book.setWentFreeAt(date);
-    }
-
-    public StorageReference getNewlyCreatedCover() {
-        return resolveCover(book);
     }
 
     public Bitmap generateQrCode(String key) {

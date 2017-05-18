@@ -19,8 +19,6 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.jakewharton.rxbinding2.view.RxView;
 
-import java.util.concurrent.TimeUnit;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.annotations.NonNull;
@@ -84,7 +82,6 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
         });
 
         acquireSubscription = RxView.clicks(acquireButton)
-                .debounce(400, TimeUnit.MILLISECONDS)
                 .subscribe(new Consumer<Object>() {
                     @Override
                     public void accept(@NonNull Object o) throws Exception {
@@ -111,7 +108,7 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
         toolbar.setTitle(book.getName());
         Glide.with(this)
                 .using(new FirebaseImageLoader())
-                .load(presenter.resolveCover(book))
+                .load(presenter.resolveCover(key))
                 .crossFade()
                 .thumbnail(0.6f)
                 .into(cover);

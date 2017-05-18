@@ -3,6 +3,7 @@ package com.bookcrossing.mobile.ui.create;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -21,7 +22,6 @@ import com.bookcrossing.mobile.presenters.BookCreatePresenter;
 import com.bookcrossing.mobile.ui.base.BaseFragment;
 import com.bookcrossing.mobile.util.listeners.BookListener;
 import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.jakewharton.rxbinding2.widget.TextViewAfterTextChangeEvent;
@@ -191,7 +191,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
                     @Override
                     public void accept(@NonNull Response<BookCreateFragment, FileData> result) throws Exception {
                         if (result.resultCode() == RESULT_OK)
-                            result.targetUI().presenter.uploadCover(result.data());
+                            result.targetUI().presenter.saveCoverTemporarly(result.data());
                     }
                 });
         subscriptions.add(coverSubscription);
@@ -227,10 +227,10 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
     }
 
     @Override
-    public void OnUpload() {
+    public void OnCoverChosen(Uri coverUri) {
         Glide.with(this)
-                .using(new FirebaseImageLoader())
-                .load(presenter.getNewlyCreatedCover())
+                .fromUri()
+                .load(coverUri)
                 .crossFade()
                 .into(cover);
     }

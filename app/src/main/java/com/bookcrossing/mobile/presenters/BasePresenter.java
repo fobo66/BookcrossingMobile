@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import com.arellomobile.mvp.MvpPresenter;
 import com.arellomobile.mvp.MvpView;
 import com.bookcrossing.mobile.R;
-import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.modules.App;
 import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.FirebaseWrapper;
@@ -85,8 +84,8 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
         return Constants.DEFAULT_USER;
     }
 
-    public StorageReference resolveCover(Book book) {
-         return firebaseWrapper.getStorage().getReference(book.getName() + ".jpg");
+    public StorageReference resolveCover(String key) {
+         return firebaseWrapper.getStorage().getReference(key + ".jpg");
     }
 
     public Uri buildBookUri(String key) {
