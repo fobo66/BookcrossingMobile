@@ -55,8 +55,8 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
                 AcquiredBooksViewHolder.class, presenter.getAcquiredBooks()) {
             @Override
             protected void populateViewHolder(AcquiredBooksViewHolder viewHolder, Book model, int position) {
-                viewHolder.bind(model);
                 viewHolder.setKey(this.getRef(position).getKey());
+                viewHolder.bind(model);
             }
         };
         acquiredBooksList.setAdapter(adapter);

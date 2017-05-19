@@ -19,8 +19,14 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.Optional;
 
 /**
+ * Reusable ViewHolder. As for me, book representation across all RecyclerViews
+ * is the same, but not everywhere we show all of the book's class fields
+ * So, maybe this solution sucks, but it's ok for now.
+ * If I find better solution, I'll refactor this.
+ *
  * (c) 2017 Andrey Mukamolow aka fobo66 <fobo66@protonmail.com>
  * Created by fobo66 on 04.01.2017.
  */
@@ -52,9 +58,11 @@ public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
     @BindView(R.id.cover)
     ImageView cover;
 
+    @Nullable
     @BindView(R.id.book_name)
     TextView bookName;
 
+    @Nullable
     @BindView(R.id.author)
     TextView author;
 
@@ -62,23 +70,26 @@ public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
     @BindView(R.id.current_place)
     TextView bookPlace;
 
-    private Book book;
 
     @Override
     public void bind(Book item) {
-        this.book = item;
+        loadCover();
+        bookName.setText(item.getName());
+        bookPlace.setText(item.getPosition());
+        author.setText(item.getAuthor());
+    }
 
+    protected void loadCover() {
         Glide.with(itemView.getContext())
                 .using(new FirebaseImageLoader())
                 .load(itemPresenter.resolveCover(key))
                 .crossFade()
+                .placeholder(R.drawable.ic_book_cover_placeholder)
                 .thumbnail(0.6f)
                 .into(cover);
-        bookName.setText(book.getName());
-        bookPlace.setText(book.getPosition());
-        author.setText(book.getAuthor());
     }
 
+    @Optional
     @OnClick(R.id.card)
     public void onClick() {
         ((BookListener) itemView.getContext()).onBookSelected(key);

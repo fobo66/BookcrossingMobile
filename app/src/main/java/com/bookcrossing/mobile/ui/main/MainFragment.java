@@ -1,6 +1,5 @@
 package com.bookcrossing.mobile.ui.main;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -18,7 +17,6 @@ import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.presenters.MainPresenter;
 import com.bookcrossing.mobile.ui.base.BaseFragment;
 import com.bookcrossing.mobile.util.adapters.BooksViewHolder;
-import com.bookcrossing.mobile.util.listeners.BookListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -38,7 +36,6 @@ public class MainFragment extends BaseFragment implements MainView {
     @InjectPresenter
     MainPresenter mainPresenter;
 
-    private BookListener listener;
     private FirebaseRecyclerAdapter<Book, BooksViewHolder> adapter;
 
     Disposable fabSubscription;
@@ -59,25 +56,6 @@ public class MainFragment extends BaseFragment implements MainView {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if (context instanceof BookListener)
-        {
-            listener = (BookListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement BookListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        listener = null;
-    }
-
-    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -87,8 +65,8 @@ public class MainFragment extends BaseFragment implements MainView {
                 BooksViewHolder.class, mainPresenter.getBooks()) {
             @Override
             protected void populateViewHolder(BooksViewHolder viewHolder, Book model, int position) {
-                viewHolder.bind(model);
                 viewHolder.setKey(this.getRef(position).getKey());
+                viewHolder.bind(model);
             }
         };
 

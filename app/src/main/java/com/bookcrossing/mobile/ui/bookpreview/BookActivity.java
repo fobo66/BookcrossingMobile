@@ -110,6 +110,7 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
                 .using(new FirebaseImageLoader())
                 .load(presenter.resolveCover(key))
                 .crossFade()
+                .placeholder(R.drawable.ic_book_cover_placeholder)
                 .thumbnail(0.6f)
                 .into(cover);
         author.setText(book.getAuthor());
