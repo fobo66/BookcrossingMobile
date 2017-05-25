@@ -12,9 +12,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.algolia.instantsearch.helpers.Searcher;
+import com.algolia.instantsearch.ui.InstantSearch;
+import com.algolia.instantsearch.ui.utils.ItemClickSupport;
+import com.algolia.instantsearch.ui.views.Hits;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.ui.base.BaseActivity;
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
@@ -28,6 +35,8 @@ import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
+
+import org.json.JSONException;
 
 import java.util.Collections;
 
@@ -50,7 +59,12 @@ public class MainActivity extends BaseActivity implements BookListener {
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
 
+    @BindView(R.id.hits)
+    Hits hits;
+
     private ActionBarDrawerToggle drawerToggle;
+    private Searcher searcher;
+    private InstantSearch instantSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +72,21 @@ public class MainActivity extends BaseActivity implements BookListener {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        setupSearch();
+        setSupportActionBar(toolbar);
         drawerToggle = setupDrawerToggle();
         drawer.addDrawerListener(drawerToggle);
+        hits.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClick(RecyclerView recyclerView, int position, View v) {
+                try {
+                    onBookSelected(hits.get(position).getString("objectID"));
+                } catch (JSONException e) {
+                    Snackbar.make(coordinatorLayout, "Cannot open book info", Snackbar.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            }
+        });
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -69,6 +96,7 @@ public class MainActivity extends BaseActivity implements BookListener {
                         drawer.closeDrawer(navigationView);
                         return true;
                     case R.id.nav_stash:
+                        toolbar.setTitle(R.string.stash_fragment_heading);
                         push(new StashFragment());
                         drawer.closeDrawer(navigationView);
                         return true;
@@ -100,8 +128,22 @@ public class MainActivity extends BaseActivity implements BookListener {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        instantSearch.registerSearchView(this, menu, R.id.menu_action_search);
+        return true;
+    }
+
     private ActionBarDrawerToggle setupDrawerToggle() {
         return new ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open,  R.string.drawer_close);
+    }
+
+    private void setupSearch() {
+        searcher = new Searcher(getString(R.string.algolia_app_id),
+                getString(R.string.algolia_api_key),
+                getString(R.string.algolia_index_name));
+        instantSearch = new InstantSearch(hits, searcher);
     }
 
     public void push(Fragment fragment) {
@@ -123,6 +165,13 @@ public class MainActivity extends BaseActivity implements BookListener {
         switch (item.getItemId()) {
             case android.R.id.home:
                 drawer.openDrawer(GravityCompat.START);
+                return true;
+            case  R.id.menu_action_search:
+                 if (hits.getVisibility() == View.GONE) {
+                     hits.setVisibility(View.VISIBLE);
+                 } else {
+                     hits.setVisibility(View.GONE);
+                 }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -181,7 +230,8 @@ public class MainActivity extends BaseActivity implements BookListener {
     @Override
     public void onBackPressed() {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
-        if (currentFragment instanceof BookCreateFragment) {
+        if (currentFragment instanceof BookCreateFragment ||
+                currentFragment instanceof StashFragment) {
             toolbar.setTitle(R.string.app_name);
         }
         super.onBackPressed();
