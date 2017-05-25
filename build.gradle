@@ -6,13 +6,16 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.2'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         classpath 'com.google.gms:google-services:3.0.0'
     }
 }
 
 plugins {
     id "me.tatarka.retrolambda" version "3.6.0"
+}
+
+ext {
+    supportLibraryVersion = '25.3.0'
 }
 
 allprojects {
@@ -25,10 +28,12 @@ allprojects {
 
 configurations.all {
     resolutionStrategy {
-        force 'com.android.support:appcompat-v7:25.3.0'
-        force 'com.android.support:support-v13:25.3.0'
-        force 'com.android.support:support-cardview-v7:25.3.0'
-        force 'com.android.support:animated-vector-drawable:25.3.0'
+        force "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"
+        force "com.android.support:support-v13:$rootProject.ext.supportLibraryVersion"
+        force "com.android.support:cardview-v7:$rootProject.ext.supportLibraryVersion"
+        force "com.android.support:customtabs:$rootProject.ext.supportLibraryVersion"
+        force "com.android.support:palette-v7:$rootProject.ext.supportLibraryVersion"
+        force "com.android.support:animated-vector-drawable:$rootProject.ext.supportLibraryVersion"
     }
 }
 
