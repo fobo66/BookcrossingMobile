@@ -84,8 +84,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            tools:text="@string/large_text" />
+            android:layout_marginTop="8dp" />
 
         <Button
             android:text="@string/book_acquire"
