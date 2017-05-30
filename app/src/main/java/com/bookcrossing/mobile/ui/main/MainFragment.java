@@ -1,5 +1,7 @@
 package com.bookcrossing.mobile.ui.main;
 
+import android.Manifest;
+import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -19,11 +21,17 @@ import com.bookcrossing.mobile.ui.base.BaseFragment;
 import com.bookcrossing.mobile.util.adapters.BooksViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.jakewharton.rxbinding2.view.RxView;
+import com.tbruyelle.rxpermissions2.RxPermissions;
+
+import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 
 public class MainFragment extends BaseFragment implements MainView {
 
@@ -34,11 +42,14 @@ public class MainFragment extends BaseFragment implements MainView {
     FloatingActionButton fab;
 
     @InjectPresenter
-    MainPresenter mainPresenter;
+    MainPresenter presenter;
 
     private FirebaseRecyclerAdapter<Book, BooksViewHolder> adapter;
 
-    Disposable fabSubscription;
+    private RxPermissions permissions;
+
+    private Disposable fabSubscription;
+    private Disposable citySubscription;
 
     public MainFragment() {
     }
@@ -53,16 +64,21 @@ public class MainFragment extends BaseFragment implements MainView {
     public void onDestroyView() {
         super.onDestroyView();
         fabSubscription.dispose();
+        citySubscription.dispose();
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        permissions = new RxPermissions(getActivity());
+
+        resolveCity();
+
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
         adapter = new FirebaseRecyclerAdapter<Book, BooksViewHolder>(Book.class, R.layout.book_list_item_main,
-                BooksViewHolder.class, mainPresenter.getBooks()) {
+                BooksViewHolder.class, presenter.getBooks()) {
             @Override
             protected void populateViewHolder(BooksViewHolder viewHolder, Book model, int position) {
                 viewHolder.setKey(this.getRef(position).getKey());
@@ -80,5 +96,24 @@ public class MainFragment extends BaseFragment implements MainView {
                 listener.onBookAdd();
             }
         });
+    }
+
+    private void resolveCity() {
+        citySubscription = permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
+                .flatMap(new Function<Boolean, ObservableSource<List<Address>>>() {
+                    @Override
+                    public ObservableSource<List<Address>> apply(@NonNull Boolean granted) throws Exception {
+                        if (granted) {
+                            return presenter.resolveUserCity();
+                        }
+                        return Observable.empty();
+                    }
+                })
+                .subscribe(new Consumer<List<Address>>() {
+                    @Override
+                    public void accept(@NonNull List<Address> addresses) throws Exception {
+                        presenter.saveCity(addresses);
+                    }
+                });
     }
 }
