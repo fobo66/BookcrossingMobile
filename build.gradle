@@ -6,12 +6,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.2'
-        classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.google.gms:google-services:3.1.0'
     }
-}
-
-plugins {
-    id "me.tatarka.retrolambda" version "3.6.0"
 }
 
 ext {
