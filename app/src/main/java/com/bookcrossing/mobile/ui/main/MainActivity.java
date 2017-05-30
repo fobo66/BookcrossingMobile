@@ -26,6 +26,7 @@ import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.ui.base.BaseActivity;
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 import com.bookcrossing.mobile.ui.create.BookCreateFragment;
+import com.bookcrossing.mobile.ui.map.MapActivity;
 import com.bookcrossing.mobile.ui.profile.ProfileFragment;
 import com.bookcrossing.mobile.ui.stash.StashFragment;
 import com.bookcrossing.mobile.util.Constants;
@@ -43,7 +44,7 @@ import java.util.Collections;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements BookListener {
+public class MainActivity extends BaseActivity implements BookListener, NavigationView.OnNavigationItemSelectedListener {
 
     private static final int RC_SIGN_IN = 1236;
 
@@ -87,36 +88,18 @@ public class MainActivity extends BaseActivity implements BookListener {
                 }
             }
         });
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.nav_catalogue:
-                        push(new MainFragment());
-                        drawer.closeDrawer(navigationView);
-                        return true;
-                    case R.id.nav_stash:
-                        toolbar.setTitle(R.string.stash_fragment_heading);
-                        push(new StashFragment());
-                        drawer.closeDrawer(navigationView);
-                        return true;
-                    case R.id.nav_books_map:
-                        return true;
-                    case R.id.nav_profile:
-                        push(new ProfileFragment());
-                        drawer.closeDrawer(navigationView);
-                        return true;
-                    case R.id.nav_settings:
-                        return true;
-                }
-
-                return false;
-            }
-        });
+        navigationView.setNavigationItemSelectedListener(this);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
-            push(new MainFragment());
+            if (savedInstanceState != null) {
+                Fragment recentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+                if (recentFragment != null) {
+                    push(recentFragment);
+                }
+            } else {
+                push(new MainFragment());
+            }
         } else {
             startActivityForResult(
                     AuthUI.getInstance().createSignInIntentBuilder()
@@ -175,6 +158,32 @@ public class MainActivity extends BaseActivity implements BookListener {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_catalogue:
+                push(new MainFragment());
+                drawer.closeDrawer(navigationView);
+                return true;
+            case R.id.nav_stash:
+                toolbar.setTitle(R.string.stash_fragment_heading);
+                push(new StashFragment());
+                drawer.closeDrawer(navigationView);
+                return true;
+            case R.id.nav_books_map:
+                navigateToMap();
+                return true;
+            case R.id.nav_profile:
+                push(new ProfileFragment());
+                drawer.closeDrawer(navigationView);
+                return true;
+            case R.id.nav_settings:
+                return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -247,5 +256,9 @@ public class MainActivity extends BaseActivity implements BookListener {
     public void onBookAdd() {
         toolbar.setTitle(R.string.add_new_book_title);
         push(new BookCreateFragment());
+    }
+
+    public void navigateToMap() {
+        startActivity(new Intent(this, MapActivity.class));
     }
 }

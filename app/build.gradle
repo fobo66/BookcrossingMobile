@@ -46,6 +46,8 @@ dependencies {
     compile "com.google.firebase:firebase-core:$firebaseVersion"
     compile "com.google.firebase:firebase-database:$firebaseVersion"
     compile "com.google.firebase:firebase-storage:$firebaseVersion"
+    compile "com.google.android.gms:play-services-maps:$firebaseVersion"
+
 
     compile "com.android.support:design:$rootProject.ext.supportLibraryVersion"
     compile "com.android.support:customtabs:$rootProject.ext.supportLibraryVersion"
@@ -72,6 +74,7 @@ dependencies {
 
     compile 'com.firebaseui:firebase-ui:1.2.0'
     compile 'com.kelvinapps:rxfirebase:0.0.15'
+    compile "com.github.akarnokd:rxjava2-interop:0.10.0"
 
     compile 'com.jakewharton:butterknife:8.4.0'
 

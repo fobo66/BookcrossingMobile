@@ -20,9 +20,8 @@ import java.util.List;
 
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.rx.ObservableFactory;
+import io.reactivex.Observable;
 import io.reactivex.SingleSource;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
@@ -38,8 +37,6 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
     protected FirebaseWrapper firebaseWrapper;
     protected SystemServicesWrapper systemServicesWrapper;
 
-    private Disposable citySubscription;
-
     public BasePresenter() {
         firebaseWrapper = new FirebaseWrapper();
         systemServicesWrapper = new SystemServicesWrapper();
@@ -52,16 +49,9 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
     }
 
     @Override
-    protected void onFirstViewAttach() {
-        super.onFirstViewAttach();
-        subscribeToCity();
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         compositeSubscription.clear();
-        citySubscription.dispose();
     }
 
     protected DatabaseReference books() {
@@ -74,6 +64,10 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
 
     protected DatabaseReference acquiredBooks() {
         return firebaseWrapper.getDatabase().getReference("acquiredBooks").child(getUserId());
+    }
+
+    protected DatabaseReference places() {
+        return firebaseWrapper.getDatabase().getReference("places");
     }
 
     private String getUserId() {
@@ -105,26 +99,21 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
         return systemServicesWrapper.getPreferences().getString(Constants.EXTRA_DEFAULT_CITY, systemServicesWrapper.getApp().getString(R.string.default_city));
     }
 
-    private void subscribeToCity() {
-        citySubscription = ObservableFactory.from(SmartLocation.with(systemServicesWrapper.getApp().getApplicationContext()).location().oneFix())
+    public Observable<List<Address>> resolveUserCity() {
+        return ObservableFactory.from(SmartLocation.with(systemServicesWrapper.getApp().getApplicationContext()).location().oneFix())
                 .flatMapSingle(new Function<Location, SingleSource<List<Address>>>() {
                     @Override
                     public SingleSource<List<Address>> apply(@io.reactivex.annotations.NonNull Location location) throws Exception {
                         return ObservableFactory.fromLocation(systemServicesWrapper.getApp().getApplicationContext(), location, 1);
                     }
-                })
-                .subscribe(new Consumer<List<Address>>() {
-                    @Override
-                    public void accept(@io.reactivex.annotations.NonNull List<Address> addresses) throws Exception {
-                        saveCity(addresses);
-                    }
                 });
     }
 
-    private void saveCity(@io.reactivex.annotations.NonNull List<Address> addresses) {
+    public void saveCity(@io.reactivex.annotations.NonNull List<Address> addresses) {
         city = addresses.get(0).getLocality();
         SharedPreferences.Editor editor = systemServicesWrapper.getPreferences().edit();
         editor.putString(Constants.EXTRA_CITY, city);
+        editor.putString(Constants.EXTRA_DEFAULT_CITY, city);
         editor.apply();
     }
 }
