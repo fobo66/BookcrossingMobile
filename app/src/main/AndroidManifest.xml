@@ -61,12 +61,26 @@
                     android:scheme="bookcrossing" />
             </intent-filter>
         </activity>
-        <activity android:name="com.bookcrossing.mobile.ui.map.MapActivity" android:label="@string/title_activity_map">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.bookcrossing.mobile.ui.main.MainActivity" />
-
+        <activity
+            android:name=".ui.map.MapActivity"
+            android:label="@string/title_activity_map">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.bookcrossing.mobile.ui.main.MainActivity" />
         </activity>
-    <meta-data android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyCu5YKw0UZ4RG5_DimoZxUWaQU_hTbz4wI" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCu5YKw0UZ4RG5_DimoZxUWaQU_hTbz4wI" />
+
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".ui.main.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.bookcrossing.mobile.ui.main.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
