@@ -48,7 +48,11 @@ public class BookPresenter extends BasePresenter<BookView> {
 
     public void handleBookStashing(String key) {
         stashed = !stashed;
-        stash().child(key).setValue(stashed);
+        if (stashed) {
+            stash().child(key).setValue(stashed);
+        } else {
+            stash().child(key).removeValue();
+        }
         updateStashButtonState();
     }
 

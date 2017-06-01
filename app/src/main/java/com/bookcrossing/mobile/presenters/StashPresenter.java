@@ -7,7 +7,6 @@ import com.google.firebase.database.DatabaseReference;
 @InjectViewState
 public class StashPresenter extends BasePresenter<StashView> {
 
-    // TODO: Check how to get only children values equal true
     public DatabaseReference getStashedBooks() {
         return stash();
     }
