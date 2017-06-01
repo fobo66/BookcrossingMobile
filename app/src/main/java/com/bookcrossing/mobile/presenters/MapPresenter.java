@@ -4,9 +4,11 @@ import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.ui.map.MvpMapView;
+import com.google.android.gms.maps.model.LatLng;
 import com.kelvinapps.rxfirebase.DataSnapshotMapper;
 import com.kelvinapps.rxfirebase.RxFirebaseDatabase;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -16,6 +18,9 @@ import rx.functions.Func2;
 
 @InjectViewState
 public class MapPresenter extends BasePresenter<MvpMapView> {
+
+    private Map<String, Book> bookMap;
+    private Map<Coordinates, String> coordinatesMap;
 
 
     public MapPresenter() {
@@ -29,9 +34,11 @@ public class MapPresenter extends BasePresenter<MvpMapView> {
                     @Override
                     public Map<String,Coordinates> call(LinkedHashMap<String, Coordinates> places,
                                                                   LinkedHashMap<String,Book> books) {
+                        bookMap = books;
+                        coordinatesMap = new HashMap<>();
                         Map<String, Coordinates> coordinatesWithBookTitlesMap = new LinkedHashMap<>();
-                        for (String key :
-                                places.keySet()) {
+                        for (String key : places.keySet()) {
+                            coordinatesMap.put(places.get(key), key);
                             coordinatesWithBookTitlesMap.put(books.get(key).getName(), places.get(key));
                         }
                         return coordinatesWithBookTitlesMap;
@@ -45,5 +52,17 @@ public class MapPresenter extends BasePresenter<MvpMapView> {
                 }
             }
         }));
+    }
+
+    private String getKey(Coordinates coordinates) {
+        return coordinatesMap.get(coordinates);
+    }
+
+    public String getKey(LatLng coordinates) {
+        return coordinatesMap.get(new Coordinates(coordinates));
+    }
+
+    public String getSnippet(Coordinates coordinates) {
+        return bookMap.get(getKey(coordinates)).getDescription();
     }
 }

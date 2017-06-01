@@ -1,6 +1,7 @@
 package com.bookcrossing.mobile.ui.map;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
@@ -8,10 +9,13 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.presenters.MapPresenter;
+import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
+import com.bookcrossing.mobile.util.Constants;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
@@ -20,7 +24,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
-public class MapActivity extends MvpAppCompatActivity implements MvpMapView, OnMapReadyCallback {
+public class MapActivity extends MvpAppCompatActivity implements MvpMapView, OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
     @InjectPresenter
     MapPresenter presenter;
@@ -58,6 +62,7 @@ public class MapActivity extends MvpAppCompatActivity implements MvpMapView, OnM
                         }
                     }
                 });
+        map.setOnInfoWindowClickListener(this);
         presenter.getBooksPositions();
     }
 
@@ -70,6 +75,14 @@ public class MapActivity extends MvpAppCompatActivity implements MvpMapView, OnM
         map.addMarker(new MarkerOptions()
                 .position(new LatLng(coordinates.lat, coordinates.lng))
                 .title(title)
+                .snippet(presenter.getSnippet(coordinates))
         );
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Intent intent = new Intent(this, BookActivity.class);
+        intent.putExtra(Constants.EXTRA_KEY, presenter.getKey(marker.getPosition()));
+        startActivity(intent);
     }
 }
