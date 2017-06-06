@@ -28,7 +28,7 @@ import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 import com.bookcrossing.mobile.ui.create.BookCreateFragment;
 import com.bookcrossing.mobile.ui.map.MapActivity;
 import com.bookcrossing.mobile.ui.profile.ProfileFragment;
-import com.bookcrossing.mobile.ui.settings.SettingsActivity;
+import com.bookcrossing.mobile.ui.settings.SettingsFragment;
 import com.bookcrossing.mobile.ui.stash.StashFragment;
 import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.listeners.BookListener;
@@ -181,7 +181,7 @@ public class MainActivity extends BaseActivity implements BookListener, Navigati
                 drawer.closeDrawer(navigationView);
                 return true;
             case R.id.nav_settings:
-                navigateToSettings();
+                push(new SettingsFragment());
                 return true;
         }
 
@@ -262,9 +262,5 @@ public class MainActivity extends BaseActivity implements BookListener, Navigati
 
     public void navigateToMap() {
         startActivity(new Intent(this, MapActivity.class));
-    }
-
-    public void navigateToSettings() {
-        startActivity(new Intent(this, SettingsActivity.class));
     }
 }

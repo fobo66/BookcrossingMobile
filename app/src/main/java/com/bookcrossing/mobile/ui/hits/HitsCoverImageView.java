@@ -12,7 +12,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import org.json.JSONObject;
 
 /**
- * Created by fobo66 on 23.05.17.
+ * (c) 2017 Andrey Mukamolow <fobo66@protonmail.com>
+ * Created 23.05.17.
  */
 
 public class HitsCoverImageView extends android.support.v7.widget.AppCompatImageView implements AlgoliaHitView {
