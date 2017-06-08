@@ -3,7 +3,6 @@ package com.bookcrossing.mobile.ui.bookpreview;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ShareCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -21,6 +21,7 @@ import com.bookcrossing.mobile.util.Constants;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
+import com.google.firebase.crash.FirebaseCrash;
 import com.jakewharton.rxbinding2.view.RxView;
 
 import butterknife.BindView;
@@ -119,13 +120,8 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
     }
 
     private void reportAbuse() {
-        ShareCompat.IntentBuilder.from(this)
-                .setType("message/rfc822")
-                .setChooserTitle(R.string.send_report_chooser)
-                .addEmailTo("fobo66@protonmail.com")
-                .setSubject("Report abuse")
-                .setText("You are dick")
-                .startChooser();
+        FirebaseCrash.log(String.format("Users complaining to book %s. Consider to check it", key));
+        Toast.makeText(this, "Your report was sent", Toast.LENGTH_SHORT).show();
     }
 
     private void handleAcquiring() {
