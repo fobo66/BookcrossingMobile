@@ -94,10 +94,7 @@ public class MainActivity extends BaseActivity implements BookListener, Navigati
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             if (savedInstanceState != null) {
-                Fragment recentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
-                if (recentFragment != null) {
-                    push(recentFragment);
-                }
+                pushRecentFragment();
             } else {
                 push(new MainFragment());
             }
@@ -128,6 +125,13 @@ public class MainActivity extends BaseActivity implements BookListener, Navigati
                 getString(R.string.algolia_api_key),
                 getString(R.string.algolia_index_name));
         instantSearch = new InstantSearch(hits, searcher);
+    }
+
+    private void pushRecentFragment() {
+        Fragment recentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        if (recentFragment != null) {
+            push(recentFragment);
+        }
     }
 
     public void push(Fragment fragment) {
@@ -182,6 +186,7 @@ public class MainActivity extends BaseActivity implements BookListener, Navigati
                 return true;
             case R.id.nav_settings:
                 push(new SettingsFragment());
+                drawer.closeDrawer(navigationView);
                 return true;
         }
 
