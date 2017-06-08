@@ -3,7 +3,10 @@ package com.bookcrossing.mobile.ui.bookpreview;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -89,18 +92,42 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
                     }
                 });
     }
-
-    private void handleAcquiring() {
-        Intent acquireIntent = new Intent(Intent.ACTION_VIEW, presenter.buildBookUri(key));
-        acquireIntent.putExtra(getString(R.string.extra_insideAppRequest), true);
-        startActivity(acquireIntent);
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         fabSubscription.dispose();
         acquireSubscription.dispose();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_book, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_action_report) {
+            reportAbuse();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void reportAbuse() {
+        ShareCompat.IntentBuilder.from(this)
+                .setType("message/rfc822")
+                .setChooserTitle(R.string.send_report_chooser)
+                .addEmailTo("fobo66@protonmail.com")
+                .setSubject("Report abuse")
+                .setText("You are dick")
+                .startChooser();
+    }
+
+    private void handleAcquiring() {
+        Intent acquireIntent = new Intent(Intent.ACTION_VIEW, presenter.buildBookUri(key));
+        acquireIntent.putExtra(getString(R.string.extra_insideAppRequest), true);
+        startActivity(acquireIntent);
     }
 
     @Override
