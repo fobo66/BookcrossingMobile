@@ -62,7 +62,14 @@
             android:layout_gravity="start"
             android:textSize="18sp"
             tools:text="L. Tolstoy" />
-
+        <com.github.curioustechizen.ago.RelativeTimeTextView
+            android:id="@+id/timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="viewStart"
+            android:layout_gravity="start"
+            app:relative_time_prefix="@string/timestamp_prefix"
+            android:padding="16dp" />
         <TextView
             android:id="@+id/position"
             android:layout_width="match_parent"

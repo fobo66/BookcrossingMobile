@@ -20,6 +20,7 @@ import com.bookcrossing.mobile.presenters.BookPresenter;
 import com.bookcrossing.mobile.util.Constants;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.jakewharton.rxbinding2.view.RxView;
 
 import butterknife.BindView;
@@ -47,6 +48,9 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
 
     @BindView(R.id.book_desc)
     TextView description;
+
+    @BindView(R.id.timestamp)
+    RelativeTimeTextView wentFree;
 
     @BindView(R.id.acquire_button)
     Button acquireButton;
@@ -142,6 +146,7 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
                 .into(cover);
         author.setText(book.getAuthor());
         position.setText(book.getPosition());
+        wentFree.setReferenceTime(book.getWentFreeAt().getTimestamp());
         description.setText(book.getDescription());
         if (book.isFree()) {
             acquireButton.setVisibility(View.VISIBLE);
