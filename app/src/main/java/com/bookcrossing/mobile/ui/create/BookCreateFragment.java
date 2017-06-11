@@ -268,8 +268,8 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
     }
 
     private void prepareDialog(View stickerView, String key) {
-        ImageView qrCode = (ImageView) stickerView.findViewById(R.id.qr_code);
-        TextView keyView = (TextView) stickerView.findViewById(R.id.sticker_book_key);
+        ImageView qrCode = stickerView.findViewById(R.id.qr_code);
+        TextView keyView = stickerView.findViewById(R.id.sticker_book_key);
         qrCode.setImageBitmap(presenter.generateQrCode(key));
         keyView.setText(key);
     }
