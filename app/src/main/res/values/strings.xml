@@ -10,6 +10,20 @@
     <string name="sign_in_failed">Sign in failed. Try again</string>
     <string name="unknown_signin_error">Unknown sign-in error</string>
 
+    <!-- Shortcut strings -->
+    <string name="acquire_shortcut_short_label">Acquire book</string>
+    <string name="acquire_shortcut_long_label">Acquire book by entering it\'s code or scanning QR</string>
+    <string name="acquire_shortcut_disabled_message">Acquire unavailable</string>
+    <string name="release_shortcut_short_label">Release book</string>
+    <string name="release_shortcut_long_label">Release new book</string>
+    <string name="release_shortcut_disabled_message">Release unavailable</string>
+    <string name="scan_shortcut_short_label">Acquire book by QR code</string>
+    <string name="scan_shortcut_long_label">Scan QR code</string>
+    <string name="scan_shortcut_disabled_message">QR code scan unavailable</string>
+    <string name="map_shortcut_short_label">Map</string>
+    <string name="map_shortcut_long_label">Find books on map</string>
+    <string name="map_shortcut_disabled_message">Map unavailable</string>
+
     <string name="book_acquire">Acquire</string>
     <string name="title_activity_book">Book</string>
     <string name="stash">Stash</string>

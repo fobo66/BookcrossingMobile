@@ -70,8 +70,10 @@ public class MapActivity extends MvpAppCompatActivity implements MvpMapView, OnM
 
         if (getIntent() != null) {
             Coordinates requestedZoomPosition = getIntent().getParcelableExtra(Constants.EXTRA_COORDINATES);
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(requestedZoomPosition.lat, requestedZoomPosition.lng), DEFAULT_ZOOM_LEVEL));
+            if (requestedZoomPosition != null) {
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(requestedZoomPosition.lat, requestedZoomPosition.lng), DEFAULT_ZOOM_LEVEL));
+            }
         }
     }
 

@@ -82,6 +82,7 @@ public class MainActivity extends BaseActivity implements BookListener, Navigati
             @Override
             public void onItemClick(RecyclerView recyclerView, int position, View v) {
                 try {
+                    hits.setVisibility(View.GONE);
                     onBookSelected(hits.get(position).getString("objectID"));
                 } catch (JSONException e) {
                     Snackbar.make(coordinatorLayout, "Cannot open book info", Snackbar.LENGTH_SHORT).show();
@@ -93,11 +94,7 @@ public class MainActivity extends BaseActivity implements BookListener, Navigati
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
-            if (savedInstanceState != null) {
-                pushRecentFragment();
-            } else {
-                push(new MainFragment());
-            }
+            resolveNavigationToFragment(savedInstanceState);
         } else {
             startActivityForResult(
                     AuthUI.getInstance().createSignInIntentBuilder()
@@ -106,6 +103,27 @@ public class MainActivity extends BaseActivity implements BookListener, Navigati
                             ))
                             .build(),
                     RC_SIGN_IN);
+        }
+    }
+
+    private void resolveNavigationToFragment(Bundle savedInstanceState) {
+        if (getIntent() != null) {
+            String whereToGo = getIntent().getStringExtra(Constants.EXTRA_TARGET_FRAGMENT);
+            if (whereToGo != null) {
+                if (whereToGo.equalsIgnoreCase("BookCreateFragment")) {
+                    push(new BookCreateFragment());
+                } else if (whereToGo.equalsIgnoreCase("ProfileFragment")) {
+                    push(new ProfileFragment());
+                } else {
+                    push(new MainFragment());
+                }
+            } else {
+                push(new MainFragment());
+            }
+        } else if (savedInstanceState != null){
+            pushRecentFragment();
+        } else {
+            push(new MainFragment());
         }
     }
 

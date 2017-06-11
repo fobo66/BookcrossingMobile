@@ -7,4 +7,5 @@ public class Constants {
     public static final String PACKAGE_NAME = "com.bookcrossing.mobile";
     public static final String DEFAULT_USER = "user";
     public static final String EXTRA_COORDINATES = "coordinates";
+    public static final String EXTRA_TARGET_FRAGMENT = "targetFragment";
 }
