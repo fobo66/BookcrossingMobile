@@ -191,7 +191,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
                     @Override
                     public void accept(@NonNull Response<BookCreateFragment, FileData> result) throws Exception {
                         if (result.resultCode() == RESULT_OK)
-                            result.targetUI().presenter.saveCoverTemporarly(result.data());
+                            result.targetUI().presenter.saveCoverTemporarily(result.data());
                     }
                 });
         subscriptions.add(coverSubscription);

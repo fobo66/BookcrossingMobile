@@ -39,6 +39,7 @@ public class BookAcquirePresenter extends BasePresenter<BookAcquireView> {
                 }));
     }
 
+    // TODO: refactor this for RX after 1to2 migration
     public boolean isKeyValid(final String key) {
         books().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

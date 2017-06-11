@@ -8,8 +8,26 @@ public class Book {
     private String name;
     private String description;
     private boolean free;
-    private String position;
+    private String positionName;
+    private Coordinates position;
+    private String city;
     private Date wentFreeAt;
+
+    public Coordinates getPosition() {
+        return position;
+    }
+
+    public void setPosition(Coordinates position) {
+        this.position = position;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
 
     public String getAuthor() {
         return author;
@@ -35,12 +53,12 @@ public class Book {
         this.free = free;
     }
 
-    public String getPosition() {
-        return position;
+    public String getPositionName() {
+        return positionName;
     }
 
-    public void setPosition(String position) {
-        this.position = position;
+    public void setPositionName(String positionName) {
+        this.positionName = positionName;
     }
 
     public Date getWentFreeAt() {
@@ -51,12 +69,12 @@ public class Book {
         this.wentFreeAt = wentFreeAt;
     }
 
-    public Book(String author, String name, String description, boolean free, String position, Date wentFreeAt) {
+    public Book(String author, String name, String description, boolean free, String positionName, Date wentFreeAt) {
         this.author = author;
         this.name = name;
         this.description = description;
         this.free = free;
-        this.position = position;
+        this.positionName = positionName;
         this.wentFreeAt = wentFreeAt;
     }
 

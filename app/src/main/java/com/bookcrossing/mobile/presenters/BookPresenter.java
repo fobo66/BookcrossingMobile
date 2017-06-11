@@ -4,6 +4,7 @@ import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.ui.bookpreview.BookView;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
 import com.kelvinapps.rxfirebase.RxFirebaseDatabase;
 
 import rx.Subscription;
@@ -62,5 +63,9 @@ public class BookPresenter extends BasePresenter<BookView> {
         } else {
             getViewState().onBookUnstashed();
         }
+    }
+
+    public DatabaseReference getPlacesHistory(String key) {
+        return placesHistory(key);
     }
 }

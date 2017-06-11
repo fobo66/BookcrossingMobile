@@ -75,7 +75,7 @@ public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
     public void bind(Book item) {
         loadCover();
         bookName.setText(item.getName());
-        bookPlace.setText(item.getPosition());
+        bookPlace.setText(item.getPositionName());
         author.setText(item.getAuthor());
     }
 

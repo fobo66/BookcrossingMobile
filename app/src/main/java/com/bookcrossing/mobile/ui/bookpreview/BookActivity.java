@@ -3,6 +3,8 @@ package com.bookcrossing.mobile.ui.bookpreview;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,9 +18,13 @@ import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Book;
+import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.presenters.BookPresenter;
+import com.bookcrossing.mobile.ui.map.MapActivity;
 import com.bookcrossing.mobile.util.Constants;
+import com.bookcrossing.mobile.util.adapters.PlacesHistoryViewHolder;
 import com.bumptech.glide.Glide;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.firebase.crash.FirebaseCrash;
@@ -44,7 +50,7 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
     @BindView(R.id.author)
     TextView author;
 
-    @BindView(R.id.position)
+    @BindView(R.id.positionName)
     TextView position;
 
     @BindView(R.id.book_desc)
@@ -52,6 +58,9 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
 
     @BindView(R.id.timestamp)
     RelativeTimeTextView wentFree;
+
+    @BindView(R.id.placesHistory)
+    RecyclerView placesHistory;
 
     @BindView(R.id.acquire_button)
     Button acquireButton;
@@ -62,6 +71,10 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
     private String key;
     private Disposable fabSubscription;
     private Disposable acquireSubscription;
+    private Disposable positionNameSubscription;
+    private FirebaseRecyclerAdapter<Coordinates, PlacesHistoryViewHolder> adapter;
+    private Coordinates currentBookPosition;
+    private boolean reportWasSent = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +94,8 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
             presenter.checkStashingState(key);
         }
 
+        setupPlacesHistory();
+
         fabSubscription = RxView.clicks(favorite)
                 .subscribe(new Consumer<Object>() {
             @Override
@@ -96,7 +111,41 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
                         handleAcquiring();
                     }
                 });
+
+        positionNameSubscription = RxView.clicks(position)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(@NonNull Object o) throws Exception {
+                        goToPosition(currentBookPosition);
+                    }
+                });
     }
+
+    public void goToPosition(Coordinates coordinates) {
+        Intent intent = new Intent(this, MapActivity.class);
+        intent.putExtra(Constants.EXTRA_COORDINATES, coordinates);
+        startActivity(intent);
+    }
+
+    private void setupPlacesHistory() {
+        RecyclerView.LayoutManager llm = new LinearLayoutManager(this);
+        placesHistory.setLayoutManager(llm);
+        adapter = new FirebaseRecyclerAdapter<Coordinates, PlacesHistoryViewHolder>(
+                        Coordinates.class,
+                        R.layout.places_history_list_item,
+                        PlacesHistoryViewHolder.class,
+                        presenter.getPlacesHistory(key)
+        ) {
+            @Override
+            protected void populateViewHolder(PlacesHistoryViewHolder viewHolder,
+                                              Coordinates coordinates,
+                                              int position) {
+                viewHolder.bind(this.getRef(position).getKey(), coordinates);
+            }
+        };
+        placesHistory.setAdapter(adapter);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -119,9 +168,18 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (reportWasSent) {
+            menu.findItem(R.id.menu_action_report).setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     private void reportAbuse() {
-        FirebaseCrash.log(String.format("Users complaining to book %s. Consider to check it", key));
+        FirebaseCrash.report(new Exception(String.format("Users complaining to book %s. Consider to check it", key)));
         Toast.makeText(this, "Your report was sent", Toast.LENGTH_SHORT).show();
+        reportWasSent = true;
     }
 
     private void handleAcquiring() {
@@ -141,12 +199,13 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
                 .thumbnail(0.6f)
                 .into(cover);
         author.setText(book.getAuthor());
-        position.setText(book.getPosition());
+        position.setText(String.format("%s, %s", book.getCity(), book.getPositionName()));
         wentFree.setReferenceTime(book.getWentFreeAt().getTimestamp());
         description.setText(book.getDescription());
         if (book.isFree()) {
             acquireButton.setVisibility(View.VISIBLE);
         }
+        currentBookPosition = book.getPosition();
     }
 
     @Override

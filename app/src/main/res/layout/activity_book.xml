@@ -71,7 +71,7 @@
             app:relative_time_prefix="@string/timestamp_prefix"
             android:padding="16dp" />
         <TextView
-            android:id="@+id/position"
+            android:id="@+id/positionName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
@@ -92,6 +92,10 @@
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/placesHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <Button
             android:text="@string/book_acquire"

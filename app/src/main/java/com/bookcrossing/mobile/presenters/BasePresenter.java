@@ -55,7 +55,7 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
     }
 
     protected DatabaseReference books() {
-        return firebaseWrapper.getDatabase().getReference("books").child(getCity());
+        return firebaseWrapper.getDatabase().getReference("books");
     }
 
     protected DatabaseReference stash() {
@@ -68,6 +68,10 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
 
     protected DatabaseReference places() {
         return firebaseWrapper.getDatabase().getReference("places");
+    }
+
+    protected DatabaseReference placesHistory(String key) {
+        return firebaseWrapper.getDatabase().getReference("placesHistory").child(key);
     }
 
     private String getUserId() {

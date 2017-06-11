@@ -7,6 +7,7 @@ import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Date;
 import com.bookcrossing.mobile.ui.create.BookCreateView;
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.zxing.BarcodeFormat;
@@ -27,11 +28,8 @@ import static android.graphics.Color.WHITE;
 @InjectViewState
 public class BookCreatePresenter extends BasePresenter<BookCreateView> {
 
-    private static final String TAG = "BookCreatePresenter";
-
     private Book book;
     private Uri tempCoverUri;
-
 
     public BookCreatePresenter() {
         super();
@@ -49,7 +47,7 @@ public class BookCreatePresenter extends BasePresenter<BookCreateView> {
 
     }
 
-    public void saveCoverTemporarly(FileData result) {
+    public void saveCoverTemporarily(FileData result) {
         tempCoverUri = Uri.fromFile(result.getFile());
         getViewState().OnCoverChosen(tempCoverUri);
     }
@@ -93,7 +91,7 @@ public class BookCreatePresenter extends BasePresenter<BookCreateView> {
     }
 
     public void OnPositionChange(String position) {
-        book.setPosition(position);
+        book.setPositionName(position);
     }
 
     public void OnDescriptionChange(String description) {
@@ -101,6 +99,7 @@ public class BookCreatePresenter extends BasePresenter<BookCreateView> {
     }
 
     public void publishBook() {
+        book.setCity(getCity());
         setPublicationDate();
         DatabaseReference newBookReference = books().push();
         newBookReference.setValue(book);
@@ -125,6 +124,7 @@ public class BookCreatePresenter extends BasePresenter<BookCreateView> {
                     BarcodeFormat.QR_CODE, 350, 350);
         } catch (WriterException e) {
             e.printStackTrace();
+            FirebaseCrash.report(e);
             return null;
         }
     }

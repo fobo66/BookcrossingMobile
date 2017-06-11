@@ -11,6 +11,7 @@ import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.presenters.MapPresenter;
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 import com.bookcrossing.mobile.util.Constants;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -25,6 +26,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
 public class MapActivity extends MvpAppCompatActivity implements MvpMapView, OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
+
+    public static final float DEFAULT_ZOOM_LEVEL = 16.0f;
 
     @InjectPresenter
     MapPresenter presenter;
@@ -64,6 +67,12 @@ public class MapActivity extends MvpAppCompatActivity implements MvpMapView, OnM
                 });
         map.setOnInfoWindowClickListener(this);
         presenter.getBooksPositions();
+
+        if (getIntent() != null) {
+            Coordinates requestedZoomPosition = getIntent().getParcelableExtra(Constants.EXTRA_COORDINATES);
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(requestedZoomPosition.lat, requestedZoomPosition.lng), DEFAULT_ZOOM_LEVEL));
+        }
     }
 
     public Observable<Boolean> requestLocationPermission() {

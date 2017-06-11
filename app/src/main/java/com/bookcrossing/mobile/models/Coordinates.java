@@ -1,10 +1,13 @@
 package com.bookcrossing.mobile.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-public class Coordinates {
+public class Coordinates implements Parcelable {
     public double lat;
     public double lng;
     public Coordinates() {}
@@ -14,6 +17,23 @@ public class Coordinates {
 
         this.lng = latLng.longitude;
     }
+
+    protected Coordinates(Parcel in) {
+        lat = in.readDouble();
+        lng = in.readDouble();
+    }
+
+    public static final Creator<Coordinates> CREATOR = new Creator<Coordinates>() {
+        @Override
+        public Coordinates createFromParcel(Parcel in) {
+            return new Coordinates(in);
+        }
+
+        @Override
+        public Coordinates[] newArray(int size) {
+            return new Coordinates[size];
+        }
+    };
 
     @Override
     public boolean equals(Object o) {
@@ -36,5 +56,16 @@ public class Coordinates {
         temp = Double.doubleToLongBits(lng);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeDouble(lat);
+        parcel.writeDouble(lng);
     }
 }
