@@ -7,8 +7,11 @@ import android.view.View;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.arellomobile.mvp.MvpAppCompatFragment;
+import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.listeners.BookListener;
+import com.firebase.ui.auth.AuthUI;
 import io.reactivex.disposables.CompositeDisposable;
+import java.util.Collections;
 
 /**
  * (c) 2016 Andrey Mukamolow aka fobo66 <fobo66@protonmail.com>
@@ -39,6 +42,14 @@ public class BaseFragment extends MvpAppCompatFragment {
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     unbinder = ButterKnife.bind(this, view);
+  }
+
+  protected void authenticate() {
+    startActivityForResult(AuthUI.getInstance()
+        .createSignInIntentBuilder()
+        .setAvailableProviders(
+            Collections.singletonList(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
+        .build(), Constants.RC_SIGN_IN);
   }
 
   @Override public void onDestroyView() {

@@ -12,11 +12,8 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.presenters.StashPresenter;
 import com.bookcrossing.mobile.ui.base.BaseFragment;
-import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.adapters.StashedBookViewHolder;
-import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import java.util.Collections;
 
 /**
  * Created by fobo66 on 18.05.17.
@@ -47,11 +44,7 @@ public class StashFragment extends BaseFragment implements StashView {
     if (presenter.isAuthenticated()) {
       setupStash();
     } else {
-      startActivityForResult(AuthUI.getInstance()
-          .createSignInIntentBuilder()
-          .setAvailableProviders(Collections.singletonList(
-              new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
-          .build(), Constants.RC_SIGN_IN);
+      authenticate();
     }
   }
 

@@ -3,30 +3,25 @@ package com.bookcrossing.mobile.modules;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-
 import dagger.Module;
 import dagger.Provides;
 
-/** (c) 2016 Andrey Mukamolow aka fobo66 <fobo66@protonmail.com>
+/**
+ * (c) 2016 Andrey Mukamolow aka fobo66 <fobo66@protonmail.com>
  * Created by fobo66 on 15.11.2016.
  */
 
-@Module
-public class ApiModule {
+@Module public class ApiModule {
 
-    @Provides
-    public FirebaseDatabase provideDatabase() {
-        return FirebaseDatabase.getInstance();
-    }
+  @Provides public FirebaseDatabase provideDatabase() {
+    return FirebaseDatabase.getInstance();
+  }
 
-    @Provides
-    public FirebaseStorage provideStorage() {
-        return FirebaseStorage.getInstance();
-    }
+  @Provides public FirebaseStorage provideStorage() {
+    return FirebaseStorage.getInstance();
+  }
 
-    @Provides
-    public FirebaseAuth provideAuth() {
-        return FirebaseAuth.getInstance();
-    }
-
+  @Provides public FirebaseAuth provideAuth() {
+    return FirebaseAuth.getInstance();
+  }
 }

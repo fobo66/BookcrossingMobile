@@ -7,7 +7,8 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
 import android.widget.Button;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
@@ -16,9 +17,6 @@ import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 import com.bookcrossing.mobile.ui.scan.ScanActivity;
 import com.bookcrossing.mobile.util.Constants;
 import com.jakewharton.rxbinding2.view.RxView;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -26,84 +24,69 @@ import io.reactivex.functions.Predicate;
 
 public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcquireView {
 
-    @InjectPresenter
-    BookAcquirePresenter presenter;
+  @InjectPresenter BookAcquirePresenter presenter;
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
+  @BindView(R.id.toolbar) Toolbar toolbar;
 
-    @BindView(R.id.submit)
-    Button submitButton;
+  @BindView(R.id.submit) Button submitButton;
 
-    @BindView(R.id.scan_code)
-    Button scanCodeButton;
+  @BindView(R.id.scan_code) Button scanCodeButton;
 
-    @BindView(R.id.input_code)
-    TextInputEditText codeInput;
+  @BindView(R.id.input_code) TextInputEditText codeInput;
 
-    @BindView(R.id.coord_layout)
-    CoordinatorLayout coordinatorLayout;
+  @BindView(R.id.coord_layout) CoordinatorLayout coordinatorLayout;
 
-    private String keyToAcquire;
-    private boolean isInnerAppRequest;
+  private String keyToAcquire;
+  private boolean isInnerAppRequest;
 
-    private Disposable acquisitionDisposable;
-    private Disposable scanDisposable;
+  private Disposable acquisitionDisposable;
+  private Disposable scanDisposable;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book_acquire);
-        ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
+  @Override protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_book_acquire);
+    ButterKnife.bind(this);
+    setSupportActionBar(toolbar);
 
-        if (getIntent() != null) {
-            keyToAcquire = getIntent().getData().getQueryParameter(Constants.EXTRA_KEY);
-            isInnerAppRequest = getIntent().getBooleanExtra(getString(R.string.extra_insideAppRequest), false);
-            if (!isInnerAppRequest) {
-                codeInput.setText(keyToAcquire);
-                codeInput.setEnabled(false);
-            }
-        }
-
-        acquisitionDisposable = RxView.clicks(submitButton)
-                .filter(new Predicate<Object>() {
-                    @Override
-                    public boolean test(@NonNull Object o) throws Exception {
-                        return presenter.isKeyValid(codeInput.getText().toString());
-                    }
-                })
-                .subscribe(new Consumer<Object>() {
-                    @Override
-                    public void accept(@NonNull Object o) throws Exception {
-                        presenter.handleAcquisition(codeInput.getText().toString());
-                    }
-                });
-
-        scanDisposable = RxView.clicks(scanCodeButton)
-                .subscribe(new Consumer<Object>() {
-                    @Override
-                    public void accept(@NonNull Object o) throws Exception {
-                        startActivity(new Intent(BookAcquireActivity.this, ScanActivity.class));
-                    }
-                });
+    if (getIntent() != null) {
+      keyToAcquire = getIntent().getData().getQueryParameter(Constants.EXTRA_KEY);
+      isInnerAppRequest =
+          getIntent().getBooleanExtra(getString(R.string.extra_insideAppRequest), false);
+      if (!isInnerAppRequest) {
+        codeInput.setText(keyToAcquire);
+        codeInput.setEnabled(false);
+      }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        acquisitionDisposable.dispose();
-    }
+    acquisitionDisposable = RxView.clicks(submitButton).filter(new Predicate<Object>() {
+      @Override public boolean test(@NonNull Object o) throws Exception {
+        return presenter.isKeyValid(codeInput.getText().toString());
+      }
+    }).subscribe(new Consumer<Object>() {
+      @Override public void accept(@NonNull Object o) throws Exception {
+        presenter.handleAcquisition(codeInput.getText().toString());
+      }
+    });
 
-    @Override
-    public void onIncorrectKey() {
-        Snackbar.make(coordinatorLayout, R.string.incorrect_key_message, Snackbar.LENGTH_SHORT).show();
-    }
+    scanDisposable = RxView.clicks(scanCodeButton).subscribe(new Consumer<Object>() {
+      @Override public void accept(@NonNull Object o) throws Exception {
+        startActivity(new Intent(BookAcquireActivity.this, ScanActivity.class));
+      }
+    });
+  }
 
-    @Override
-    public void onAcquired() {
-        Intent intent = new Intent(this, BookActivity.class);
-        intent.putExtra(Constants.EXTRA_KEY, keyToAcquire);
-        startActivity(intent);
-    }
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    acquisitionDisposable.dispose();
+  }
+
+  @Override public void onIncorrectKey() {
+    Snackbar.make(coordinatorLayout, R.string.incorrect_key_message, Snackbar.LENGTH_SHORT).show();
+  }
+
+  @Override public void onAcquired() {
+    Intent intent = new Intent(this, BookActivity.class);
+    intent.putExtra(Constants.EXTRA_KEY, keyToAcquire);
+    startActivity(intent);
+  }
 }

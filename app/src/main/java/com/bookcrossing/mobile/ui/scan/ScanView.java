@@ -1,7 +1,6 @@
 package com.bookcrossing.mobile.ui.scan;
 
 import android.net.Uri;
-
 import com.arellomobile.mvp.MvpView;
 
 /**
@@ -10,6 +9,7 @@ import com.arellomobile.mvp.MvpView;
  */
 
 public interface ScanView extends MvpView {
-    void onBookCodeScanned(Uri uri);
-    void onIncorrectCodeScanned();
+  void onBookCodeScanned(Uri uri);
+
+  void onIncorrectCodeScanned();
 }

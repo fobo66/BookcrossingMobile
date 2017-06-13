@@ -7,6 +7,7 @@ import com.arellomobile.mvp.MvpView;
  */
 
 public interface BookAcquireView extends MvpView {
-    void onIncorrectKey();
-    void onAcquired();
+  void onIncorrectKey();
+
+  void onAcquired();
 }

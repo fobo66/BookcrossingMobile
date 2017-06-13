@@ -14,12 +14,9 @@ import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.presenters.ProfilePresenter;
 import com.bookcrossing.mobile.ui.base.BaseFragment;
-import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.adapters.AcquiredBooksViewHolder;
 import com.bumptech.glide.Glide;
-import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import java.util.Collections;
 
 public class ProfileFragment extends BaseFragment implements ProfileView {
 
@@ -48,11 +45,7 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
 
       Glide.with(this).fromUri().crossFade().load(presenter.getPhotoUrl()).into(profileImage);
     } else {
-      startActivityForResult(AuthUI.getInstance()
-          .createSignInIntentBuilder()
-          .setAvailableProviders(Collections.singletonList(
-              new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
-          .build(), Constants.RC_SIGN_IN);
+      authenticate();
     }
   }
 

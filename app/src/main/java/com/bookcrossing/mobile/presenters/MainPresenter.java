@@ -9,10 +9,9 @@ import com.google.firebase.database.DatabaseReference;
  * Created by fobo66 on 21.12.2016.
  */
 
-@InjectViewState
-public class MainPresenter extends BasePresenter<MainView> {
+@InjectViewState public class MainPresenter extends BasePresenter<MainView> {
 
-    public DatabaseReference getBooks() {
-        return books();
-    }
+  public DatabaseReference getBooks() {
+    return books();
+  }
 }

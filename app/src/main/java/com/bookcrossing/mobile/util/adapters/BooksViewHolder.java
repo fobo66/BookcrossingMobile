@@ -4,7 +4,9 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.OnClick;
+import butterknife.Optional;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
@@ -16,10 +18,6 @@ import com.bookcrossing.mobile.ui.bookpreview.BookItemView;
 import com.bookcrossing.mobile.util.listeners.BookListener;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
-
-import butterknife.BindView;
-import butterknife.OnClick;
-import butterknife.Optional;
 
 /**
  * Reusable ViewHolder. As for me, book representation across all RecyclerViews
@@ -33,69 +31,56 @@ import butterknife.Optional;
 
 public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
 
-    private static final String TAG = "BooksViewHolder";
+  private static final String TAG = "BooksViewHolder";
 
-    @InjectPresenter(type = PresenterType.GLOBAL, tag = BookItemPresenter.TAG)
-    public BookItemPresenter itemPresenter;
+  @InjectPresenter(type = PresenterType.GLOBAL, tag = BookItemPresenter.TAG)
+  public BookItemPresenter itemPresenter;
 
-    protected String key;
+  protected String key;
 
-    public BooksViewHolder(View view) {
-        super(view);
-    }
+  public BooksViewHolder(View view) {
+    super(view);
+  }
 
-    @ProvidePresenterTag(presenterClass = BookItemPresenter.class, type = PresenterType.GLOBAL)
-    String provideRepositoryPresenterTag() {
-        return BookItemPresenter.TAG;
-    }
+  @ProvidePresenterTag(presenterClass = BookItemPresenter.class, type = PresenterType.GLOBAL)
+  String provideRepositoryPresenterTag() {
+    return BookItemPresenter.TAG;
+  }
 
-    @ProvidePresenter(type = PresenterType.GLOBAL)
-    BookItemPresenter providePresenter() {
-        return new BookItemPresenter();
-    }
+  @ProvidePresenter(type = PresenterType.GLOBAL) BookItemPresenter providePresenter() {
+    return new BookItemPresenter();
+  }
 
-    @Nullable
-    @BindView(R.id.cover)
-    ImageView cover;
+  @Nullable @BindView(R.id.cover) ImageView cover;
 
-    @Nullable
-    @BindView(R.id.book_name)
-    TextView bookName;
+  @Nullable @BindView(R.id.book_name) TextView bookName;
 
-    @Nullable
-    @BindView(R.id.author)
-    TextView author;
+  @Nullable @BindView(R.id.author) TextView author;
 
-    @Nullable
-    @BindView(R.id.current_place)
-    TextView bookPlace;
+  @Nullable @BindView(R.id.current_place) TextView bookPlace;
 
+  @Override public void bind(Book item) {
+    loadCover();
+    bookName.setText(item.getName());
+    bookPlace.setText(item.getPositionName());
+    author.setText(item.getAuthor());
+  }
 
-    @Override
-    public void bind(Book item) {
-        loadCover();
-        bookName.setText(item.getName());
-        bookPlace.setText(item.getPositionName());
-        author.setText(item.getAuthor());
-    }
+  protected void loadCover() {
+    Glide.with(itemView.getContext())
+        .using(new FirebaseImageLoader())
+        .load(itemPresenter.resolveCover(key))
+        .crossFade()
+        .placeholder(R.drawable.ic_book_cover_placeholder)
+        .thumbnail(0.6f)
+        .into(cover);
+  }
 
-    protected void loadCover() {
-        Glide.with(itemView.getContext())
-                .using(new FirebaseImageLoader())
-                .load(itemPresenter.resolveCover(key))
-                .crossFade()
-                .placeholder(R.drawable.ic_book_cover_placeholder)
-                .thumbnail(0.6f)
-                .into(cover);
-    }
+  @Optional @OnClick(R.id.card) public void onClick() {
+    ((BookListener) itemView.getContext()).onBookSelected(key);
+  }
 
-    @Optional
-    @OnClick(R.id.card)
-    public void onClick() {
-        ((BookListener) itemView.getContext()).onBookSelected(key);
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
+  public void setKey(String key) {
+    this.key = key;
+  }
 }

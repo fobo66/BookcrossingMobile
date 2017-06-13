@@ -1,8 +1,6 @@
 package com.bookcrossing.mobile.util.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.widget.BaseAdapter;
-
 import com.arellomobile.mvp.MvpDelegate;
 
 /**
@@ -10,23 +8,22 @@ import com.arellomobile.mvp.MvpDelegate;
  */
 
 public abstract class MvpBaseAdapter extends RecyclerView.Adapter {
-    private MvpDelegate<? extends MvpBaseAdapter> mMvpDelegate;
-    private MvpDelegate<?> mParentDelegate;
-    private String mChildId;
+  private MvpDelegate<? extends MvpBaseAdapter> mMvpDelegate;
+  private MvpDelegate<?> mParentDelegate;
+  private String mChildId;
 
-    public MvpBaseAdapter(MvpDelegate<?> parentDelegate, String childId) {
-        mParentDelegate = parentDelegate;
-        mChildId = childId;
+  public MvpBaseAdapter(MvpDelegate<?> parentDelegate, String childId) {
+    mParentDelegate = parentDelegate;
+    mChildId = childId;
 
-        getMvpDelegate().onCreate();
+    getMvpDelegate().onCreate();
+  }
+
+  public MvpDelegate getMvpDelegate() {
+    if (mMvpDelegate == null) {
+      mMvpDelegate = new MvpDelegate<>(this);
+      mMvpDelegate.setParentDelegate(mParentDelegate, mChildId);
     }
-
-    public MvpDelegate getMvpDelegate() {
-        if (mMvpDelegate == null) {
-            mMvpDelegate = new MvpDelegate<>(this);
-            mMvpDelegate.setParentDelegate(mParentDelegate, mChildId);
-
-        }
-        return mMvpDelegate;
-    }
+    return mMvpDelegate;
+  }
 }

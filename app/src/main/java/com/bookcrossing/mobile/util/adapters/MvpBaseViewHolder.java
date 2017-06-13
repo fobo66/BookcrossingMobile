@@ -1,7 +1,6 @@
 package com.bookcrossing.mobile.util.adapters;
 
 import android.view.View;
-
 import com.arellomobile.mvp.MvpDelegate;
 
 /**
@@ -9,18 +8,18 @@ import com.arellomobile.mvp.MvpDelegate;
  */
 
 public class MvpBaseViewHolder extends BaseViewHolder {
-    private MvpDelegate<? extends BaseViewHolder> mMvpDelegate;
+  private MvpDelegate<? extends BaseViewHolder> mMvpDelegate;
 
-    public MvpBaseViewHolder(View view) {
-        super(view);
-        getMvpDelegate().onCreate();
+  public MvpBaseViewHolder(View view) {
+    super(view);
+    getMvpDelegate().onCreate();
+  }
+
+  private MvpDelegate getMvpDelegate() {
+    if (this.mMvpDelegate == null) {
+      this.mMvpDelegate = new MvpDelegate<>(this);
     }
 
-    private MvpDelegate getMvpDelegate() {
-        if(this.mMvpDelegate == null) {
-            this.mMvpDelegate = new MvpDelegate<>(this);
-        }
-
-        return this.mMvpDelegate;
-    }
+    return this.mMvpDelegate;
+  }
 }

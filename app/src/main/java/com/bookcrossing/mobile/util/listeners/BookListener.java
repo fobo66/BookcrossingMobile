@@ -5,7 +5,9 @@ package com.bookcrossing.mobile.util.listeners;
  */
 
 public interface BookListener {
-    void onBookSelected(String bookKey);
-    void onBookReleased(String bookKey);
-    void onBookAdd();
+  void onBookSelected(String bookKey);
+
+  void onBookReleased(String bookKey);
+
+  void onBookAdd();
 }
