@@ -1,6 +1,5 @@
 package com.bookcrossing.mobile.ui.profile;
 
-
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
+import butterknife.BindView;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Book;
@@ -20,69 +19,60 @@ import com.bookcrossing.mobile.util.adapters.AcquiredBooksViewHolder;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-
 import java.util.Collections;
-
-import butterknife.BindView;
 
 public class ProfileFragment extends BaseFragment implements ProfileView {
 
-    @InjectPresenter
-    ProfilePresenter presenter;
+  @InjectPresenter ProfilePresenter presenter;
 
-    @BindView(R.id.profile_image)
-    ImageView profileImage;
+  @BindView(R.id.profile_image) ImageView profileImage;
 
-    @BindView(R.id.acquiredBooksList)
-    RecyclerView acquiredBooksList;
+  @BindView(R.id.acquiredBooksList) RecyclerView acquiredBooksList;
 
-    public ProfileFragment() {
-        // Required empty public constructor
+  public ProfileFragment() {
+    // Required empty public constructor
+  }
+
+  private FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder> adapter;
+
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.fragment_profile, container, false);
+  }
+
+  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+
+    if (presenter.isAuthenticated()) {
+      setupAcquiredBookList();
+
+      Glide.with(this).fromUri().crossFade().load(presenter.getPhotoUrl()).into(profileImage);
+    } else {
+      startActivityForResult(AuthUI.getInstance()
+          .createSignInIntentBuilder()
+          .setAvailableProviders(Collections.singletonList(
+              new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
+          .build(), Constants.RC_SIGN_IN);
     }
+  }
 
-    private FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder> adapter;
+  private void setupAcquiredBookList() {
+    LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+    acquiredBooksList.setLayoutManager(llm);
+    adapter = new FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder>(Book.class,
+        R.layout.acquired_book_list_item, AcquiredBooksViewHolder.class,
+        presenter.getAcquiredBooks()) {
+      @Override protected void populateViewHolder(AcquiredBooksViewHolder viewHolder, Book model,
+          int position) {
+        viewHolder.setKey(this.getRef(position).getKey());
+        viewHolder.bind(model);
+      }
+    };
+    acquiredBooksList.setAdapter(adapter);
+  }
 
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        if (presenter.isAuthenticated()) {
-            setupAcquiredBookList();
-
-            Glide.with(this)
-                    .fromUri()
-                    .crossFade()
-                    .load(presenter.getPhotoUrl())
-                    .into(profileImage);
-        } else {
-            startActivityForResult(
-                    AuthUI.getInstance().createSignInIntentBuilder()
-                            .setProviders(Collections.singletonList(
-                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
-                            ))
-                            .build(),
-                    Constants.RC_SIGN_IN);
-        }
-    }
-
-    private void setupAcquiredBookList() {
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        acquiredBooksList.setLayoutManager(llm);
-        adapter = new FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder>(Book.class, R.layout.acquired_book_list_item,
-                AcquiredBooksViewHolder.class, presenter.getAcquiredBooks()) {
-            @Override
-            protected void populateViewHolder(AcquiredBooksViewHolder viewHolder, Book model, int position) {
-                viewHolder.setKey(this.getRef(position).getKey());
-                viewHolder.bind(model);
-            }
-        };
-        acquiredBooksList.setAdapter(adapter);
-    }
+  @Override public void onDestroyView() {
+    super.onDestroyView();
+    adapter.cleanup();
+  }
 }

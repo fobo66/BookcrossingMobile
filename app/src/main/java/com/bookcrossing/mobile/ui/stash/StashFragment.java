@@ -7,15 +7,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import butterknife.BindView;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.presenters.StashPresenter;
 import com.bookcrossing.mobile.ui.base.BaseFragment;
+import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.adapters.StashedBookViewHolder;
+import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-
-import butterknife.BindView;
+import java.util.Collections;
 
 /**
  * Created by fobo66 on 18.05.17.
@@ -23,41 +24,51 @@ import butterknife.BindView;
 
 public class StashFragment extends BaseFragment implements StashView {
 
-    public static final int STASH_COLUMNS = 3;
+  public static final int STASH_COLUMNS = 3;
 
-    @InjectPresenter
-    StashPresenter presenter;
+  @InjectPresenter StashPresenter presenter;
 
-    @BindView(R.id.stash_rv)
-    RecyclerView rv;
+  @BindView(R.id.stash_rv) RecyclerView rv;
 
-    private FirebaseRecyclerAdapter<Boolean, StashedBookViewHolder> adapter;
+  private FirebaseRecyclerAdapter<Boolean, StashedBookViewHolder> adapter;
 
-    public StashFragment() {
+  public StashFragment() {
+  }
+
+  @Nullable @Override
+  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.fragment_stash, container, false);
+  }
+
+  @Override public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+
+    if (presenter.isAuthenticated()) {
+      setupStash();
+    } else {
+      startActivityForResult(AuthUI.getInstance()
+          .createSignInIntentBuilder()
+          .setAvailableProviders(Collections.singletonList(
+              new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
+          .build(), Constants.RC_SIGN_IN);
     }
+  }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_stash, container, false);
-    }
+  private void setupStash() {
+    RecyclerView.LayoutManager gridLayoutManager =
+        new GridLayoutManager(getActivity(), STASH_COLUMNS);
+    rv.setLayoutManager(gridLayoutManager);
 
-    @Override
-    public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    adapter = new FirebaseRecyclerAdapter<Boolean, StashedBookViewHolder>(Boolean.class,
+        R.layout.stash_item, StashedBookViewHolder.class, presenter.getStashedBooks()) {
+      @Override protected void populateViewHolder(StashedBookViewHolder viewHolder, Boolean model,
+          int position) {
+        viewHolder.setKey(this.getRef(position).getKey());
+        viewHolder.load();
+      }
+    };
 
-        RecyclerView.LayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), STASH_COLUMNS);
-        rv.setLayoutManager(gridLayoutManager);
-
-        adapter = new FirebaseRecyclerAdapter<Boolean, StashedBookViewHolder>(Boolean.class, R.layout.stash_item,
-                StashedBookViewHolder.class, presenter.getStashedBooks()) {
-            @Override
-            protected void populateViewHolder(StashedBookViewHolder viewHolder, Boolean model, int position) {
-                viewHolder.setKey(this.getRef(position).getKey());
-                viewHolder.load();
-            }
-        };
-
-        rv.setAdapter(adapter);
-    }
+    rv.setAdapter(adapter);
+  }
 }
