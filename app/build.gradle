@@ -48,6 +48,8 @@ dependencies {
     compile "com.google.firebase:firebase-storage:$firebaseVersion"
     compile "com.google.firebase:firebase-crash:$firebaseVersion"
     compile "com.google.android.gms:play-services-maps:$firebaseVersion"
+    compile "com.google.android.gms:play-services-location:$firebaseVersion"
+    compile "com.google.android.gms:play-services-auth:$firebaseVersion"
 
 
     compile "com.android.support:design:$rootProject.ext.supportLibraryVersion"

@@ -61,7 +61,7 @@
 
     <string name="extra_insideAppRequest" translatable="false">fromInsideAppRequest</string>
     <string name="incorrect_key_message">Incorrect key</string>
-    <string name="hint_position">Where you left this book?</string>
+    <string name="hint_position">Where did you left this book?</string>
     <string name="default_city">Unknown</string>
 
     <string name="acquired_books_header">My acquired books</string>
@@ -88,4 +88,5 @@
     <string name="scan_code_button_text">Scan QR code</string>
     <string name="title_activity_scan">Scan book code</string>
     <string name="scan_activity_initial_message">Scan code on the flyleaf</string>
+    <string name="filler_position">Somewhere</string>
 </resources>
