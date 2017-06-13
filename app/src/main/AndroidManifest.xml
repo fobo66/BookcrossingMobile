@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".modules.App"
@@ -70,10 +71,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.bookcrossing.mobile.ui.main.MainActivity" />
         </activity>
+        <activity
+            android:name=".ui.scan.ScanActivity"
+            android:label="@string/title_activity_scan">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.bookcrossing.mobile.ui.main.MainActivity" />
+        </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCu5YKw0UZ4RG5_DimoZxUWaQU_hTbz4wI" />
+        <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="barcode"/>
 
     </application>
 

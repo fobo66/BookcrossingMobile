@@ -13,6 +13,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.presenters.BookAcquirePresenter;
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
+import com.bookcrossing.mobile.ui.scan.ScanActivity;
 import com.bookcrossing.mobile.util.Constants;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -34,6 +35,9 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
     @BindView(R.id.submit)
     Button submitButton;
 
+    @BindView(R.id.scan_code)
+    Button scanCodeButton;
+
     @BindView(R.id.input_code)
     TextInputEditText codeInput;
 
@@ -44,6 +48,7 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
     private boolean isInnerAppRequest;
 
     private Disposable acquisitionDisposable;
+    private Disposable scanDisposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +77,14 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
                     @Override
                     public void accept(@NonNull Object o) throws Exception {
                         presenter.handleAcquisition(codeInput.getText().toString());
+                    }
+                });
+
+        scanDisposable = RxView.clicks(scanCodeButton)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(@NonNull Object o) throws Exception {
+                        startActivity(new Intent(BookAcquireActivity.this, ScanActivity.class));
                     }
                 });
     }

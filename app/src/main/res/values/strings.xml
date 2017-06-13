@@ -84,4 +84,8 @@
     <string name="send_report_chooser">Choose:</string>
     <string name="timestamp_prefix">Went free&#160;</string>
     <string name="placesHistory_header">Book\'s travels</string>
+    <string name="incorrect_code_scanned_message">Incorrect code scanned. Scan code on the flyleaf</string>
+    <string name="scan_code_button_text">Scan QR code</string>
+    <string name="title_activity_scan">Scan book code</string>
+    <string name="scan_activity_initial_message">Scan code on the flyleaf</string>
 </resources>
