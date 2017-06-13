@@ -11,7 +11,7 @@ buildscript {
 }
 
 ext {
-    supportLibraryVersion = '25.3.0'
+    supportLibraryVersion = '25.3.1'
 }
 
 allprojects {
@@ -29,6 +29,7 @@ configurations.all {
         force "com.android.support:cardview-v7:$rootProject.ext.supportLibraryVersion"
         force "com.android.support:customtabs:$rootProject.ext.supportLibraryVersion"
         force "com.android.support:palette-v7:$rootProject.ext.supportLibraryVersion"
+        force "com.android.support:preference-v14:$rootProject.ext.supportLibraryVersion"
         force "com.android.support:animated-vector-drawable:$rootProject.ext.supportLibraryVersion"
     }
 }
