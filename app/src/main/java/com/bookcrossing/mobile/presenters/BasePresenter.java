@@ -75,7 +75,7 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
     }
 
     private String getUserId() {
-        if (firebaseWrapper.getAuth().getCurrentUser() != null) {
+        if (isAuthenticated()) {
             return firebaseWrapper.getAuth().getCurrentUser().getUid();
         }
 
@@ -119,5 +119,9 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
         editor.putString(Constants.EXTRA_CITY, city);
         editor.putString(Constants.EXTRA_DEFAULT_CITY, city);
         editor.apply();
+    }
+
+    public boolean isAuthenticated() {
+        return firebaseWrapper.getAuth().getCurrentUser() != null;
     }
 }

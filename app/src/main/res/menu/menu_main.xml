@@ -8,4 +8,8 @@
         app:showAsAction="collapseActionView|ifRoom"
         app:actionViewClass="android.support.v7.widget.SearchView"
         android:title="@string/action_search_title" />
+    <item
+        android:id="@+id/menu_action_logout"
+        app:showAsAction="never"
+        android:title="@string/action_logout" />
 </menu>

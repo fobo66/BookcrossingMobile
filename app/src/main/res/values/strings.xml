@@ -54,7 +54,7 @@
         "Sticker for this book was saved in gallery. You can either glue it on the flyleaf or write the code and any other warm words by hand.\n"
         "Sticker will look like this:"
     </string>
-    <string name="title_activity_book_acquire">BookAcquireActivity</string>
+    <string name="title_activity_book_acquire">Acquire</string>
     <string name="acquire_a_book_heading">You\'re going to acquire a book</string>
     <string name="book_submit_acquisition">Submit</string>
     <string name="hint_book_code">Enter book\'s code</string>

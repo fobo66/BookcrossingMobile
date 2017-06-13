@@ -1,6 +1,8 @@
 package com.bookcrossing.mobile.util;
 
 public class Constants {
+    public static final int RC_SIGN_IN = 1236;
+
     public static final String EXTRA_KEY = "key";
     public static final String EXTRA_CITY = "city";
     public static final String EXTRA_DEFAULT_CITY = "defaultCity";

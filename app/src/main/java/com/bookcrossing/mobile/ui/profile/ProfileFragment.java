@@ -15,9 +15,13 @@ import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.presenters.ProfilePresenter;
 import com.bookcrossing.mobile.ui.base.BaseFragment;
+import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.adapters.AcquiredBooksViewHolder;
 import com.bumptech.glide.Glide;
+import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
+import java.util.Collections;
 
 import butterknife.BindView;
 
@@ -49,6 +53,26 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (presenter.isAuthenticated()) {
+            setupAcquiredBookList();
+
+            Glide.with(this)
+                    .fromUri()
+                    .crossFade()
+                    .load(presenter.getPhotoUrl())
+                    .into(profileImage);
+        } else {
+            startActivityForResult(
+                    AuthUI.getInstance().createSignInIntentBuilder()
+                            .setProviders(Collections.singletonList(
+                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
+                            ))
+                            .build(),
+                    Constants.RC_SIGN_IN);
+        }
+    }
+
+    private void setupAcquiredBookList() {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         acquiredBooksList.setLayoutManager(llm);
         adapter = new FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder>(Book.class, R.layout.acquired_book_list_item,
@@ -60,12 +84,5 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
             }
         };
         acquiredBooksList.setAdapter(adapter);
-
-
-        Glide.with(this)
-                .fromUri()
-                .crossFade()
-                .load(presenter.getPhotoUrl())
-                .into(profileImage);
     }
 }

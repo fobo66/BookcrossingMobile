@@ -36,6 +36,8 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONException;
@@ -46,8 +48,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity implements BookListener, NavigationView.OnNavigationItemSelectedListener {
-
-    private static final int RC_SIGN_IN = 1236;
 
     @BindView(R.id.coord_layout)
     CoordinatorLayout coordinatorLayout;
@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity implements BookListener, Navigati
                                     new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
                             ))
                             .build(),
-                    RC_SIGN_IN);
+                    Constants.RC_SIGN_IN);
         }
     }
 
@@ -179,6 +179,16 @@ public class MainActivity extends BaseActivity implements BookListener, Navigati
                      hits.setVisibility(View.GONE);
                  }
                 return true;
+            case R.id.menu_action_logout:
+                AuthUI.getInstance()
+                        .signOut(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        finish();
+                    }
+                });
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -214,7 +224,7 @@ public class MainActivity extends BaseActivity implements BookListener, Navigati
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == Constants.RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == ResultCodes.OK) {
                 push(new MainFragment());
