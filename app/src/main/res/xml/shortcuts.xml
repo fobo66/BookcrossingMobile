@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
-        android:shortcutId="acquire"
+        android:shortcutId="scan"
         android:enabled="true"
-        android:icon="@drawable/ic_acquire_shortcut"
-        android:shortcutShortLabel="@string/acquire_shortcut_short_label"
-        android:shortcutLongLabel="@string/acquire_shortcut_long_label"
-        android:shortcutDisabledMessage="@string/acquire_shortcut_disabled_message">
+        android:icon="@drawable/ic_scan_qrcode_shortcut"
+        android:shortcutShortLabel="@string/scan_shortcut_short_label"
+        android:shortcutLongLabel="@string/scan_shortcut_long_label"
+        android:shortcutDisabledMessage="@string/scan_shortcut_disabled_message">
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="com.bookcrossing.mobile"
-            android:targetClass="com.bookcrossing.mobile.ui.acquire.BookAcquireActivity" />
+            android:targetClass="com.bookcrossing.mobile.ui.scan.ScanActivity" />
     </shortcut>
     <shortcut
         android:shortcutId="release"

@@ -17,8 +17,8 @@
     <string name="release_shortcut_short_label">Release book</string>
     <string name="release_shortcut_long_label">Release new book</string>
     <string name="release_shortcut_disabled_message">Release unavailable</string>
-    <string name="scan_shortcut_short_label">Acquire book by QR code</string>
-    <string name="scan_shortcut_long_label">Scan QR code</string>
+    <string name="scan_shortcut_long_label">Acquire book by QR code</string>
+    <string name="scan_shortcut_short_label">Scan book\'s QR code</string>
     <string name="scan_shortcut_disabled_message">QR code scan unavailable</string>
     <string name="map_shortcut_short_label">Map</string>
     <string name="map_shortcut_long_label">Find books on map</string>
