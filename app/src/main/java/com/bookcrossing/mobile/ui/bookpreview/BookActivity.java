@@ -1,8 +1,10 @@
 package com.bookcrossing.mobile.ui.bookpreview;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +23,7 @@ import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.presenters.BookPresenter;
+import com.bookcrossing.mobile.ui.main.MainActivity;
 import com.bookcrossing.mobile.ui.map.MapActivity;
 import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.adapters.PlacesHistoryViewHolder;
@@ -179,6 +182,18 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
       acquireButton.setVisibility(View.VISIBLE);
     }
     currentBookPosition = book.getPosition();
+  }
+
+  @Override public void onErrorToLoadBook() {
+    new AlertDialog.Builder(this)
+        .setMessage(R.string.failed_to_load_book_message)
+        .setTitle(R.string.error_dialog_title)
+        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialogInterface, int i) {
+            startActivity(new Intent(BookActivity.this, MainActivity.class));
+          }
+        })
+        .show();
   }
 
   @Override public void onBookStashed() {

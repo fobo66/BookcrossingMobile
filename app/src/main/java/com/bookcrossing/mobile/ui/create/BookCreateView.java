@@ -9,4 +9,6 @@ public interface BookCreateView extends MvpView {
   void OnNameChange();
 
   void OnReleased(String newKey);
+
+  void onFailedToRelease();
 }

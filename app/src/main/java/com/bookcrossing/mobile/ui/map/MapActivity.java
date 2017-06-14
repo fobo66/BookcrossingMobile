@@ -1,8 +1,10 @@
 package com.bookcrossing.mobile.ui.map;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
@@ -75,10 +77,21 @@ public class MapActivity extends MvpAppCompatActivity
     return permissions.request(Manifest.permission.ACCESS_FINE_LOCATION);
   }
 
-  @Override public void setBookMarker(String title, Coordinates coordinates) {
+  @Override public void onBookMarkerLoaded(String title, Coordinates coordinates) {
     map.addMarker(new MarkerOptions().position(new LatLng(coordinates.lat, coordinates.lng))
         .title(title)
         .snippet(presenter.getSnippet(coordinates)));
+  }
+
+  @Override public void onErrorToLoadMarker() {
+    new AlertDialog.Builder(this).setMessage(R.string.failed_to_load_books_message)
+        .setTitle(R.string.error_dialog_title)
+        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialogInterface, int i) {
+            dialogInterface.dismiss();
+          }
+        })
+        .show();
   }
 
   @Override public void onInfoWindowClick(Marker marker) {

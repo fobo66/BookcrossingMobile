@@ -1,12 +1,15 @@
 package com.bookcrossing.mobile.ui.create;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -245,6 +248,17 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
     dialog.show();
   }
 
+  @Override public void onFailedToRelease() {
+    new AlertDialog.Builder(getContext()).setMessage(R.string.failed_to_release_book_message)
+        .setTitle(R.string.error_dialog_title)
+        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialogInterface, int i) {
+            dialogInterface.dismiss();
+          }
+        })
+        .show();
+  }
+
   private void prepareDialog(View stickerView, String key) {
     ImageView qrCode = stickerView.findViewById(R.id.qr_code);
     TextView keyView = stickerView.findViewById(R.id.sticker_book_key);
@@ -253,6 +267,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
   }
 
   private void renderSticker(View sticker) {
+    sticker.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
     Bitmap b =
         Bitmap.createBitmap(sticker.getWidth(), sticker.getHeight(), Bitmap.Config.ARGB_8888);
     Canvas c = new Canvas(b);

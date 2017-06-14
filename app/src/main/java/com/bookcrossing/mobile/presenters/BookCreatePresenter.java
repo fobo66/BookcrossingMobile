@@ -2,10 +2,13 @@ package com.bookcrossing.mobile.presenters;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Date;
 import com.bookcrossing.mobile.ui.create.BookCreateView;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageMetadata;
@@ -94,11 +97,19 @@ import static android.graphics.Color.WHITE;
   public void publishBook() {
     book.setCity(getCity());
     setPublicationDate();
-    DatabaseReference newBookReference = books().push();
-    newBookReference.setValue(book);
-    String key = newBookReference.getKey();
-    uploadCover(key);
-    getViewState().OnReleased(key);
+    final DatabaseReference newBookReference = books().push();
+    newBookReference.setValue(book).addOnSuccessListener(new OnSuccessListener<Void>() {
+      @Override public void onSuccess(Void aVoid) {
+        String key = newBookReference.getKey();
+        uploadCover(key);
+        getViewState().OnReleased(key);
+      }
+    }).addOnFailureListener(new OnFailureListener() {
+      @Override public void onFailure(@NonNull Exception e) {
+        FirebaseCrash.report(e);
+        getViewState().onFailedToRelease();
+      }
+    });
   }
 
   private void setPublicationDate() {
@@ -110,7 +121,7 @@ import static android.graphics.Color.WHITE;
 
   public Bitmap generateQrCode(String key) {
     try {
-      return encodeBookAsQrCode(buildBookUri(key).toString(), BarcodeFormat.QR_CODE, 350, 350);
+      return encodeBookAsQrCode(buildBookUri(key).toString(), BarcodeFormat.QR_CODE, 450, 450);
     } catch (WriterException e) {
       e.printStackTrace();
       FirebaseCrash.report(e);

@@ -3,6 +3,7 @@ package com.bookcrossing.mobile.presenters;
 import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.ui.bookpreview.BookView;
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.kelvinapps.rxfirebase.RxFirebaseDatabase;
@@ -21,8 +22,12 @@ import rx.functions.Func1;
               @Override public void call(Book book) {
                 getViewState().onBookLoaded(book);
               }
-            });
-    unsubscribeOnDestroy(bookSubscription);
+            }, new Action1<Throwable>() {
+              @Override public void call(Throwable throwable) {
+                FirebaseCrash.report(throwable);
+                getViewState().onErrorToLoadBook();
+              }
+            }); unsubscribeOnDestroy(bookSubscription);
   }
 
   public void checkStashingState(String key) {

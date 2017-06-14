@@ -44,8 +44,12 @@ import rx.functions.Func2;
             .subscribe(new Action1<Map<String, Coordinates>>() {
               @Override public void call(Map<String, Coordinates> places) {
                 for (String key : places.keySet()) {
-                  getViewState().setBookMarker(key, places.get(key));
+                  getViewState().onBookMarkerLoaded(key, places.get(key));
                 }
+              }
+            }, new Action1<Throwable>() {
+              @Override public void call(Throwable throwable) {
+                getViewState().onErrorToLoadMarker();
               }
             }));
   }
