@@ -6,9 +6,10 @@ import com.bookcrossing.mobile.ui.acquire.BookAcquireView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.kelvinapps.rxfirebase.RxFirebaseDatabase;
-import rx.functions.Action1;
-import rx.functions.Func1;
+import durdinapps.rxfirebase2.RxFirebaseDatabase;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 
 @InjectViewState public class BookAcquirePresenter extends BasePresenter<BookAcquireView> {
 
@@ -22,14 +23,14 @@ import rx.functions.Func1;
     books().child(key).child("free").setValue(false);
 
     unsubscribeOnDestroy(RxFirebaseDatabase.observeSingleValueEvent(books().child(key), Book.class)
-        .map(new Func1<Book, Book>() {
-          @Override public Book call(Book book) {
+        .map(new Function<Book, Book>() {
+          @Override public Book apply(@NonNull Book book) throws Exception {
             acquiredBooks().child(key).setValue(book);
             return book;
           }
         })
-        .subscribe(new Action1<Book>() {
-          @Override public void call(Book book) {
+        .subscribe(new Consumer<Book>() {
+          @Override public void accept(@NonNull Book book) throws Exception {
             getViewState().onAcquired();
           }
         }));

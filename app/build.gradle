@@ -80,8 +80,7 @@ dependencies {
     compile 'com.github.miguelbcr:RxPaparazzo:0.5.2-2.x'
 
     compile 'com.firebaseui:firebase-ui:2.0.0'
-    compile 'com.kelvinapps:rxfirebase:0.0.15'
-    compile "com.github.akarnokd:rxjava2-interop:0.10.0"
+    compile 'com.github.frangsierra:rx2firebase:1.1.3'
 
     compile 'com.jakewharton:butterknife:8.4.0'
 

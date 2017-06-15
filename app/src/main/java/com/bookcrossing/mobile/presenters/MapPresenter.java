@@ -5,13 +5,15 @@ import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.ui.map.MvpMapView;
 import com.google.android.gms.maps.model.LatLng;
-import com.kelvinapps.rxfirebase.DataSnapshotMapper;
-import com.kelvinapps.rxfirebase.RxFirebaseDatabase;
+import com.google.firebase.crash.FirebaseCrash;
+import durdinapps.rxfirebase2.DataSnapshotMapper;
+import durdinapps.rxfirebase2.RxFirebaseDatabase;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.BiFunction;
+import io.reactivex.functions.Consumer;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import rx.functions.Action1;
-import rx.functions.Func2;
 
 @InjectViewState public class MapPresenter extends BasePresenter<MvpMapView> {
 
@@ -27,10 +29,10 @@ import rx.functions.Func2;
         RxFirebaseDatabase.observeValueEvent(places(), DataSnapshotMapper.mapOf(Coordinates.class))
             .zipWith(
                 RxFirebaseDatabase.observeValueEvent(books(), DataSnapshotMapper.mapOf(Book.class)),
-                new Func2<LinkedHashMap<String, Coordinates>, LinkedHashMap<String, Book>, Map<String, Coordinates>>() {
-                  @Override
-                  public Map<String, Coordinates> call(LinkedHashMap<String, Coordinates> places,
-                      LinkedHashMap<String, Book> books) {
+                new BiFunction<LinkedHashMap<String, Coordinates>, LinkedHashMap<String, Book>, Map<String, Coordinates>>() {
+                  @Override public Map<String, Coordinates> apply(
+                      @NonNull LinkedHashMap<String, Coordinates> places,
+                      @NonNull LinkedHashMap<String, Book> books) throws Exception {
                     bookMap = books;
                     coordinatesMap = new HashMap<>();
                     Map<String, Coordinates> coordinatesWithBookTitlesMap = new LinkedHashMap<>();
@@ -41,14 +43,15 @@ import rx.functions.Func2;
                     return coordinatesWithBookTitlesMap;
                   }
                 })
-            .subscribe(new Action1<Map<String, Coordinates>>() {
-              @Override public void call(Map<String, Coordinates> places) {
+            .subscribe(new Consumer<Map<String, Coordinates>>() {
+              @Override public void accept(@NonNull Map<String, Coordinates> places) {
                 for (String key : places.keySet()) {
                   getViewState().onBookMarkerLoaded(key, places.get(key));
                 }
               }
-            }, new Action1<Throwable>() {
-              @Override public void call(Throwable throwable) {
+            }, new Consumer<Throwable>() {
+              @Override public void accept(@NonNull Throwable throwable) throws Exception {
+                FirebaseCrash.report(throwable);
                 getViewState().onErrorToLoadMarker();
               }
             }));

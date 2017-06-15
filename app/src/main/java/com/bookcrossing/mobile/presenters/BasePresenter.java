@@ -18,10 +18,10 @@ import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.rx.ObservableFactory;
 import io.reactivex.Observable;
 import io.reactivex.SingleSource;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import java.util.List;
-import rx.Subscription;
-import rx.subscriptions.CompositeSubscription;
 
 /**
  * (c) 2016 Andrey Mukamolow aka fobo66 <fobo66@protonmail.com>
@@ -29,7 +29,7 @@ import rx.subscriptions.CompositeSubscription;
  */
 
 public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
-  private CompositeSubscription compositeSubscription = new CompositeSubscription();
+  private CompositeDisposable compositeSubscription = new CompositeDisposable();
   protected String city = "undefined";
   protected FirebaseWrapper firebaseWrapper;
   protected SystemServicesWrapper systemServicesWrapper;
@@ -41,7 +41,7 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
     App.getComponent().inject(systemServicesWrapper);
   }
 
-  protected void unsubscribeOnDestroy(@NonNull Subscription subscription) {
+  protected void unsubscribeOnDestroy(@NonNull Disposable subscription) {
     compositeSubscription.add(subscription);
   }
 

@@ -6,44 +6,42 @@ import com.bookcrossing.mobile.ui.bookpreview.BookView;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.kelvinapps.rxfirebase.RxFirebaseDatabase;
-import rx.Subscription;
-import rx.functions.Action1;
-import rx.functions.Func1;
+import durdinapps.rxfirebase2.RxFirebaseDatabase;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
 
 @InjectViewState public class BookPresenter extends BasePresenter<BookView> {
 
   private boolean stashed = false;
 
   public void subscribeToBookReference(String key) {
-    Subscription bookSubscription =
-        RxFirebaseDatabase.observeSingleValueEvent(books().child(key), Book.class)
-            .subscribe(new Action1<Book>() {
-              @Override public void call(Book book) {
-                getViewState().onBookLoaded(book);
-              }
-            }, new Action1<Throwable>() {
-              @Override public void call(Throwable throwable) {
-                FirebaseCrash.report(throwable);
-                getViewState().onErrorToLoadBook();
-              }
-            }); unsubscribeOnDestroy(bookSubscription);
+    unsubscribeOnDestroy(RxFirebaseDatabase.observeSingleValueEvent(books().child(key), Book.class)
+        .subscribe(new Consumer<Book>() {
+          @Override public void accept(@NonNull Book book) throws Exception {
+            getViewState().onBookLoaded(book);
+          }
+        }, new Consumer<Throwable>() {
+          @Override public void accept(@NonNull Throwable throwable) {
+            FirebaseCrash.report(throwable);
+            getViewState().onErrorToLoadBook();
+          }
+        }));
   }
 
   public void checkStashingState(String key) {
-    Subscription stashSubscription = RxFirebaseDatabase.observeSingleValueEvent(stash().child(key))
-        .filter(new Func1<DataSnapshot, Boolean>() {
-          @Override public Boolean call(DataSnapshot dataSnapshot) {
+    unsubscribeOnDestroy(RxFirebaseDatabase.observeSingleValueEvent(stash().child(key))
+        .filter(new Predicate<DataSnapshot>() {
+          @Override public boolean test(@NonNull DataSnapshot dataSnapshot) throws Exception {
             return dataSnapshot.exists();
           }
         })
-        .subscribe(new Action1<DataSnapshot>() {
-          @Override public void call(DataSnapshot data) {
+        .subscribe(new Consumer<DataSnapshot>() {
+          @Override public void accept(@NonNull DataSnapshot data) throws Exception {
             stashed = (boolean) data.getValue();
             updateStashButtonState();
           }
-        });
-    unsubscribeOnDestroy(stashSubscription);
+        }));
   }
 
   public void handleBookStashing(String key) {
