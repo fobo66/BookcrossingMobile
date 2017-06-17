@@ -61,6 +61,16 @@ public class MainFragment extends BaseFragment implements MainView {
 
     resolveCity();
 
+    setupBookList();
+
+    subscriptions.add(RxView.clicks(fab).subscribe(new Consumer<Object>() {
+      @Override public void accept(@NonNull Object o) throws Exception {
+        listener.onBookAdd();
+      }
+    }));
+  }
+
+  private void setupBookList() {
     RecyclerView.LayoutManager llm = new LinearLayoutManager(getActivity());
     rv.setLayoutManager(llm);
     adapter =
@@ -76,12 +86,6 @@ public class MainFragment extends BaseFragment implements MainView {
     rv.setAdapter(adapter);
     SnapHelper snapHelper = new LinearSnapHelper();
     snapHelper.attachToRecyclerView(rv);
-
-    subscriptions.add(RxView.clicks(fab).subscribe(new Consumer<Object>() {
-      @Override public void accept(@NonNull Object o) throws Exception {
-        listener.onBookAdd();
-      }
-    }));
   }
 
   private void resolveCity() {

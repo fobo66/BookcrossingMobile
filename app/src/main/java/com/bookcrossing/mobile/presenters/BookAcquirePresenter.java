@@ -36,7 +36,6 @@ import io.reactivex.functions.Function;
         }));
   }
 
-  // TODO: refactor this for RX after 1to2 migration
   public boolean isKeyValid(final String key) {
     books().addListenerForSingleValueEvent(new ValueEventListener() {
       @Override public void onDataChange(DataSnapshot dataSnapshot) {
