@@ -13,4 +13,8 @@ import com.bookcrossing.mobile.ui.bookpreview.BookItemView;
     books().child(key).child("positionName").setValue(position);
     books().child(key).child("free").setValue(true);
   }
+
+  public void unstashCurrentBook(String key) {
+    stash().child(key).removeValue();
+  }
 }
