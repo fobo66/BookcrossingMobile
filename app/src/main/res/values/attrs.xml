@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <declare-styleable name="PointsOverlayView">
+    <attr name="pointColor" format="color" />
+    <attr name="pointSize" format="dimension" />
+  </declare-styleable>
+</resources>
