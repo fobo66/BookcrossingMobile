@@ -4,8 +4,6 @@ import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.ui.acquire.BookAcquireView;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
@@ -37,8 +35,9 @@ import io.reactivex.functions.Function;
   }
 
   public boolean isKeyValid(final String key) {
-    books().addListenerForSingleValueEvent(new ValueEventListener() {
-      @Override public void onDataChange(DataSnapshot dataSnapshot) {
+    unsubscribeOnDestroy(RxFirebaseDatabase.observeSingleValueEvent(books())
+    .subscribe(new Consumer<DataSnapshot>() {
+      @Override public void accept(@NonNull DataSnapshot dataSnapshot) throws Exception {
         if (dataSnapshot.hasChild(key)) {
           setKeyExists(true);
         } else {
@@ -46,11 +45,7 @@ import io.reactivex.functions.Function;
           getViewState().onIncorrectKey();
         }
       }
-
-      @Override public void onCancelled(DatabaseError databaseError) {
-
-      }
-    });
+    }));
 
     return keyExists;
   }
