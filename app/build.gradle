@@ -42,11 +42,12 @@ dependencies {
     compile "com.arello-mobile:moxy-app-compat:$moxyVersion"
     provided "com.arello-mobile:moxy-compiler:$moxyVersion"
 
-    def firebaseVersion = "11.0.0"
+    def firebaseVersion = "11.0.1"
     compile "com.google.firebase:firebase-core:$firebaseVersion"
     compile "com.google.firebase:firebase-database:$firebaseVersion"
     compile "com.google.firebase:firebase-storage:$firebaseVersion"
     compile "com.google.firebase:firebase-crash:$firebaseVersion"
+    compile "com.google.firebase:firebase-messaging:$firebaseVersion"
     compile "com.google.android.gms:play-services-maps:$firebaseVersion"
     compile "com.google.android.gms:play-services-location:$firebaseVersion"
     compile "com.google.android.gms:play-services-auth:$firebaseVersion"
