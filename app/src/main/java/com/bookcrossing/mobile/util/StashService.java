@@ -1,4 +1,4 @@
-package com.bookcrossing.mobile;
+package com.bookcrossing.mobile.util;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
