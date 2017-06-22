@@ -48,7 +48,9 @@ public class MapActivity extends MvpAppCompatActivity
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    locationDisposable.dispose();
+    if (locationDisposable != null && !locationDisposable.isDisposed()) {
+      locationDisposable.dispose();
+    }
   }
 
   @Override public void onMapReady(GoogleMap googleMap) {
