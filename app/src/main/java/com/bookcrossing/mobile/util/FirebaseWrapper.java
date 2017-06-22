@@ -2,13 +2,10 @@ package com.bookcrossing.mobile.util;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import dagger.Lazy;
 import javax.inject.Inject;
-
-/**
- * Created by fobo66 on 25.4.17.
- */
 
 public class FirebaseWrapper {
   @Inject Lazy<FirebaseStorage> storageLazy;
@@ -16,6 +13,12 @@ public class FirebaseWrapper {
   @Inject Lazy<FirebaseAuth> authLazy;
 
   @Inject Lazy<FirebaseDatabase> databaseLazy;
+
+  @Inject Lazy<FirebaseMessaging> fcmLazy;
+
+  public FirebaseMessaging getFcm() {
+    return fcmLazy.get();
+  }
 
   public FirebaseStorage getStorage() {
     return storageLazy.get();

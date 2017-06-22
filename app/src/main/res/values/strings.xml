@@ -93,4 +93,9 @@
   <string name="error_dialog_title">Failed to load</string>
   <string name="failed_to_release_book_message">Failed to release book. Maybe you have entered incorrect names or something happened n the server. Try again later.</string>
   <string name="failed_to_load_books_message">Books\' locations unavailable. Try again later</string>
+
+  <string name="stash_notification_title_free">Book from your stash went free!</string>
+  <string name="stash_notification_body_free">One of your favorite books is now free again! See where it goes</string>
+  <string name="stash_notification_title_acquired">Book from your stash was acquired</string>
+  <string name="stash_notification_body_acquired">One of your favorite books is now acquired. Wait when it get free again</string>
 </resources>

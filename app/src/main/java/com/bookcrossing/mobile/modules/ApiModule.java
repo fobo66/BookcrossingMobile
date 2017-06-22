@@ -2,6 +2,7 @@ package com.bookcrossing.mobile.modules;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import dagger.Module;
 import dagger.Provides;
@@ -23,5 +24,9 @@ import dagger.Provides;
 
   @Provides public FirebaseAuth provideAuth() {
     return FirebaseAuth.getInstance();
+  }
+
+  @Provides public FirebaseMessaging provideFCM() {
+    return FirebaseMessaging.getInstance();
   }
 }

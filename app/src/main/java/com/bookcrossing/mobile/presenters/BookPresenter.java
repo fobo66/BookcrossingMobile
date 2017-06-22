@@ -48,8 +48,10 @@ import io.reactivex.functions.Predicate;
     stashed = !stashed;
     if (stashed) {
       stash().child(key).setValue(stashed);
+      firebaseWrapper.getFcm().subscribeToTopic(key);
     } else {
       stash().child(key).removeValue();
+      firebaseWrapper.getFcm().unsubscribeFromTopic(key);
     }
     updateStashButtonState();
   }
