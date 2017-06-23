@@ -10,4 +10,6 @@ public interface BookListener {
   void onBookReleased(String bookKey);
 
   void onBookAdd();
+
+  void setTitle(String fragmentTitle);
 }

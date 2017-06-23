@@ -42,6 +42,11 @@ public class BaseFragment extends MvpAppCompatFragment {
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     unbinder = ButterKnife.bind(this, view);
+    setActivityTitle();
+  }
+
+  private void setActivityTitle() {
+    listener.setTitle(getClass().getSimpleName().split("Fragment")[0]);
   }
 
   protected void authenticate() {

@@ -3,6 +3,7 @@ package com.bookcrossing.mobile.ui.main;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -29,9 +30,9 @@ import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 import com.bookcrossing.mobile.ui.create.BookCreateFragment;
 import com.bookcrossing.mobile.ui.map.MapActivity;
 import com.bookcrossing.mobile.ui.profile.ProfileFragment;
-import com.bookcrossing.mobile.ui.settings.SettingsFragment;
 import com.bookcrossing.mobile.ui.stash.StashFragment;
 import com.bookcrossing.mobile.util.Constants;
+import com.bookcrossing.mobile.util.NavigationDrawerResolver;
 import com.bookcrossing.mobile.util.listeners.BookListener;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
@@ -139,6 +140,15 @@ public class MainActivity extends BaseActivity
     }
   }
 
+  private void selectDrawerItem(@IdRes int itemId) {
+    if (itemId == R.id.nav_books_map) {
+      navigateToMap();
+    } else {
+      push(NavigationDrawerResolver.resolveNavigationDrawerItem(itemId));
+    }
+    drawer.closeDrawer(navigationView);
+  }
+
   public void push(Fragment fragment) {
     getSupportFragmentManager().beginTransaction()
         .addToBackStack(null)
@@ -178,30 +188,8 @@ public class MainActivity extends BaseActivity
   }
 
   @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-    switch (item.getItemId()) {
-      case R.id.nav_catalogue:
-        push(new MainFragment());
-        drawer.closeDrawer(navigationView);
-        return true;
-      case R.id.nav_stash:
-        toolbar.setTitle(R.string.stash_fragment_heading);
-        push(new StashFragment());
-        drawer.closeDrawer(navigationView);
-        return true;
-      case R.id.nav_books_map:
-        navigateToMap();
-        return true;
-      case R.id.nav_profile:
-        push(new ProfileFragment());
-        drawer.closeDrawer(navigationView);
-        return true;
-      case R.id.nav_settings:
-        push(new SettingsFragment());
-        drawer.closeDrawer(navigationView);
-        return true;
-    }
-
-    return false;
+    selectDrawerItem(item.getItemId());
+    return true;
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -270,6 +258,10 @@ public class MainActivity extends BaseActivity
   @Override public void onBookAdd() {
     toolbar.setTitle(R.string.add_new_book_title);
     push(new BookCreateFragment());
+  }
+
+  @Override public void setTitle(String fragmentTitle) {
+    toolbar.setTitle(fragmentTitle);
   }
 
   public void navigateToMap() {
