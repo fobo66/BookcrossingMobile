@@ -66,6 +66,8 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    adapter.cleanup();
+    if (presenter.isAuthenticated()) {
+      adapter.cleanup();
+    }
   }
 }
