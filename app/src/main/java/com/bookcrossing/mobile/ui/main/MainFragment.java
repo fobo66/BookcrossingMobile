@@ -20,6 +20,8 @@ import com.bookcrossing.mobile.presenters.MainPresenter;
 import com.bookcrossing.mobile.ui.base.BaseFragment;
 import com.bookcrossing.mobile.util.adapters.BooksViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import io.reactivex.Observable;
@@ -34,6 +36,8 @@ public class MainFragment extends BaseFragment implements MainView {
   @BindView(R.id.books_rv) RecyclerView rv;
 
   @BindView(R.id.addBookButton) FloatingActionButton fab;
+
+  @BindView(R.id.adView) AdView ad;
 
   @InjectPresenter MainPresenter presenter;
 
@@ -68,6 +72,9 @@ public class MainFragment extends BaseFragment implements MainView {
         listener.onBookAdd();
       }
     }));
+
+    AdRequest adRequest = new AdRequest.Builder().build();
+    ad.loadAd(adRequest);
   }
 
   private void setupBookList() {

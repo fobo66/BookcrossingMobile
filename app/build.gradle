@@ -1,110 +1,113 @@
 apply plugin: 'com.android.application'
 
 android {
-    dataBinding.enabled true
-    compileSdkVersion 26
-    buildToolsVersion "26.0.0"
-    defaultConfig {
-        applicationId "com.bookcrossing.mobile"
-        minSdkVersion 16
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
+  dataBinding.enabled true
+  compileSdkVersion 26
+  buildToolsVersion "26.0.0"
+  defaultConfig {
+    applicationId "com.bookcrossing.mobile"
+    minSdkVersion 16
+    targetSdkVersion 26
+    versionCode 1
+    versionName "1.0"
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    multiDexEnabled true
+  }
+  buildTypes {
+    release {
+      minifyEnabled true
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
-    packagingOptions {
-        exclude 'META-INF/rxjava.properties'
-    }
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_7
+    targetCompatibility JavaVersion.VERSION_1_7
+  }
+  packagingOptions {
+    exclude 'META-INF/rxjava.properties'
+  }
 }
 
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+  compile fileTree(include: ['*.jar'], dir: 'libs')
+  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    exclude group: 'com.android.support', module: 'support-annotations'
+  })
 
-    def moxyVersion = '1.5.3'
+  def moxyVersion = '1.5.3'
 
-    compile "com.arello-mobile:moxy:$moxyVersion"
-    compile "com.arello-mobile:moxy-android:$moxyVersion"
-    compile "com.arello-mobile:moxy-app-compat:$moxyVersion"
-    provided "com.arello-mobile:moxy-compiler:$moxyVersion"
+  compile "com.arello-mobile:moxy:$moxyVersion"
+  compile "com.arello-mobile:moxy-android:$moxyVersion"
+  compile "com.arello-mobile:moxy-app-compat:$moxyVersion"
+  provided "com.arello-mobile:moxy-compiler:$moxyVersion"
 
-    def firebaseVersion = "11.0.1"
-    compile "com.google.firebase:firebase-core:$firebaseVersion"
-    compile "com.google.firebase:firebase-database:$firebaseVersion"
-    compile "com.google.firebase:firebase-storage:$firebaseVersion"
-    compile "com.google.firebase:firebase-crash:$firebaseVersion"
-    compile "com.google.firebase:firebase-messaging:$firebaseVersion"
-    compile "com.google.android.gms:play-services-maps:$firebaseVersion"
-    compile "com.google.android.gms:play-services-location:$firebaseVersion"
-    compile "com.google.android.gms:play-services-auth:$firebaseVersion"
-
-
-    compile "com.android.support:design:$rootProject.ext.supportLibraryVersion"
-    compile "com.android.support:customtabs:$rootProject.ext.supportLibraryVersion"
-    compile "com.android.support:cardview-v7:$rootProject.ext.supportLibraryVersion"
-    compile "com.android.support:palette-v7:$rootProject.ext.supportLibraryVersion"
-    compile "com.android.support:preference-v14:$rootProject.ext.supportLibraryVersion"
-    compile "com.android.support:support-v4:$rootProject.ext.supportLibraryVersion"
-    compile "com.android.support:support-v13:$rootProject.ext.supportLibraryVersion"
-    compile "com.android.support:support-vector-drawable:$rootProject.ext.supportLibraryVersion"
-    compile "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"
+  def firebaseVersion = "11.0.1"
+  compile "com.google.firebase:firebase-core:$firebaseVersion"
+  compile "com.google.firebase:firebase-database:$firebaseVersion"
+  compile "com.google.firebase:firebase-storage:$firebaseVersion"
+  compile "com.google.firebase:firebase-crash:$firebaseVersion"
+  compile "com.google.firebase:firebase-messaging:$firebaseVersion"
+  compile "com.google.firebase:firebase-ads:$firebaseVersion"
+  compile "com.google.android.gms:play-services-maps:$firebaseVersion"
+  compile "com.google.android.gms:play-services-location:$firebaseVersion"
+  compile "com.google.android.gms:play-services-auth:$firebaseVersion"
 
 
-    def rxBindingsVersion = '2.0.0'
-    compile "com.jakewharton.rxbinding2:rxbinding:$rxBindingsVersion"
-    compile "com.jakewharton.rxbinding2:rxbinding-design:$rxBindingsVersion"
-    compile "com.jakewharton.rxbinding2:rxbinding-recyclerview-v7:$rxBindingsVersion"
-    compile "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:$rxBindingsVersion"
+  compile "com.android.support:design:$rootProject.ext.supportLibraryVersion"
+  compile "com.android.support:customtabs:$rootProject.ext.supportLibraryVersion"
+  compile "com.android.support:cardview-v7:$rootProject.ext.supportLibraryVersion"
+  compile "com.android.support:palette-v7:$rootProject.ext.supportLibraryVersion"
+  compile "com.android.support:preference-v14:$rootProject.ext.supportLibraryVersion"
+  compile "com.android.support:support-v4:$rootProject.ext.supportLibraryVersion"
+  compile "com.android.support:support-v13:$rootProject.ext.supportLibraryVersion"
+  compile "com.android.support:support-vector-drawable:$rootProject.ext.supportLibraryVersion"
+  compile "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"
 
-    compile 'com.google.code.findbugs:jsr305:2.0.1'
-    compile 'com.google.dagger:dagger:2.11'
 
-    compile 'com.github.bumptech.glide:glide:3.7.0'
+  def rxBindingsVersion = '2.0.0'
+  compile "com.jakewharton.rxbinding2:rxbinding:$rxBindingsVersion"
+  compile "com.jakewharton.rxbinding2:rxbinding-design:$rxBindingsVersion"
+  compile "com.jakewharton.rxbinding2:rxbinding-recyclerview-v7:$rxBindingsVersion"
+  compile "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:$rxBindingsVersion"
 
-    compile 'io.reactivex.rxjava2:rxjava:2.1.0'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+  def daggerVersion = '2.11'
+  compile 'com.google.code.findbugs:jsr305:2.0.1'
+  compile "com.google.dagger:dagger:$daggerVersion"
 
-    compile 'com.github.miguelbcr:RxPaparazzo:0.5.2-2.x'
+  compile 'com.github.bumptech.glide:glide:3.7.0'
 
-    compile 'com.firebaseui:firebase-ui:2.0.1'
-    compile 'com.github.frangsierra:rx2firebase:1.1.3'
+  compile 'io.reactivex.rxjava2:rxjava:2.1.0'
+  compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
-    compile 'com.jakewharton:butterknife:8.6.0'
+  compile 'com.github.miguelbcr:RxPaparazzo:0.5.2-2.x'
 
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:multidex:1.0.1'
+  compile 'com.firebaseui:firebase-ui:2.0.1'
+  compile 'com.github.frangsierra:rx2firebase:1.1.3'
 
-    compile 'com.afollestad.material-dialogs:core:0.9.4.2'
-    compile 'com.github.curioustechizen.android-ago:library:1.3.4'
+  def butterknifeVersion = '8.6.0'
+  compile "com.jakewharton:butterknife:$butterknifeVersion"
 
-    compile 'com.google.zxing:android-integration:3.3.0'
-    compile 'com.google.zxing:android-core:3.3.0'
-    compile 'com.google.zxing:core:3.3.0'
-    compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.2'
+  compile 'com.android.support.constraint:constraint-layout:1.0.2'
+  compile 'com.android.support:multidex:1.0.1'
 
-    compile 'io.nlopez.smartlocation:library:3.3.1'
-    compile 'io.nlopez.smartlocation:rx:3.3.1'
+  compile 'com.afollestad.material-dialogs:core:0.9.4.2'
+  compile 'com.github.curioustechizen.android-ago:library:1.3.4'
 
-    compile 'com.algolia:instantsearch-android:0.8.0'
+  compile 'com.google.zxing:android-integration:3.3.0'
+  compile 'com.google.zxing:android-core:3.3.0'
+  compile 'com.google.zxing:core:3.3.0'
+  compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.2'
 
-    testCompile 'junit:junit:4.12'
+  compile 'io.nlopez.smartlocation:library:3.3.1'
+  compile 'io.nlopez.smartlocation:rx:3.3.1'
 
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+  compile 'com.algolia:instantsearch-android:0.8.0'
+
+  testCompile 'junit:junit:4.12'
+
+  annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
+  annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
 }
 
 apply plugin: 'com.google.gms.google-services'
