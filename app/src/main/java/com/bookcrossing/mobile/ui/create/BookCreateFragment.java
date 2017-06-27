@@ -1,7 +1,5 @@
 package com.bookcrossing.mobile.ui.create;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
@@ -9,13 +7,13 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import butterknife.BindString;
 import butterknife.BindView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -23,7 +21,6 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.presenters.BookCreatePresenter;
 import com.bookcrossing.mobile.ui.base.BaseFragment;
-import com.bookcrossing.mobile.util.listeners.BookListener;
 import com.bumptech.glide.Glide;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
@@ -31,12 +28,11 @@ import com.jakewharton.rxbinding2.widget.TextViewAfterTextChangeEvent;
 import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo;
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData;
 import com.miguelbcr.ui.rx_paparazzo2.entities.Response;
-import io.reactivex.ObservableSource;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
@@ -45,8 +41,6 @@ import static android.app.Activity.RESULT_OK;
 
 public class BookCreateFragment extends BaseFragment implements BookCreateView {
   @InjectPresenter BookCreatePresenter presenter;
-
-  private BookListener listener;
 
   @BindView(R.id.cover) ImageView cover;
 
@@ -60,6 +54,12 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
 
   @BindView(R.id.publish_book) Button publishButton;
 
+  @BindString(R.string.rendered_sticker_name) String stickerName;
+
+  @BindString(R.string.rendered_sticker_description) String stickerDescription;
+
+  private MaterialDialog coverChooserDialog;
+
   public BookCreateFragment() {
   }
 
@@ -70,6 +70,31 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+
+    coverChooserDialog = new MaterialDialog.Builder(getContext()).title("Choose source")
+        .items(R.array.cover_chooser_dialog_items)
+        .itemsCallback(new MaterialDialog.ListCallback() {
+          @Override public void onSelection(MaterialDialog dialog, View itemView, int position,
+              CharSequence text) {
+            Observable<Response<BookCreateFragment, FileData>> chooserObservable;
+            if (position == 0) {
+              chooserObservable = requestCoverImageFromGallery();
+            } else {
+              chooserObservable = requestCoverImageFromCamera();
+            }
+            subscriptions.add(
+                chooserObservable.subscribe(new Consumer<Response<BookCreateFragment, FileData>>() {
+                  @Override
+                  public void accept(@NonNull Response<BookCreateFragment, FileData> result)
+                      throws Exception {
+                    if (result.resultCode() == RESULT_OK) {
+                      result.targetUI().presenter.saveCoverTemporarily(result.data());
+                    }
+                  }
+                }));
+          }
+        })
+        .build();
     registerSubscriptions();
   }
 
@@ -169,44 +194,26 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
   }
 
   private void registerCoverClickSubscription() {
-    Disposable coverSubscription = RxView.clicks(cover)
-        .switchMap(
-            new Function<Object, ObservableSource<Response<BookCreateFragment, FileData>>>() {
-              @Override public ObservableSource<Response<BookCreateFragment, FileData>> apply(
-                  @NonNull Object o) throws Exception {
-                return requestCoverImage();
-              }
-            })
-        .subscribe(new Consumer<Response<BookCreateFragment, FileData>>() {
-          @Override public void accept(@NonNull Response<BookCreateFragment, FileData> result)
-              throws Exception {
-            if (result.resultCode() == RESULT_OK) {
-              result.targetUI().presenter.saveCoverTemporarily(result.data());
-            }
-          }
-        });
+    Disposable coverSubscription = RxView.clicks(cover).subscribe(new Consumer<Object>() {
+      @Override public void accept(@NonNull Object o) throws Exception {
+        coverChooserDialog.show();
+      }
+    });
     subscriptions.add(coverSubscription);
   }
 
-  private ObservableSource<Response<BookCreateFragment, FileData>> requestCoverImage() {
+  private Observable<Response<BookCreateFragment, FileData>> requestCoverImageFromGallery() {
     return RxPaparazzo.single(this)
         .usingGallery()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread());
   }
 
-  @Override public void onAttach(Context context) {
-    super.onAttach(context);
-    if (context instanceof BookListener) {
-      listener = (BookListener) context;
-    } else {
-      throw new RuntimeException(context.toString() + " must implement BookListener");
-    }
-  }
-
-  @Override public void onDetach() {
-    super.onDetach();
-    listener = null;
+  private Observable<Response<BookCreateFragment, FileData>> requestCoverImageFromCamera() {
+    return RxPaparazzo.single(this)
+        .usingCamera()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread());
   }
 
   private void publishBook() {
@@ -249,11 +256,13 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
   }
 
   @Override public void onFailedToRelease() {
-    new AlertDialog.Builder(getContext()).setMessage(R.string.failed_to_release_book_message)
-        .setTitle(R.string.error_dialog_title)
-        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-          @Override public void onClick(DialogInterface dialogInterface, int i) {
-            dialogInterface.dismiss();
+    new MaterialDialog.Builder(getContext()).content(R.string.failed_to_release_book_message)
+        .title(R.string.error_dialog_title)
+        .positiveText(R.string.ok)
+        .onPositive(new MaterialDialog.SingleButtonCallback() {
+          @Override public void onClick(@android.support.annotation.NonNull MaterialDialog dialog,
+              @android.support.annotation.NonNull DialogAction which) {
+            dialog.dismiss();
           }
         })
         .show();
@@ -272,7 +281,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
         Bitmap.createBitmap(sticker.getWidth(), sticker.getHeight(), Bitmap.Config.ARGB_8888);
     Canvas c = new Canvas(b);
     sticker.draw(c);
-    MediaStore.Images.Media.insertImage(getContext().getContentResolver(), b, "Book sticker",
-        "Glue it on the flyleaf");
+    MediaStore.Images.Media.insertImage(getContext().getContentResolver(), b, stickerName,
+        stickerDescription);
   }
 }
