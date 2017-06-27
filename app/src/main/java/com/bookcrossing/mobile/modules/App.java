@@ -27,9 +27,12 @@ public class App extends MultiDexApplication {
     RxPaparazzo.register(this);
     MobileAds.initialize(this, getResources().getString(R.string.admob_app_id));
     component = DaggerAppComponent.builder()
+        .application(this)
         .appModule(new AppModule(this))
         .prefModule(new PrefModule())
         .apiModule(new ApiModule())
+        .locationModule(new LocationModule())
         .build();
+    component.inject(this);
   }
 }

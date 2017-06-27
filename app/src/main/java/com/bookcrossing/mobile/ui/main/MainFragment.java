@@ -73,6 +73,10 @@ public class MainFragment extends BaseFragment implements MainView {
       }
     }));
 
+    loadAds();
+  }
+
+  private void loadAds() {
     AdRequest adRequest = new AdRequest.Builder().build();
     ad.loadAd(adRequest);
   }

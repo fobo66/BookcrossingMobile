@@ -14,7 +14,6 @@ import com.bookcrossing.mobile.util.FirebaseWrapper;
 import com.bookcrossing.mobile.util.SystemServicesWrapper;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
-import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.rx.ObservableFactory;
 import io.reactivex.Observable;
 import io.reactivex.SingleSource;
@@ -101,17 +100,14 @@ public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
   }
 
   public Observable<List<Address>> resolveUserCity() {
-    return ObservableFactory.from(
-        SmartLocation.with(systemServicesWrapper.getApp().getApplicationContext())
-            .location()
-            .oneFix()).flatMapSingle(new Function<Location, SingleSource<List<Address>>>() {
-      @Override
-      public SingleSource<List<Address>> apply(@io.reactivex.annotations.NonNull Location location)
-          throws Exception {
-        return ObservableFactory.fromLocation(
-            systemServicesWrapper.getApp().getApplicationContext(), location, 1);
-      }
-    });
+    return ObservableFactory.from(systemServicesWrapper.getLocation().location().oneFix())
+        .flatMapSingle(new Function<Location, SingleSource<List<Address>>>() {
+          @Override public SingleSource<List<Address>> apply(
+              @io.reactivex.annotations.NonNull Location location) throws Exception {
+            return ObservableFactory.fromLocation(
+                systemServicesWrapper.getApp().getApplicationContext(), location, 1);
+          }
+        });
   }
 
   public void saveCity(@io.reactivex.annotations.NonNull List<Address> addresses) {
