@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Bookcrossing</string>
+  <string name="acquire_a_book_heading">Вы собираетесь взять книгу</string>
+  <string name="acquired_books_header">Книги у меня</string>
+  <string name="action_logout">Выйти</string>
+  <string name="action_report">Сообщить о нарушении</string>
+  <string name="action_search_title">Поиск</string>
+  <string name="action_settings">Настройки</string>
+  <string name="add_new_book_title">Отпустить новую книгу</string>
+  <string name="book_acquire">Взять</string>
+  <string name="book_saved_dialog_title">Книга освобождена</string>
+  <string name="timestamp_prefix">Отпущена&#160;</string>
+  <string name="title_activity_book">Книга</string>
+  <string name="title_activity_map">Карта</string>
+  <string name="stash">Полка</string>
+  <string name="book_sticker_get_app">Нет такого приложения? Скачай его в Google Play</string>
+  <string name="book_sticker_heading_text">Поздравляю! Ты нашёл(а) свободную книгу.</string>
+  <string name="book_submit_acquisition">Отправить</string>
+  <string name="books_map">Карта книг</string>
+  <string name="cover_description">Обложка книги</string>
+  <string name="error_dialog_title">Ошибка загрузки</string>
+  <string name="failed_to_load_book_message">Не получилось загрузить информацию о книге. Попробуйте ещё раз позже</string>
+  <string name="failed_to_load_books_message">Местоположения книг недоступны. Попробуйте ещё раз позже.</string>
+  <string name="failed_to_release_book_message">Не получилось отпустить книгу. Возможно, вы ввели некорректные символы в поля или что-то случилось на сервере. Попробуйте ещё раз.</string>
+  <string name="hint_author">Автор</string>
+  <string name="scan_shortcut_short_label">Сканировать QR код книги</string>
+  <string name="scan_shortcut_long_label">Взять книгу по QR коду</string>
+  <string name="rendered_sticker_name">Наклейка для книги</string>
+  <string name="scan_activity_initial_message">Отсканируйте код на форзаце</string>
+  <string name="rendered_sticker_description">Наклейте эту наклейку на форзац книги</string>
+  <string name="release_shortcut_short_label">Отпустить книгу</string>
+  <string name="release_shortcut_long_label">Отпустить новую книгу</string>
+  <string name="release_shortcut_disabled_message">Нельзя отпустить книгу</string>
+  <string name="release_book">Отпустить</string>
+  <string name="profileTitle">Профиль</string>
+  <string name="profile">Профиль</string>
+  <string name="pref_title_default_city">Город по умолчанию</string>
+  <string name="placesHistory_header">Путешествия книги</string>
+  <string name="no_internet_connection">Нет соединения с интернетом</string>
+  <string name="map_shortcut_short_label">Карта</string>
+  <string name="map_shortcut_disabled_message">Карта недоступна</string>
+  <string name="mainTitle">Книги</string>
+  <string name="incorrect_key_message">Неверный код</string>
+  <string name="incorrect_code_scanned_message">Код не распознан. Пожалуйста, отсканируйте код на форзаце</string>
+  <string name="hint_position">Где вы оставили книгу?</string>
+  <string name="hint_name">Название</string>
+  <string name="hint_description">Опишите книгу</string>
+  <string name="hint_book_code">Введите код книги</string>
+  <string name="filler_position">Где-то</string>
+  <string name="drawer_close">Закрыть боковое меню</string>
+  <string name="drawer_open">Открыть боковое меню</string>
+  <string name="title_activity_book_acquire">Взять книгу</string>
+  <string name="unknown_signin_error">Неопознанная ошибка входа</string>
+  <string name="title_activity_scan">Сканировать код книги</string>
+  <string name="sign_in_failed">Вход не выполнен, повторите попытку.</string>
+  <string name="sticker_created_info">"Наклейка для этой книги была сохранена в галерее. Вы можете распечатать её и наклеить на форзац, либо "</string>
+  <string name="sign_in_cancelled">Вход прерван.</string>
+  <string name="scan_shortcut_disabled_message">Сканер QR кодов недоступен</string>
+  <string name="scan_code_button_text">Отсканировать QR код</string>
+  <string name="map_shortcut_long_label">Найти книги на карте</string>
+  <string name="book_sticker_main_text">
+        "Я особенная книга. Я путешествую по миру, "
+        "приобретая новых друзей. Надеюсь, что я нашла в тебе друга.\n"
+        "Пожалуйста, установи приложение Bookcrossing для Android и пометь, что я найдена, "
+        "введя мой код (написан ниже) или отсканировав мой QR код"
+    </string>
+  <string name="default_city">Неизвестен</string>
+</resources>

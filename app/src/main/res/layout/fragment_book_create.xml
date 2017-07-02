@@ -69,5 +69,5 @@
         android:id="@+id/publish_book"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/publish_book" />
+        android:text="@string/release_book" />
 </LinearLayout>

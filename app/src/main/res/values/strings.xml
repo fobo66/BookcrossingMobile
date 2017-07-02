@@ -1,6 +1,6 @@
 <resources>
   <string name="app_name">Bookcrossing</string>
-  <string name="package_name">com.bookcrossing.mobile</string>
+  <string name="package_name" translatable="false">com.bookcrossing.mobile</string>
   <string name="action_settings">Settings</string>
   <string name="mainTitle">Books</string>
   <string name="sign_in_cancelled">Sign in cancelled. Try again.</string>
@@ -31,7 +31,6 @@
   <string name="add_new_book_title">Release new book</string>
   <string name="cover_description">Book cover</string>
   <string name="hint_description">Describe this book</string>
-  <string name="publish_book">Release</string>
   <string name="ok" translatable="false">OK</string>
 
   <string name="book_saved_dialog_title">Book released</string>
@@ -74,14 +73,14 @@
   <string name="action_report">Report abuse</string>
   <string name="timestamp_prefix">Went free&#160;</string>
   <string name="placesHistory_header">Book\'s travels</string>
-  <string name="incorrect_code_scanned_message">Incorrect code scanned. Scan code on the flyleaf</string>
+  <string name="incorrect_code_scanned_message">Scanned code not recognized. Scan code on the flyleaf</string>
   <string name="scan_code_button_text">Scan QR code</string>
   <string name="title_activity_scan">Scan book code</string>
   <string name="scan_activity_initial_message">Scan code on the flyleaf</string>
   <string name="filler_position">Somewhere</string>
   <string name="failed_to_load_book_message">Failed to load book. Try again later</string>
   <string name="error_dialog_title">Failed to load</string>
-  <string name="failed_to_release_book_message">Failed to release book. Maybe you have entered incorrect names or something happened n the server. Try again later.</string>
+  <string name="failed_to_release_book_message">Failed to release book. Maybe you have entered incorrect names or something happened on the server. Try again later.</string>
   <string name="failed_to_load_books_message">Books\' locations unavailable. Try again later</string>
 
   <string name="rendered_sticker_name">Book sticker</string>
