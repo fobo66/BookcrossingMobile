@@ -9,7 +9,6 @@
     >
 
   <TextView
-      android:id="@+id/sticker_created_info"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:text="@string/sticker_created_info"
@@ -26,7 +25,6 @@
       android:padding="@dimen/sticker_padding"
       >
     <TextView
-        android:id="@+id/sticker_heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableTop="@mipmap/ic_launcher"
@@ -37,7 +35,6 @@
         />
 
     <TextView
-        android:id="@+id/sticker_main_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/book_sticker_main_text"
@@ -66,7 +63,6 @@
         />
 
     <TextView
-        android:id="@+id/sticker_get_app_heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/book_sticker_get_app"
@@ -75,7 +71,6 @@
         />
 
     <ImageView
-        android:id="@+id/app_link"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_gravity="center"

@@ -1,19 +1,14 @@
 <resources>
   <string name="app_name">Bookcrossing</string>
   <string name="package_name">com.bookcrossing.mobile</string>
-  <string name="title_activity_main">Books</string>
   <string name="action_settings">Settings</string>
-  <string name="email">Email</string>
-  <string name="catalogue">Books</string>
+  <string name="mainTitle">Books</string>
   <string name="sign_in_cancelled">Sign in cancelled. Try again.</string>
   <string name="no_internet_connection">Internet connection not available</string>
   <string name="sign_in_failed">Sign in failed. Try again</string>
   <string name="unknown_signin_error">Unknown sign-in error</string>
 
   <!-- Shortcut strings -->
-  <string name="acquire_shortcut_short_label">Acquire book</string>
-  <string name="acquire_shortcut_long_label">Acquire book by entering it\'s code or scanning QR</string>
-  <string name="acquire_shortcut_disabled_message">Acquire unavailable</string>
   <string name="release_shortcut_short_label">Release book</string>
   <string name="release_shortcut_long_label">Release new book</string>
   <string name="release_shortcut_disabled_message">Release unavailable</string>
@@ -28,18 +23,16 @@
   <string name="title_activity_book">Book</string>
   <string name="stash">Stash</string>
   <string name="books_map">Map</string>
-  <string name="user_profile">Profile</string>
   <string name="drawer_open">Open navigation drawer</string>
   <string name="drawer_close">Close navigation drawer</string>
 
   <string name="hint_name">Name</string>
   <string name="hint_author">Author</string>
-  <string name="add_new_book_title">Add new book</string>
+  <string name="add_new_book_title">Release new book</string>
   <string name="cover_description">Book cover</string>
   <string name="hint_description">Describe this book</string>
   <string name="publish_book">Release</string>
-  <string name="select_picture">Select Picture</string>
-  <string name="ok">OK</string>
+  <string name="ok" translatable="false">OK</string>
 
   <string name="book_saved_dialog_title">Book released</string>
   <string name="book_sticker_heading_text">Congratulations! You have found a free book!</string>
@@ -66,7 +59,6 @@
 
   <string name="acquired_books_header">My acquired books</string>
   <string name="release_book">Release</string>
-  <string name="stash_fragment_heading">Stash</string>
   <string name="action_search_title">Search</string>
 
   <!-- Algolia credentials -->
@@ -74,14 +66,12 @@
   <string name="algolia_api_key" translatable="false">dbb62b00ef8b16504cdbbe14dfe81907</string>
   <string name="algolia_index_name" translatable="false">books</string>
   <string name="title_activity_map">Map</string>
-  <string name="title_activity_settings">Settings</string>
 
   <!-- Strings related to Settings -->
   <string name="pref_title_default_city">Default city</string>
 
   <string name="action_logout">Logout</string>
   <string name="action_report">Report abuse</string>
-  <string name="send_report_chooser">Choose:</string>
   <string name="timestamp_prefix">Went free&#160;</string>
   <string name="placesHistory_header">Book\'s travels</string>
   <string name="incorrect_code_scanned_message">Incorrect code scanned. Scan code on the flyleaf</string>
@@ -94,8 +84,13 @@
   <string name="failed_to_release_book_message">Failed to release book. Maybe you have entered incorrect names or something happened n the server. Try again later.</string>
   <string name="failed_to_load_books_message">Books\' locations unavailable. Try again later</string>
 
-  <string name="stash_notification_title_free">Book from your stash went free!</string>
-  <string name="stash_notification_body_free">One of your favorite books is now free again! See where it goes</string>
-  <string name="stash_notification_title_acquired">Book from your stash was acquired</string>
-  <string name="stash_notification_body_acquired">One of your favorite books is now acquired. Wait when it get free again</string>
+  <string name="rendered_sticker_name">Book sticker</string>
+  <string name="rendered_sticker_description">Glue it on the flyleaf</string>
+  <string name="profileTitle">Profile</string>
+  <string name="profile">Profile</string>
+
+  <string-array name="cover_chooser_dialog_items">
+    <item>From gallery</item>
+    <item>From camera</item>
+  </string-array>
 </resources>
