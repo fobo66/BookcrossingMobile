@@ -8,8 +8,8 @@ import android.view.View;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.arellomobile.mvp.MvpAppCompatFragment;
+import com.bookcrossing.mobile.util.BookListenerDelegate;
 import com.bookcrossing.mobile.util.Constants;
-import com.bookcrossing.mobile.util.listeners.BookListener;
 import com.firebase.ui.auth.AuthUI;
 import io.reactivex.disposables.CompositeDisposable;
 import java.util.Collections;
@@ -23,23 +23,19 @@ public abstract class BaseFragment extends MvpAppCompatFragment {
 
   protected Unbinder unbinder;
   protected CompositeDisposable subscriptions = new CompositeDisposable();
-  protected BookListener listener;
+  protected BookListenerDelegate listener;
 
   public abstract @StringRes int title();
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
 
-    if (context instanceof BookListener) {
-      listener = (BookListener) context;
-    } else {
-      throw new RuntimeException(context.toString() + " must implement BookListener");
-    }
+    listener = new BookListenerDelegate(context);
   }
 
   @Override public void onDetach() {
     super.onDetach();
-    listener = null;
+    listener.detachListener();
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
