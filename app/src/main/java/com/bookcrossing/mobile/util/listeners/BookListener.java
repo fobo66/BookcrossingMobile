@@ -1,8 +1,6 @@
 package com.bookcrossing.mobile.util.listeners;
 
-/**
- * Created by fobo66 on 21.1.17.
- */
+import android.support.annotation.StringRes;
 
 public interface BookListener {
   void onBookSelected(String bookKey);
@@ -11,5 +9,5 @@ public interface BookListener {
 
   void onBookAdd();
 
-  void setTitle(String fragmentTitle);
+  void setTitle(@StringRes int fragmentTitleId);
 }

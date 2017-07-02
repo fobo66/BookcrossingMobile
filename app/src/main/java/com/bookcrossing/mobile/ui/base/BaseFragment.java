@@ -3,6 +3,7 @@ package com.bookcrossing.mobile.ui.base;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.view.View;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -18,11 +19,13 @@ import java.util.Collections;
  * Created by fobo66 on 16.11.2016.
  */
 
-public class BaseFragment extends MvpAppCompatFragment {
+public abstract class BaseFragment extends MvpAppCompatFragment {
 
   protected Unbinder unbinder;
   protected CompositeDisposable subscriptions = new CompositeDisposable();
   protected BookListener listener;
+
+  public abstract @StringRes int title();
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
@@ -46,7 +49,7 @@ public class BaseFragment extends MvpAppCompatFragment {
   }
 
   private void setActivityTitle() {
-    listener.setTitle(getClass().getSimpleName().split("Fragment")[0]);
+    listener.setTitle(title());
   }
 
   protected void authenticate() {

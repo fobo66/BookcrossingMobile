@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -30,7 +31,6 @@ import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 import com.bookcrossing.mobile.ui.create.BookCreateFragment;
 import com.bookcrossing.mobile.ui.map.MapActivity;
 import com.bookcrossing.mobile.ui.profile.ProfileFragment;
-import com.bookcrossing.mobile.ui.stash.StashFragment;
 import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.NavigationDrawerResolver;
 import com.bookcrossing.mobile.util.listeners.BookListener;
@@ -243,11 +243,12 @@ public class MainActivity extends BaseActivity
   }
 
   @Override public void onBackPressed() {
-    Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
-    if (currentFragment instanceof BookCreateFragment || currentFragment instanceof StashFragment) {
-      toolbar.setTitle(R.string.app_name);
-    }
     super.onBackPressed();
+    Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+
+    if (currentFragment == null) {
+      finish();
+    }
   }
 
   @Override public void onBookReleased(String bookKey) {
@@ -256,12 +257,11 @@ public class MainActivity extends BaseActivity
   }
 
   @Override public void onBookAdd() {
-    toolbar.setTitle(R.string.add_new_book_title);
     push(new BookCreateFragment());
   }
 
-  @Override public void setTitle(String fragmentTitle) {
-    toolbar.setTitle(fragmentTitle);
+  @Override public void setTitle(@StringRes int fragmentTitleId) {
+    toolbar.setTitle(fragmentTitleId);
   }
 
   public void navigateToMap() {

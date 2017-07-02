@@ -15,10 +15,6 @@ import com.bookcrossing.mobile.ui.base.BaseFragment;
 import com.bookcrossing.mobile.util.adapters.StashedBookViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
-/**
- * Created by fobo66 on 18.05.17.
- */
-
 public class StashFragment extends BaseFragment implements StashView {
 
   public static final int STASH_COLUMNS = 3;
@@ -30,6 +26,10 @@ public class StashFragment extends BaseFragment implements StashView {
   private FirebaseRecyclerAdapter<Boolean, StashedBookViewHolder> adapter;
 
   public StashFragment() {
+  }
+
+  @Override public int title() {
+    return R.string.stash;
   }
 
   @Nullable @Override

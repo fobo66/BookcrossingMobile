@@ -45,6 +45,10 @@ public class MainFragment extends BaseFragment implements MainView {
 
   private RxPermissions permissions;
 
+  @Override public int title() {
+    return R.string.mainTitle;
+  }
+
   public MainFragment() {
   }
 

@@ -60,6 +60,10 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
 
   private MaterialDialog coverChooserDialog;
 
+  @Override public int title() {
+    return R.string.add_new_book_title;
+  }
+
   public BookCreateFragment() {
   }
 
