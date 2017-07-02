@@ -87,7 +87,7 @@
 
     <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyCu5YKw0UZ4RG5_DimoZxUWaQU_hTbz4wI"/>
+        android:value="@string/google_maps_key"/>
 
     <service
         android:name=".util.StashService"
