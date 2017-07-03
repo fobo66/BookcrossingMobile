@@ -106,11 +106,11 @@ public class MainActivity extends BaseActivity
         } else {
           push(new MainFragment());
         }
+      } else if (savedInstanceState != null) {
+        pushRecentFragment();
       } else {
         push(new MainFragment());
       }
-    } else if (savedInstanceState != null) {
-      pushRecentFragment();
     } else {
       push(new MainFragment());
     }
@@ -136,7 +136,7 @@ public class MainActivity extends BaseActivity
   private void pushRecentFragment() {
     Fragment recentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
     if (recentFragment != null) {
-      push(recentFragment);
+      replace(recentFragment);
     }
   }
 
