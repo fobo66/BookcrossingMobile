@@ -1,9 +1,21 @@
 apply plugin: 'com.android.application'
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
   dataBinding.enabled true
   compileSdkVersion 26
   buildToolsVersion "26.0.0"
+  signingConfigs {
+    releaseConfig {
+      keyAlias keystoreProperties['keyAlias']
+      keyPassword keystoreProperties['keyPassword']
+      storeFile file(keystoreProperties['storeFile'])
+      storePassword keystoreProperties['storePassword']
+    }
+  }
   defaultConfig {
     applicationId "com.bookcrossing.mobile"
     minSdkVersion 16
@@ -17,6 +29,7 @@ android {
     release {
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+      signingConfig signingConfigs.releaseConfig
     }
   }
   compileOptions {
@@ -50,6 +63,7 @@ dependencies {
   compile "com.google.firebase:firebase-crash:$firebaseVersion"
   compile "com.google.firebase:firebase-messaging:$firebaseVersion"
   compile "com.google.firebase:firebase-ads:$firebaseVersion"
+  compile "com.google.firebase:firebase-auth:$firebaseVersion"
   compile "com.google.android.gms:play-services-maps:$firebaseVersion"
   compile "com.google.android.gms:play-services-location:$firebaseVersion"
   compile "com.google.android.gms:play-services-auth:$firebaseVersion"
