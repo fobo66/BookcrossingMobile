@@ -66,4 +66,8 @@
         "введя мой код (написан ниже) или отсканировав мой QR код"
     </string>
   <string name="default_city">Неизвестен</string>
+  <string-array name="cover_chooser_dialog_items">
+    <item>Из галереи</item>
+    <item>Сделать фото</item>
+  </string-array>
 </resources>
