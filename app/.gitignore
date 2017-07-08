@@ -1,2 +1,4 @@
 /build
 upload_cert.der
+/src/release/res/values/google_maps_api.xml
+google-services.json
