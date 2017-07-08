@@ -1,0 +1,14 @@
+dependencies:
+  pre:
+    # Android SDK Platform
+    - if [ ! -d "/usr/local/android-sdk-linux/platforms/android-26" ]; then echo y | android update sdk --no-ui --all --filter "android-24"; fi
+    # Android SDK Build-tools
+    - if [ ! -d "/usr/local/android-sdk-linux/build-tools/26.0.0" ]; then echo y | android update sdk --no-ui --all --filter "build-tools-24.0.1"; fi
+    # Android Support Repository
+    - if [ ! -d "/usr/local/android-sdk-linux/extras/android/m2repository/com/android/support/design/24.1.0" ]; then echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"; fi
+
+
+  cache_directories:
+    - /usr/local/android-sdk-linux/platforms/android-26
+    - /usr/local/android-sdk-linux/build-tools/26.0.0
+    - /usr/local/android-sdk-linux/extras/android/m2repository
