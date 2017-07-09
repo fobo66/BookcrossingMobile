@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "846297707940",
+    "firebase_url": "https://bookcrossing-148918.firebaseio.com",
+    "project_id": "bookcrossing-148918",
+    "storage_bucket": "bookcrossing-148918.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:846297707940:android:9e64d9793dd0413f",
+        "android_client_info": {
+          "package_name": "com.bookcrossing.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "846297707940-i3rnt27ff58dv4honld15of455p1fij0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bookcrossing.mobile",
+            "certificate_hash": "5b2218482ca9716172acf4c7292e1cc100901888"
+          }
+        },
+        {
+          "client_id": "846297707940-ilkfhtisogebcndiv98pmigdnoh4hhkn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bookcrossing.mobile",
+            "certificate_hash": "a9394abc8cc0810e6cab002d18c9607a8a6db101"
+          }
+        },
+        {
+          "client_id": "846297707940-161ih32i1mjdak8ugg81dur09n0jlopf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUuFksIEW7UiiBCnrlbFFGZX4zetwYB_A"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "846297707940-161ih32i1mjdak8ugg81dur09n0jlopf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

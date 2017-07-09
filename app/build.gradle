@@ -1,8 +1,9 @@
 apply plugin: 'com.android.application'
+apply from: '../propertiesLoader.gradle'
 
-def keystorePropertiesFile = rootProject.file("keystore.properties")
-def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+def keystoreProperties = loadProperties("keystore.properties")
+
+def apiProperties = loadProperties("api.properties")
 
 android {
   dataBinding.enabled true
@@ -26,10 +27,16 @@ android {
     multiDexEnabled true
   }
   buildTypes {
+    debug {
+      resValue "string", "google_maps_key", apiProperties['google_maps_key']
+    }
     release {
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       signingConfig signingConfigs.releaseConfig
+
+      resValue "string", "google_maps_key", apiProperties['google_maps_key']
+      resValue "string", "admob_app_id", apiProperties['admob_app_id']
     }
   }
   compileOptions {

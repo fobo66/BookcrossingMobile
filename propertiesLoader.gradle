@@ -1,0 +1,6 @@
+ext.loadProperties = { propertiesName ->
+  def propertiesFile = rootProject.file(propertiesName)
+  def properties = new Properties()
+  properties.load(new FileInputStream(propertiesFile))
+  return properties
+}
