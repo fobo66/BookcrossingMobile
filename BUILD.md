@@ -1,6 +1,7 @@
 # Building Bookcrossing Mobile
 
-To build Bookcrossing Mobile application, you need to grab your API key for Google Maps here first.
+To build Bookcrossing Mobile application, you need to grab your API key for Google Maps 
+[here](http://bit.ly/2uZ5EWV) first.
 
 1. Open your Terminal, `cd` to the project's directory and execute the following commands:
  
