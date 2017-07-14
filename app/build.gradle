@@ -124,6 +124,8 @@ dependencies {
   compile 'io.nlopez.smartlocation:library:3.3.1'
   compile 'io.nlopez.smartlocation:rx:3.3.1'
 
+  compile 'com.github.tiagohm.MarkdownView:library:0.17.0'
+
   compile 'com.algolia:instantsearch-android:0.8.0'
 
   testCompile 'junit:junit:4.12'

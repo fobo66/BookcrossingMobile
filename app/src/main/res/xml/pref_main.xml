@@ -1,8 +1,16 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditTextPreference
-        android:defaultValue="@string/default_city"
-        android:key="defaultCity"
-        android:title="@string/pref_title_default_city" />
+  <EditTextPreference
+      android:defaultValue="@string/default_city"
+      android:key="defaultCity"
+      android:title="@string/pref_title_default_city"/>
+
+  <Preference
+      android:title="@string/title_activity_about">
+    <intent
+        android:action="android.intent.action.VIEW"
+        android:targetClass="com.bookcrossing.mobile.ui.about.AboutActivity"
+        android:targetPackage="com.bookcrossing.mobile"/>
+  </Preference>
 
 </PreferenceScreen>
