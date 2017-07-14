@@ -45,7 +45,7 @@ import static android.graphics.Color.WHITE;
 
   public void saveCoverTemporarily(FileData result) {
     tempCoverUri = Uri.fromFile(result.getFile());
-    getViewState().OnCoverChosen(tempCoverUri);
+    getViewState().onCoverChosen(tempCoverUri);
   }
 
   private Bitmap encodeBookAsQrCode(String contents, BarcodeFormat format, int img_width,
@@ -79,7 +79,7 @@ import static android.graphics.Color.WHITE;
 
   public void OnNameChange(String name) {
     book.setName(name);
-    getViewState().OnNameChange();
+    getViewState().onNameChange();
   }
 
   public void OnAuthorChange(String author) {
@@ -102,7 +102,7 @@ import static android.graphics.Color.WHITE;
       @Override public void onSuccess(Void aVoid) {
         String key = newBookReference.getKey();
         uploadCover(key);
-        getViewState().OnReleased(key);
+        getViewState().onReleased(key);
       }
     }).addOnFailureListener(new OnFailureListener() {
       @Override public void onFailure(@NonNull Exception e) {

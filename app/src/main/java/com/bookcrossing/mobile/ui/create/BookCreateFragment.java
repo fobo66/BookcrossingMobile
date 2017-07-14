@@ -225,11 +225,11 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
     presenter.publishBook();
   }
 
-  @Override public void OnCoverChosen(Uri coverUri) {
+  @Override public void onCoverChosen(Uri coverUri) {
     Glide.with(this).fromUri().load(coverUri).crossFade().into(cover);
   }
 
-  @Override public void OnNameChange() {
+  @Override public void onNameChange() {
     getActivity().runOnUiThread(new Runnable() {
       @Override public void run() {
         if (cover.getVisibility() == View.GONE) {
@@ -239,7 +239,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
     });
   }
 
-  @Override public void OnReleased(final String newKey) {
+  @Override public void onReleased(final String newKey) {
     MaterialDialog dialog =
         new MaterialDialog.Builder(getContext()).title(R.string.book_saved_dialog_title)
             .customView(R.layout.book_sticker_layout, true)

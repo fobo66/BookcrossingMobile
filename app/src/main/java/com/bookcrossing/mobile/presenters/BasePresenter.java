@@ -27,7 +27,7 @@ import java.util.List;
  * Created by fobo66 on 29.12.2016.
  */
 
-public class BasePresenter<View extends MvpView> extends MvpPresenter<View> {
+public class BasePresenter<V extends MvpView> extends MvpPresenter<V> {
   private CompositeDisposable compositeSubscription = new CompositeDisposable();
   protected String city = "undefined";
   protected FirebaseWrapper firebaseWrapper;

@@ -4,11 +4,11 @@ import android.net.Uri;
 import com.arellomobile.mvp.MvpView;
 
 public interface BookCreateView extends MvpView {
-  void OnCoverChosen(Uri coverUri);
+  void onCoverChosen(Uri coverUri);
 
-  void OnNameChange();
+  void onNameChange();
 
-  void OnReleased(String newKey);
+  void onReleased(String newKey);
 
   void onFailedToRelease();
 }
