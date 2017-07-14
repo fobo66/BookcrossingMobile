@@ -1,5 +1,6 @@
 # Bookcrossing Mobile
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0986c637df94601b87a7cccfaa3e5f8)](https://www.codacy.com/app/fobo66/BookcrossingMobile?utm_source=github.com&utm_medium=referral&utm_content=fobo66/BookcrossingMobile&utm_campaign=badger)
 [![CircleCI](https://circleci.com/gh/fobo66/BookcrossingMobile.svg?style=shield)](https://circleci.com/gh/fobo66/BookcrossingMobile)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0986c637df94601b87a7cccfaa3e5f8)](https://www.codacy.com/app/fobo66/BookcrossingMobile?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fobo66/BookcrossingMobile&amp;utm_campaign=Badge_Grade)
 
