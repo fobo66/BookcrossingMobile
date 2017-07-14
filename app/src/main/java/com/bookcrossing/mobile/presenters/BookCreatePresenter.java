@@ -77,20 +77,20 @@ import static android.graphics.Color.WHITE;
     return bitmap;
   }
 
-  public void OnNameChange(String name) {
+  public void onNameChange(String name) {
     book.setName(name);
     getViewState().onNameChange();
   }
 
-  public void OnAuthorChange(String author) {
+  public void onAuthorChange(String author) {
     book.setAuthor(author);
   }
 
-  public void OnPositionChange(String position) {
+  public void onPositionChange(String position) {
     book.setPositionName(position);
   }
 
-  public void OnDescriptionChange(String description) {
+  public void onDescriptionChange(String description) {
     book.setDescription(description);
   }
 

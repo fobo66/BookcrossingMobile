@@ -136,7 +136,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
         .subscribe(new Consumer<TextViewAfterTextChangeEvent>() {
           @Override public void accept(@NonNull TextViewAfterTextChangeEvent event)
               throws Exception {
-            presenter.OnDescriptionChange(event.view().getText().toString());
+            presenter.onDescriptionChange(event.view().getText().toString());
           }
         });
     subscriptions.add(descriptionSubscription);
@@ -154,7 +154,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
         .subscribe(new Consumer<TextViewAfterTextChangeEvent>() {
           @Override public void accept(@NonNull TextViewAfterTextChangeEvent event)
               throws Exception {
-            presenter.OnPositionChange(event.view().getText().toString());
+            presenter.onPositionChange(event.view().getText().toString());
           }
         });
     subscriptions.add(positionSubscription);
@@ -172,7 +172,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
         .subscribe(new Consumer<TextViewAfterTextChangeEvent>() {
           @Override public void accept(@NonNull TextViewAfterTextChangeEvent event)
               throws Exception {
-            presenter.OnAuthorChange(event.view().getText().toString());
+            presenter.onAuthorChange(event.view().getText().toString());
           }
         });
     subscriptions.add(authorSubscription);
@@ -191,7 +191,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
         .subscribe(new Consumer<TextViewAfterTextChangeEvent>() {
           @Override public void accept(@NonNull TextViewAfterTextChangeEvent event)
               throws Exception {
-            presenter.OnNameChange(event.view().getText().toString());
+            presenter.onNameChange(event.view().getText().toString());
           }
         });
     subscriptions.add(nameSubscription);
