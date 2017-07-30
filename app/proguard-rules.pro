@@ -34,6 +34,15 @@
     public <init>(android.content.Context);
 }
 
+# Cardview
+-keep class android.support.v7.widget.RoundRectDrawable { *; }
+
+# Support design
+-dontwarn android.support.design.**
+-keep class android.support.design.** { *; }
+-keep interface android.support.design.** { *; }
+-keep public class android.support.design.R$* { *; }
+
 # Instantsearch uses jsonpath
 -dontwarn com.jayway.jsonpath.spi.json.GsonJsonProvider
 -dontwarn com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider
@@ -47,3 +56,7 @@
 
 # Necessary for ignoring json-smart's logging dependencies
 -dontwarn org.slf4j.*
+
+# Application's own rules
+-keep class com.bookcrossing.mobile.util.adapters.* { *; }
+-keep class com.bookcrossing.mobile.models.* { *; }
