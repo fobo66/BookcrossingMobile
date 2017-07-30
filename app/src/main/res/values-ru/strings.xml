@@ -70,4 +70,5 @@
     <item>Из галереи</item>
     <item>Сделать фото</item>
   </string-array>
+  <string name="title_activity_about">О приложении</string>
 </resources>
