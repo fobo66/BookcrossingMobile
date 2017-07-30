@@ -10,3 +10,4 @@
 keystore.properties
 api.properties
 *.jks
+/infer-out
