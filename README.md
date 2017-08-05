@@ -13,11 +13,11 @@ We use today's most popular and powerful instruments in our app, such as Firebas
 RxJava 2, Dagger 2, etc. So, this project may be useful as an example on integration of these tools 
 and gluing them together.
 
-Check out our [privacy policy](/privacy_policy.html).
+Check out our [privacy policy](./privacy_policy.html).
 
 ### Wanna help?
 
-Check our [contribution guide](/contributing.html) for more information.
+Check our [contribution guide](./contributing.html) for more information.
 
 Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). 
 By participating in this project you agree to abide by its terms.
