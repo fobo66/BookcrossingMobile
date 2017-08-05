@@ -1,6 +1,6 @@
 ---
 layout: post
-permalink: /contributing
+permalink: /contributing.html
 ---
 # Contribute to the Bookcrossing Mobile project
 

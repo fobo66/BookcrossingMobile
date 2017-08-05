@@ -1,3 +1,7 @@
+---
+layout: post
+permalink: /privacy_policy.html
+---
 # Privacy Policy
 
 Andrey Mukamolow built the Bookcrossing Mobile app as an Open Source app. This SERVICE is provided by Andrey Mukamolow at no cost and is intended for use as is.
