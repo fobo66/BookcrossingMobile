@@ -1,8 +1,0 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <EditTextPreference
-        android:defaultValue="@string/default_city"
-        android:key="defaultCity"
-        android:title="@string/pref_title_default_city" />
-
-</PreferenceScreen>
