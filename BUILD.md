@@ -1,3 +1,7 @@
+---
+layout: post
+permalink: /build
+---
 # Building Bookcrossing Mobile
 
 To build Bookcrossing Mobile application, you need to grab your API key for Google Maps 
@@ -11,8 +15,7 @@ To build Bookcrossing Mobile application, you need to grab your API key for Goog
  cp app/google-services.json.example app/google-services.json
  ```
  
- 2. Replace stub values in `keystore.properties` and `api.properties` files with your actual 
- credentials.
+ 2. Replace stub values in `keystore.properties` and `api.properties` files with your actual credentials.
  
  Alternatively, you can use your own Firebase project for testing purposes. In this case you don't 
  need to run last command from above, just register a new Firebase project for your app.
