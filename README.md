@@ -3,8 +3,7 @@
 [![CircleCI](https://circleci.com/gh/fobo66/BookcrossingMobile.svg?style=shield)](https://circleci.com/gh/fobo66/BookcrossingMobile)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0986c637df94601b87a7cccfaa3e5f8)](https://www.codacy.com/app/fobo66/BookcrossingMobile?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fobo66/BookcrossingMobile&amp;utm_campaign=Badge_Grade)
 
-This is an Android app for exchanging books. You can download it free on Google Play
-(currently unreleased).
+This is an Android app for exchanging books. You can download it free on [Google Play](https://play.google.com/store/apps/details?id=com.bookcrossing.mobile).
 
 There is a global Bookcrossing website that gather community since 2001, but we decided to write our 
 mobile-first solution separately of the main project due to it's bad API design.
