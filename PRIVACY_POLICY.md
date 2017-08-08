@@ -1,5 +1,4 @@
 ---
-layout: page
 permalink: /privacy_policy.html
 ---
 # Privacy Policy
