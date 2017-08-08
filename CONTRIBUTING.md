@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: /contributing.html
 ---
 # Contribute to the Bookcrossing Mobile project
