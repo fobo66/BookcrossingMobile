@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: /build
 ---
 # Building Bookcrossing Mobile
