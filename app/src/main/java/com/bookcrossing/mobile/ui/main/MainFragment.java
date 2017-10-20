@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.BindView;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Book;
@@ -26,9 +27,11 @@ import com.jakewharton.rxbinding2.view.RxView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import java.util.List;
 
 public class MainFragment extends BaseFragment implements MainView {
@@ -104,7 +107,7 @@ public class MainFragment extends BaseFragment implements MainView {
   }
 
   private void resolveCity() {
-    subscriptions.add(permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
+    permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
         .flatMap(new Function<Boolean, ObservableSource<List<Address>>>() {
           @Override public ObservableSource<List<Address>> apply(@NonNull Boolean granted)
               throws Exception {
@@ -113,11 +116,29 @@ public class MainFragment extends BaseFragment implements MainView {
             }
             return Observable.empty();
           }
-        })
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Consumer<List<Address>>() {
           @Override public void accept(@NonNull List<Address> addresses) throws Exception {
-            presenter.saveCity(addresses);
+            if (!addresses.isEmpty()) {
+              presenter.saveCity(addresses);
+            } else {
+              askUserToProvideDefaultCity();
+            }
           }
-        }));
+        });
+  }
+
+  private void askUserToProvideDefaultCity() {
+    new MaterialDialog.Builder(getContext()).title(R.string.enter_city_title)
+        .content(R.string.enter_city_content)
+        .input(R.string.city_hint, R.string.default_city, false,
+            new MaterialDialog.InputCallback() {
+              @Override
+              public void onInput(@android.support.annotation.NonNull MaterialDialog dialog,
+                  CharSequence input) {
+                presenter.saveCity(input.toString());
+              }
+            })
+        .show();
   }
 }

@@ -93,7 +93,7 @@ public class BasePresenter<V extends MvpView> extends MvpPresenter<V> {
     return systemServicesWrapper.getPreferences().getString(Constants.EXTRA_CITY, getDefaultCity());
   }
 
-  private String getDefaultCity() {
+  public String getDefaultCity() {
     return systemServicesWrapper.getPreferences()
         .getString(Constants.EXTRA_DEFAULT_CITY,
             systemServicesWrapper.getApp().getString(R.string.default_city));
@@ -111,7 +111,13 @@ public class BasePresenter<V extends MvpView> extends MvpPresenter<V> {
   }
 
   public void saveCity(@io.reactivex.annotations.NonNull List<Address> addresses) {
-    city = addresses.get(0).getLocality();
+    if (!addresses.isEmpty()) {
+      city = addresses.get(0).getLocality();
+      saveCity(city);
+    }
+  }
+
+  public void saveCity(String city) {
     SharedPreferences.Editor editor = systemServicesWrapper.getPreferences().edit();
     editor.putString(Constants.EXTRA_CITY, city);
     editor.putString(Constants.EXTRA_DEFAULT_CITY, city);
