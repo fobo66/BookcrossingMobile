@@ -47,15 +47,15 @@ import org.json.JSONException;
 public class MainActivity extends BaseActivity
     implements BookListener, NavigationView.OnNavigationItemSelectedListener {
 
-  @BindView(R.id.coord_layout) CoordinatorLayout coordinatorLayout;
+  @BindView(R.id.coord_layout) public CoordinatorLayout coordinatorLayout;
 
-  @BindView(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.toolbar) public Toolbar toolbar;
 
-  @BindView(R.id.nav_view) NavigationView navigationView;
+  @BindView(R.id.nav_view) public NavigationView navigationView;
 
-  @BindView(R.id.drawer_layout) DrawerLayout drawer;
+  @BindView(R.id.drawer_layout) public DrawerLayout drawer;
 
-  @BindView(R.id.hits) Hits hits;
+  @BindView(R.id.hits) public Hits hits;
 
   private ActionBarDrawerToggle drawerToggle;
   private Searcher searcher;

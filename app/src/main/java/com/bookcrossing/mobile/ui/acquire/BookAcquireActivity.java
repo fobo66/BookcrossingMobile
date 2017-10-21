@@ -24,17 +24,17 @@ import io.reactivex.functions.Predicate;
 
 public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcquireView {
 
-  @InjectPresenter BookAcquirePresenter presenter;
+  @InjectPresenter public BookAcquirePresenter presenter;
 
-  @BindView(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.toolbar) public Toolbar toolbar;
 
-  @BindView(R.id.submit) Button submitButton;
+  @BindView(R.id.submit) public Button submitButton;
 
-  @BindView(R.id.scan_code) Button scanCodeButton;
+  @BindView(R.id.scan_code) public Button scanCodeButton;
 
-  @BindView(R.id.input_code) TextInputEditText codeInput;
+  @BindView(R.id.input_code) public TextInputEditText codeInput;
 
-  @BindView(R.id.coord_layout) CoordinatorLayout coordinatorLayout;
+  @BindView(R.id.coord_layout) public CoordinatorLayout coordinatorLayout;
 
   private String keyToAcquire;
   private boolean isInnerAppRequest;
@@ -78,6 +78,7 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
   @Override protected void onDestroy() {
     super.onDestroy();
     acquisitionDisposable.dispose();
+    scanDisposable.dispose();
   }
 
   @Override public void onIncorrectKey() {

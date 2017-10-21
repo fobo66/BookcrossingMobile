@@ -9,7 +9,7 @@ import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.ui.base.BaseActivity;
 
 public class AboutActivity extends BaseActivity {
-  @BindView(R.id.markdownView) MarkdownView markdownView;
+  @BindView(R.id.markdownView) public MarkdownView markdownView;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

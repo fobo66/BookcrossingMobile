@@ -27,9 +27,9 @@ import io.reactivex.functions.Consumer;
 public class ScanActivity extends BaseActivity
     implements ScanView, QRCodeReaderView.OnQRCodeReadListener {
 
-  @InjectPresenter ScanPresenter presenter;
+  @InjectPresenter public ScanPresenter presenter;
 
-  @BindView(R.id.qrContainer) ViewGroup container;
+  @BindView(R.id.qrContainer) public ViewGroup container;
 
   private QRCodeReaderView readerView;
   private PointsOverlayView pointsOverlayView;

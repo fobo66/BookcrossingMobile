@@ -19,9 +19,9 @@ public class StashFragment extends BaseFragment implements StashView {
 
   public static final int STASH_COLUMNS = 3;
 
-  @InjectPresenter StashPresenter presenter;
+  @InjectPresenter public StashPresenter presenter;
 
-  @BindView(R.id.stash_rv) RecyclerView rv;
+  @BindView(R.id.stash_rv) public RecyclerView rv;
 
   private FirebaseRecyclerAdapter<Boolean, StashedBookViewHolder> adapter;
 

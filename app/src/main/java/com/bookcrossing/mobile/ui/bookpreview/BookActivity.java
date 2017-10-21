@@ -39,25 +39,25 @@ import io.reactivex.functions.Consumer;
 
 public class BookActivity extends MvpAppCompatActivity implements BookView {
 
-  @InjectPresenter BookPresenter presenter;
+  @InjectPresenter public BookPresenter presenter;
 
-  @BindView(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.toolbar) public Toolbar toolbar;
 
-  @BindView(R.id.cover) ImageView cover;
+  @BindView(R.id.cover) public ImageView cover;
 
-  @BindView(R.id.author) TextView author;
+  @BindView(R.id.author) public TextView author;
 
-  @BindView(R.id.positionName) TextView position;
+  @BindView(R.id.positionName) public TextView position;
 
-  @BindView(R.id.book_desc) TextView description;
+  @BindView(R.id.book_desc) public TextView description;
 
-  @BindView(R.id.timestamp) RelativeTimeTextView wentFree;
+  @BindView(R.id.timestamp) public RelativeTimeTextView wentFree;
 
-  @BindView(R.id.placesHistory) RecyclerView placesHistory;
+  @BindView(R.id.placesHistory) public RecyclerView placesHistory;
 
-  @BindView(R.id.acquire_button) Button acquireButton;
+  @BindView(R.id.acquire_button) public Button acquireButton;
 
-  @BindView(R.id.fab_like) FloatingActionButton favorite;
+  @BindView(R.id.fab_like) public FloatingActionButton favorite;
 
   private String key;
   private Disposable fabSubscription;
@@ -130,6 +130,7 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
     super.onDestroy();
     fabSubscription.dispose();
     acquireSubscription.dispose();
+    positionNameSubscription.dispose();
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {

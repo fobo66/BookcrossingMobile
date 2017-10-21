@@ -20,11 +20,11 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 public class ProfileFragment extends BaseFragment implements ProfileView {
 
-  @InjectPresenter ProfilePresenter presenter;
+  @InjectPresenter public ProfilePresenter presenter;
 
-  @BindView(R.id.profile_image) ImageView profileImage;
+  @BindView(R.id.profile_image) public ImageView profileImage;
 
-  @BindView(R.id.acquiredBooksList) RecyclerView acquiredBooksList;
+  @BindView(R.id.acquiredBooksList) public RecyclerView acquiredBooksList;
 
   public ProfileFragment() {
     // Required empty public constructor

@@ -36,13 +36,13 @@ import java.util.List;
 
 public class MainFragment extends BaseFragment implements MainView {
 
-  @BindView(R.id.books_rv) RecyclerView rv;
+  @BindView(R.id.books_rv) public RecyclerView rv;
 
-  @BindView(R.id.addBookButton) FloatingActionButton fab;
+  @BindView(R.id.addBookButton) public FloatingActionButton fab;
 
-  @BindView(R.id.adView) AdView ad;
+  @BindView(R.id.adView) public AdView ad;
 
-  @InjectPresenter MainPresenter presenter;
+  @InjectPresenter public MainPresenter presenter;
 
   private FirebaseRecyclerAdapter<Book, BooksViewHolder> adapter;
 

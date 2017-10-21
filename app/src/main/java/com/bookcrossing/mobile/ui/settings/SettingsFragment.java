@@ -33,6 +33,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     delegate.setTitle(R.string.action_settings);
   }
 
+  @Override public void onResume() {
+    super.onResume();
+  }
+
   @Override public void onDetach() {
     super.onDetach();
     delegate.detachListener();

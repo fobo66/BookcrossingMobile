@@ -40,23 +40,24 @@ import java.util.concurrent.TimeUnit;
 import static android.app.Activity.RESULT_OK;
 
 public class BookCreateFragment extends BaseFragment implements BookCreateView {
-  @InjectPresenter BookCreatePresenter presenter;
 
-  @BindView(R.id.cover) ImageView cover;
+  @InjectPresenter public BookCreatePresenter presenter;
 
-  @BindView(R.id.input_name) TextView bookNameInput;
+  @BindView(R.id.cover) public ImageView cover;
 
-  @BindView(R.id.input_author) TextView bookAuthorInput;
+  @BindView(R.id.input_name) public TextView bookNameInput;
 
-  @BindView(R.id.input_position) TextView bookPositionInput;
+  @BindView(R.id.input_author) public TextView bookAuthorInput;
 
-  @BindView(R.id.input_description) TextView bookDescriptionInput;
+  @BindView(R.id.input_position) public TextView bookPositionInput;
 
-  @BindView(R.id.publish_book) Button publishButton;
+  @BindView(R.id.input_description) public TextView bookDescriptionInput;
 
-  @BindString(R.string.rendered_sticker_name) String stickerName;
+  @BindView(R.id.publish_book) public Button publishButton;
 
-  @BindString(R.string.rendered_sticker_description) String stickerDescription;
+  @BindString(R.string.rendered_sticker_name) public String stickerName;
+
+  @BindString(R.string.rendered_sticker_description) public String stickerDescription;
 
   private MaterialDialog coverChooserDialog;
 
@@ -187,7 +188,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
             String textFieldValue = event.view().getText().toString();
             return !textFieldValue.contains("*#[]?") && !textFieldValue.isEmpty();
           }
-        })
+        }).observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Consumer<TextViewAfterTextChangeEvent>() {
           @Override public void accept(@NonNull TextViewAfterTextChangeEvent event)
               throws Exception {
@@ -230,13 +231,9 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
   }
 
   @Override public void onNameChange() {
-    getActivity().runOnUiThread(new Runnable() {
-      @Override public void run() {
-        if (cover.getVisibility() == View.GONE) {
-          cover.setVisibility(View.VISIBLE);
-        }
-      }
-    });
+    if (cover.getVisibility() == View.GONE) {
+      cover.setVisibility(View.VISIBLE);
+    }
   }
 
   @Override public void onReleased(final String newKey) {
