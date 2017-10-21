@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply from: '../propertiesLoader.gradle'
+apply from: 'https://gist.githubusercontent.com/fobo66/17d5116b5c7bccf5f28036f401f3c09d/raw/ad621696be25a46919f7556207a104d1fe82b993/propertiesLoader.gradle'
 
 def keystoreProperties = loadProperties("keystore.properties")
 
