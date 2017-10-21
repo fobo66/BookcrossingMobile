@@ -8,7 +8,7 @@ def apiProperties = loadProperties("api.properties")
 android {
   dataBinding.enabled true
   compileSdkVersion 26
-  buildToolsVersion "26.0.0"
+  buildToolsVersion "26.0.2"
   signingConfigs {
     releaseConfig {
       keyAlias keystoreProperties['keyAlias']
@@ -63,7 +63,7 @@ dependencies {
   compile "com.arello-mobile:moxy-app-compat:$moxyVersion"
   provided "com.arello-mobile:moxy-compiler:$moxyVersion"
 
-  def firebaseVersion = "11.0.4"
+  def firebaseVersion = "11.4.2"
   compile "com.google.firebase:firebase-core:$firebaseVersion"
   compile "com.google.firebase:firebase-database:$firebaseVersion"
   compile "com.google.firebase:firebase-storage:$firebaseVersion"
@@ -99,7 +99,7 @@ dependencies {
 
   compile 'com.github.bumptech.glide:glide:3.8.0'
 
-  compile 'io.reactivex.rxjava2:rxjava:2.1.1'
+  compile 'io.reactivex.rxjava2:rxjava:2.1.5'
   compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
   compile 'com.github.miguelbcr:RxPaparazzo:0.5.4-2.x'
@@ -107,13 +107,13 @@ dependencies {
   compile 'com.firebaseui:firebase-ui:2.0.1'
   compile 'com.github.frangsierra:rx2firebase:1.1.3'
 
-  def butterknifeVersion = '8.7.0'
+  def butterknifeVersion = '8.8.1'
   compile "com.jakewharton:butterknife:$butterknifeVersion"
 
   compile 'com.android.support.constraint:constraint-layout:1.0.2'
   compile 'com.android.support:multidex:1.0.1'
 
-  compile 'com.afollestad.material-dialogs:core:0.9.4.5'
+  compile 'com.afollestad.material-dialogs:core:0.9.4.7'
   compile 'com.github.curioustechizen.android-ago:library:1.3.4'
 
   compile 'com.google.zxing:android-integration:3.3.0'

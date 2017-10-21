@@ -6,12 +6,12 @@ buildscript {
   }
   dependencies {
     classpath 'com.android.tools.build:gradle:2.3.3'
-    classpath 'com.google.gms:google-services:3.1.0'
+    classpath 'com.google.gms:google-services:3.1.1'
   }
 }
 
 ext {
-  supportLibraryVersion = '26.0.0'
+  supportLibraryVersion = '26.1.0'
 }
 
 allprojects {
