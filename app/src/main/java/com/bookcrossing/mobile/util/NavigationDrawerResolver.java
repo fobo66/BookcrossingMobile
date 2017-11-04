@@ -40,8 +40,7 @@ public class NavigationDrawerResolver {
       return navigationDrawerItems.get(itemId).newInstance();
     } catch (Exception e) {
       FirebaseCrash.report(e);
-      e.printStackTrace();
+      return new MainFragment();
     }
-    return new MainFragment();
   }
 }

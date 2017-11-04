@@ -1,6 +1,5 @@
 package com.bookcrossing.mobile.ui.bookpreview;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -189,11 +188,8 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
     new AlertDialog.Builder(this)
         .setMessage(R.string.failed_to_load_book_message)
         .setTitle(R.string.error_dialog_title)
-        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-          @Override public void onClick(DialogInterface dialogInterface, int i) {
-            startActivity(new Intent(BookActivity.this, MainActivity.class));
-          }
-        })
+        .setPositiveButton(R.string.ok, (dialogInterface, i) -> startActivity(
+            new Intent(BookActivity.this, MainActivity.class)))
         .show();
   }
 

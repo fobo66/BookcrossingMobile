@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.BindString;
 import butterknife.BindView;
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
@@ -24,16 +23,12 @@ import com.bookcrossing.mobile.ui.base.BaseFragment;
 import com.bumptech.glide.Glide;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
-import com.jakewharton.rxbinding2.widget.TextViewAfterTextChangeEvent;
 import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo;
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData;
 import com.miguelbcr.ui.rx_paparazzo2.entities.Response;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 
@@ -78,26 +73,18 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
 
     coverChooserDialog = new MaterialDialog.Builder(getContext()).title("Choose source")
         .items(R.array.cover_chooser_dialog_items)
-        .itemsCallback(new MaterialDialog.ListCallback() {
-          @Override public void onSelection(MaterialDialog dialog, View itemView, int position,
-              CharSequence text) {
-            Observable<Response<BookCreateFragment, FileData>> chooserObservable;
-            if (position == 0) {
-              chooserObservable = requestCoverImageFromGallery();
-            } else {
-              chooserObservable = requestCoverImageFromCamera();
-            }
-            subscriptions.add(
-                chooserObservable.subscribe(new Consumer<Response<BookCreateFragment, FileData>>() {
-                  @Override
-                  public void accept(@NonNull Response<BookCreateFragment, FileData> result)
-                      throws Exception {
-                    if (result.resultCode() == RESULT_OK) {
-                      result.targetUI().presenter.saveCoverTemporarily(result.data());
-                    }
-                  }
-                }));
+        .itemsCallback((dialog, itemView, position, text) -> {
+          Observable<Response<BookCreateFragment, FileData>> chooserObservable;
+          if (position == 0) {
+            chooserObservable = requestCoverImageFromGallery();
+          } else {
+            chooserObservable = requestCoverImageFromCamera();
           }
+          subscriptions.add(chooserObservable.subscribe(result -> {
+            if (result.resultCode() == RESULT_OK) {
+              result.targetUI().presenter.saveCoverTemporarily(result.data());
+            }
+          }));
         })
         .build();
     registerSubscriptions();
@@ -117,93 +104,48 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
   }
 
   private void registerPublishButtonClickSubscription() {
-    Disposable publishSubscription = RxView.clicks(publishButton).subscribe(new Consumer<Object>() {
-      @Override public void accept(@NonNull Object o) throws Exception {
-        publishBook();
-      }
-    });
+    Disposable publishSubscription = RxView.clicks(publishButton).subscribe(o -> publishBook());
     subscriptions.add(publishSubscription);
   }
 
   private void registerDescriptionInputSubscription() {
     Disposable descriptionSubscription = RxTextView.afterTextChangeEvents(bookDescriptionInput)
         .debounce(300, TimeUnit.MILLISECONDS)
-        .filter(new Predicate<TextViewAfterTextChangeEvent>() {
-          @Override public boolean test(@NonNull TextViewAfterTextChangeEvent event)
-              throws Exception {
-            return !event.view().getText().toString().contains("*#[]?");
-          }
-        })
-        .subscribe(new Consumer<TextViewAfterTextChangeEvent>() {
-          @Override public void accept(@NonNull TextViewAfterTextChangeEvent event)
-              throws Exception {
-            presenter.onDescriptionChange(event.view().getText().toString());
-          }
-        });
+        .filter(event -> !event.view().getText().toString().contains("*#[]?"))
+        .subscribe(event -> presenter.onDescriptionChange(event.view().getText().toString()));
     subscriptions.add(descriptionSubscription);
   }
 
   private void registerPositionInputSubscription() {
     Disposable positionSubscription = RxTextView.afterTextChangeEvents(bookPositionInput)
         .debounce(300, TimeUnit.MILLISECONDS)
-        .filter(new Predicate<TextViewAfterTextChangeEvent>() {
-          @Override public boolean test(@NonNull TextViewAfterTextChangeEvent event)
-              throws Exception {
-            return !event.view().getText().toString().contains("*#[]?");
-          }
-        })
-        .subscribe(new Consumer<TextViewAfterTextChangeEvent>() {
-          @Override public void accept(@NonNull TextViewAfterTextChangeEvent event)
-              throws Exception {
-            presenter.onPositionChange(event.view().getText().toString());
-          }
-        });
+        .filter(event -> !event.view().getText().toString().contains("*#[]?"))
+        .subscribe(event -> presenter.onPositionChange(event.view().getText().toString()));
     subscriptions.add(positionSubscription);
   }
 
   private void registerAuthorInputSubscription() {
     Disposable authorSubscription = RxTextView.afterTextChangeEvents(bookAuthorInput)
         .debounce(300, TimeUnit.MILLISECONDS)
-        .filter(new Predicate<TextViewAfterTextChangeEvent>() {
-          @Override public boolean test(@NonNull TextViewAfterTextChangeEvent event)
-              throws Exception {
-            return !event.view().getText().toString().contains("*#[]?");
-          }
-        })
-        .subscribe(new Consumer<TextViewAfterTextChangeEvent>() {
-          @Override public void accept(@NonNull TextViewAfterTextChangeEvent event)
-              throws Exception {
-            presenter.onAuthorChange(event.view().getText().toString());
-          }
-        });
+        .filter(event -> !event.view().getText().toString().contains("*#[]?"))
+        .subscribe(event -> presenter.onAuthorChange(event.view().getText().toString()));
     subscriptions.add(authorSubscription);
   }
 
   private void registerNameInputSubscription() {
     Disposable nameSubscription = RxTextView.afterTextChangeEvents(bookNameInput)
         .debounce(300, TimeUnit.MILLISECONDS)
-        .filter(new Predicate<TextViewAfterTextChangeEvent>() {
-          @Override public boolean test(@NonNull TextViewAfterTextChangeEvent event)
-              throws Exception {
-            String textFieldValue = event.view().getText().toString();
-            return !textFieldValue.contains("*#[]?") && !textFieldValue.isEmpty();
-          }
-        }).observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<TextViewAfterTextChangeEvent>() {
-          @Override public void accept(@NonNull TextViewAfterTextChangeEvent event)
-              throws Exception {
-            presenter.onNameChange(event.view().getText().toString());
-          }
-        });
+        .filter(event -> {
+          String textFieldValue = event.view().getText().toString();
+          return !textFieldValue.contains("*#[]?") && !textFieldValue.isEmpty();
+        })
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(event -> presenter.onNameChange(event.view().getText().toString()));
     subscriptions.add(nameSubscription);
   }
 
   private void registerCoverClickSubscription() {
-    Disposable coverSubscription = RxView.clicks(cover).subscribe(new Consumer<Object>() {
-      @Override public void accept(@NonNull Object o) throws Exception {
-        coverChooserDialog.show();
-      }
-    });
+    Disposable coverSubscription = RxView.clicks(cover).subscribe(o -> coverChooserDialog.show());
     subscriptions.add(coverSubscription);
   }
 
@@ -240,15 +182,10 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
     MaterialDialog dialog =
         new MaterialDialog.Builder(getContext()).title(R.string.book_saved_dialog_title)
             .customView(R.layout.book_sticker_layout, true)
-            .positiveText(R.string.ok)
-            .onPositive(new MaterialDialog.SingleButtonCallback() {
-              @Override
-              public void onClick(@android.support.annotation.NonNull MaterialDialog dialog,
-                  @android.support.annotation.NonNull DialogAction which) {
-                renderSticker(dialog.getCustomView().findViewById(R.id.sticker));
-                getActivity().getSupportFragmentManager().popBackStack();
-                listener.onBookReleased(newKey);
-              }
+            .positiveText(R.string.ok).onPositive((dialog1, which) -> {
+          renderSticker(dialog1.getCustomView().findViewById(R.id.sticker));
+          getActivity().getSupportFragmentManager().popBackStack();
+          listener.onBookReleased(newKey);
             })
             .build();
 
@@ -259,13 +196,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
   @Override public void onFailedToRelease() {
     new MaterialDialog.Builder(getContext()).content(R.string.failed_to_release_book_message)
         .title(R.string.error_dialog_title)
-        .positiveText(R.string.ok)
-        .onPositive(new MaterialDialog.SingleButtonCallback() {
-          @Override public void onClick(@android.support.annotation.NonNull MaterialDialog dialog,
-              @android.support.annotation.NonNull DialogAction which) {
-            dialog.dismiss();
-          }
-        })
+        .positiveText(R.string.ok).onPositive((dialog, which) -> dialog.dismiss())
         .show();
   }
 

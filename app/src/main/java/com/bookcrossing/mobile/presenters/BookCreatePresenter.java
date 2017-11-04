@@ -2,13 +2,10 @@ package com.bookcrossing.mobile.presenters;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Date;
 import com.bookcrossing.mobile.ui.create.BookCreateView;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageMetadata;
@@ -98,17 +95,13 @@ import static android.graphics.Color.WHITE;
     book.setCity(getCity());
     setPublicationDate();
     final DatabaseReference newBookReference = books().push();
-    newBookReference.setValue(book).addOnSuccessListener(new OnSuccessListener<Void>() {
-      @Override public void onSuccess(Void aVoid) {
-        String key = newBookReference.getKey();
-        uploadCover(key);
-        getViewState().onReleased(key);
-      }
-    }).addOnFailureListener(new OnFailureListener() {
-      @Override public void onFailure(@NonNull Exception e) {
-        FirebaseCrash.report(e);
-        getViewState().onFailedToRelease();
-      }
+    newBookReference.setValue(book).addOnSuccessListener(aVoid -> {
+      String key = newBookReference.getKey();
+      uploadCover(key);
+      getViewState().onReleased(key);
+    }).addOnFailureListener(e -> {
+      FirebaseCrash.report(e);
+      getViewState().onFailedToRelease();
     });
   }
 

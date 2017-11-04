@@ -38,8 +38,6 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import java.util.Collections;
 import org.json.JSONException;
@@ -177,11 +175,7 @@ public class MainActivity extends BaseActivity
         }
         return true;
       case R.id.menu_action_logout:
-        AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
-          @Override public void onComplete(@NonNull Task<Void> task) {
-            finish();
-          }
-        });
+        AuthUI.getInstance().signOut(this).addOnCompleteListener(task -> finish());
         return true;
     }
     return super.onOptionsItemSelected(item);

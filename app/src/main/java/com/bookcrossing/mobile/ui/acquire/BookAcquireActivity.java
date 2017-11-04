@@ -17,10 +17,7 @@ import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 import com.bookcrossing.mobile.ui.scan.ScanActivity;
 import com.bookcrossing.mobile.util.Constants;
 import com.jakewharton.rxbinding2.view.RxView;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Predicate;
 
 public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcquireView {
 
@@ -58,21 +55,12 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
       }
     }
 
-    acquisitionDisposable = RxView.clicks(submitButton).filter(new Predicate<Object>() {
-      @Override public boolean test(@NonNull Object o) throws Exception {
-        return presenter.isKeyValid(codeInput.getText().toString());
-      }
-    }).subscribe(new Consumer<Object>() {
-      @Override public void accept(@NonNull Object o) throws Exception {
-        presenter.handleAcquisition(codeInput.getText().toString());
-      }
-    });
+    acquisitionDisposable = RxView.clicks(submitButton)
+        .filter(o -> presenter.isKeyValid(codeInput.getText().toString()))
+        .subscribe(o -> presenter.handleAcquisition(codeInput.getText().toString()));
 
-    scanDisposable = RxView.clicks(scanCodeButton).subscribe(new Consumer<Object>() {
-      @Override public void accept(@NonNull Object o) throws Exception {
-        startActivity(new Intent(BookAcquireActivity.this, ScanActivity.class));
-      }
-    });
+    scanDisposable = RxView.clicks(scanCodeButton)
+        .subscribe(o -> startActivity(new Intent(BookAcquireActivity.this, ScanActivity.class)));
   }
 
   @Override protected void onDestroy() {

@@ -2,7 +2,6 @@ package com.bookcrossing.mobile.presenters;
 
 import android.content.SharedPreferences;
 import android.location.Address;
-import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import com.arellomobile.mvp.MvpPresenter;
@@ -16,10 +15,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
 import io.nlopez.smartlocation.rx.ObservableFactory;
 import io.reactivex.Observable;
-import io.reactivex.SingleSource;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import java.util.List;
 
 /**
@@ -101,13 +98,8 @@ public class BasePresenter<V extends MvpView> extends MvpPresenter<V> {
 
   public Observable<List<Address>> resolveUserCity() {
     return ObservableFactory.from(systemServicesWrapper.getLocation().location().oneFix())
-        .flatMapSingle(new Function<Location, SingleSource<List<Address>>>() {
-          @Override public SingleSource<List<Address>> apply(
-              @io.reactivex.annotations.NonNull Location location) throws Exception {
-            return ObservableFactory.fromLocation(
-                systemServicesWrapper.getApp().getApplicationContext(), location, 1);
-          }
-        });
+        .flatMapSingle(location -> ObservableFactory.fromLocation(
+            systemServicesWrapper.getApp().getApplicationContext(), location, 1));
   }
 
   public void saveCity(@io.reactivex.annotations.NonNull List<Address> addresses) {

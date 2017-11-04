@@ -1,9 +1,7 @@
 package com.bookcrossing.mobile.ui.map;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -22,10 +20,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 
 public class MapActivity extends BaseActivity
     implements MvpMapView, OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
@@ -74,21 +70,15 @@ public class MapActivity extends BaseActivity
   }
 
   private void requestUserLocation() {
-    subscriptions.add(
-        requestLocationPermission().flatMap(new Function<Boolean, ObservableSource<Location>>() {
-          @Override public ObservableSource<Location> apply(@NonNull Boolean granted)
-              throws Exception {
-            if (granted) {
-              return presenter.requestUserLocation();
-            } else {
-              return Observable.empty();
-            }
-          }
-        }).subscribe(new Consumer<Location>() {
-          @Override public void accept(@NonNull Location location) throws Exception {
-            onUserLocationReceived(new LatLng(location.getLatitude(), location.getLongitude()));
-          }
-        }));
+    subscriptions.add(requestLocationPermission().flatMap(granted -> {
+      if (granted) {
+        return presenter.requestUserLocation();
+      } else {
+        return Observable.empty();
+      }
+    })
+        .subscribe(location -> onUserLocationReceived(
+            new LatLng(location.getLatitude(), location.getLongitude()))));
   }
 
   public Observable<Boolean> requestLocationPermission() {
@@ -105,11 +95,7 @@ public class MapActivity extends BaseActivity
   @Override public void onErrorToLoadMarker() {
     new AlertDialog.Builder(this).setMessage(R.string.failed_to_load_books_message)
         .setTitle(R.string.error_dialog_title)
-        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-          @Override public void onClick(DialogInterface dialogInterface, int i) {
-            dialogInterface.dismiss();
-          }
-        })
+        .setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss())
         .show();
   }
 

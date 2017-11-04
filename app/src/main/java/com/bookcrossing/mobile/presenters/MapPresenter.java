@@ -11,9 +11,6 @@ import durdinapps.rxfirebase2.DataSnapshotMapper;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import io.nlopez.smartlocation.rx.ObservableFactory;
 import io.reactivex.Observable;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.BiFunction;
-import io.reactivex.functions.Consumer;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,31 +29,22 @@ import java.util.Map;
         RxFirebaseDatabase.observeValueEvent(places(), DataSnapshotMapper.mapOf(Coordinates.class))
             .zipWith(
                 RxFirebaseDatabase.observeValueEvent(books(), DataSnapshotMapper.mapOf(Book.class)),
-                new BiFunction<LinkedHashMap<String, Coordinates>, LinkedHashMap<String, Book>, Map<String, Coordinates>>() {
-                  @Override public Map<String, Coordinates> apply(
-                      @NonNull LinkedHashMap<String, Coordinates> places,
-                      @NonNull LinkedHashMap<String, Book> books) throws Exception {
-                    bookMap = books;
-                    coordinatesMap = new HashMap<>();
-                    Map<String, Coordinates> coordinatesWithBookTitlesMap = new LinkedHashMap<>();
-                    for (String key : places.keySet()) {
-                      coordinatesMap.put(places.get(key), key);
-                      coordinatesWithBookTitlesMap.put(books.get(key).getName(), places.get(key));
-                    }
-                    return coordinatesWithBookTitlesMap;
+                (places, books) -> {
+                  bookMap = books;
+                  coordinatesMap = new HashMap<>();
+                  Map<String, Coordinates> coordinatesWithBookTitlesMap = new LinkedHashMap<>();
+                  for (String key : places.keySet()) {
+                    coordinatesMap.put(places.get(key), key);
+                    coordinatesWithBookTitlesMap.put(books.get(key).getName(), places.get(key));
                   }
-                })
-            .subscribe(new Consumer<Map<String, Coordinates>>() {
-              @Override public void accept(@NonNull Map<String, Coordinates> places) {
-                for (String key : places.keySet()) {
-                  getViewState().onBookMarkerLoaded(key, places.get(key));
-                }
+                  return coordinatesWithBookTitlesMap;
+                }).subscribe(places -> {
+          for (String key : places.keySet()) {
+            getViewState().onBookMarkerLoaded(key, places.get(key));
               }
-            }, new Consumer<Throwable>() {
-              @Override public void accept(@NonNull Throwable throwable) throws Exception {
-                FirebaseCrash.report(throwable);
-                getViewState().onErrorToLoadMarker();
-              }
+        }, throwable -> {
+          FirebaseCrash.report(throwable);
+          getViewState().onErrorToLoadMarker();
             }));
   }
 

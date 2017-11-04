@@ -1,7 +1,6 @@
 package com.bookcrossing.mobile.ui.main;
 
 import android.Manifest;
-import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -26,13 +25,8 @@ import com.google.android.gms.ads.AdView;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import java.util.List;
 
 public class MainFragment extends BaseFragment implements MainView {
 
@@ -74,11 +68,7 @@ public class MainFragment extends BaseFragment implements MainView {
 
     setupBookList();
 
-    subscriptions.add(RxView.clicks(fab).subscribe(new Consumer<Object>() {
-      @Override public void accept(@NonNull Object o) throws Exception {
-        listener.onBookAdd();
-      }
-    }));
+    subscriptions.add(RxView.clicks(fab).subscribe(o -> listener.onBookAdd()));
 
     loadAds();
   }
@@ -108,22 +98,17 @@ public class MainFragment extends BaseFragment implements MainView {
 
   private void resolveCity() {
     permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
-        .flatMap(new Function<Boolean, ObservableSource<List<Address>>>() {
-          @Override public ObservableSource<List<Address>> apply(@NonNull Boolean granted)
-              throws Exception {
-            if (granted) {
-              return presenter.resolveUserCity();
-            }
-            return Observable.empty();
+        .flatMap(granted -> {
+          if (granted) {
+            return presenter.resolveUserCity();
           }
+          return Observable.empty();
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<List<Address>>() {
-          @Override public void accept(@NonNull List<Address> addresses) throws Exception {
-            if (!addresses.isEmpty()) {
-              presenter.saveCity(addresses);
-            } else {
-              askUserToProvideDefaultCity();
-            }
+        .subscribe(addresses -> {
+          if (!addresses.isEmpty()) {
+            presenter.saveCity(addresses);
+          } else {
+            askUserToProvideDefaultCity();
           }
         });
   }
@@ -132,13 +117,7 @@ public class MainFragment extends BaseFragment implements MainView {
     new MaterialDialog.Builder(getContext()).title(R.string.enter_city_title)
         .content(R.string.enter_city_content)
         .input(R.string.city_hint, R.string.default_city, false,
-            new MaterialDialog.InputCallback() {
-              @Override
-              public void onInput(@android.support.annotation.NonNull MaterialDialog dialog,
-                  CharSequence input) {
-                presenter.saveCity(input.toString());
-              }
-            })
+            (dialog, input) -> presenter.saveCity(input.toString()))
         .show();
   }
 }
