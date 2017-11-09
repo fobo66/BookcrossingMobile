@@ -7,8 +7,8 @@ def apiProperties = loadProperties("api.properties")
 
 android {
   dataBinding.enabled true
-  compileSdkVersion 26
-  buildToolsVersion "26.0.2"
+  compileSdkVersion 27
+  buildToolsVersion "27.0.1"
   signingConfigs {
     releaseConfig {
       keyAlias keystoreProperties['keyAlias']
@@ -20,7 +20,7 @@ android {
   defaultConfig {
     applicationId "com.bookcrossing.mobile"
     minSdkVersion 16
-    targetSdkVersion 26
+    targetSdkVersion 27
     versionCode 2
     versionName "1.0.1"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -126,7 +126,7 @@ dependencies {
 
   implementation 'com.github.tiagohm.MarkdownView:library:0.17.0'
 
-  implementation 'com.algolia:instantsearch-android:0.8.0'
+  implementation 'com.algolia:instantsearch-android:1.1.4'
 
   testImplementation 'junit:junit:4.12'
 

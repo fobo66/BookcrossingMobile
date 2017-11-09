@@ -14,16 +14,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.algolia.instantsearch.helpers.InstantSearch;
 import com.algolia.instantsearch.helpers.Searcher;
-import com.algolia.instantsearch.ui.InstantSearch;
-import com.algolia.instantsearch.ui.utils.ItemClickSupport;
 import com.algolia.instantsearch.ui.views.Hits;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.ui.base.BaseActivity;
@@ -68,15 +66,13 @@ public class MainActivity extends BaseActivity
     setSupportActionBar(toolbar);
     drawerToggle = setupDrawerToggle();
     drawer.addDrawerListener(drawerToggle);
-    hits.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-      @Override public void onItemClick(RecyclerView recyclerView, int position, View v) {
-        try {
-          hits.setVisibility(View.GONE);
-          onBookSelected(hits.get(position).getString("objectID"));
-        } catch (JSONException e) {
-          Snackbar.make(coordinatorLayout, "Cannot open book info", Snackbar.LENGTH_SHORT).show();
-          e.printStackTrace();
-        }
+    hits.setOnItemClickListener((recyclerView, position, v) -> {
+      try {
+        hits.setVisibility(View.GONE);
+        onBookSelected(hits.get(position).getString("objectID"));
+      } catch (JSONException e) {
+        Snackbar.make(coordinatorLayout, "Cannot open book info", Snackbar.LENGTH_SHORT).show();
+        e.printStackTrace();
       }
     });
     navigationView.setNavigationItemSelectedListener(this);
@@ -126,8 +122,9 @@ public class MainActivity extends BaseActivity
   }
 
   private void setupSearch() {
-    searcher = new Searcher(getString(R.string.algolia_app_id), getString(R.string.algolia_api_key),
-        getString(R.string.algolia_index_name));
+    searcher =
+        Searcher.create(getString(R.string.algolia_app_id), getString(R.string.algolia_api_key),
+            getString(R.string.algolia_index_name));
     instantSearch = new InstantSearch(hits, searcher);
   }
 
