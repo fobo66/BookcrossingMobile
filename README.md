@@ -5,7 +5,7 @@
 
 This is an Android app for exchanging books. You can download it free on [Google Play](https://play.google.com/store/apps/details?id=com.bookcrossing.mobile).
 
-There is a global Bookcrossing website that gather community since 2001, but we decided to write our 
+There is a [global Bookcrossing website](http://www.bookcrossing.com/) that gather community since 2001, but we decided to write our 
 mobile-first solution separately of the main project due to it's bad API design.
 
 We use today's most popular and powerful instruments in our app, such as Firebase, Moxy MVP framework,
