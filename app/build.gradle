@@ -8,7 +8,7 @@ def apiProperties = loadProperties("api.properties")
 android {
   dataBinding.enabled true
   compileSdkVersion 27
-  buildToolsVersion "27.0.1"
+  buildToolsVersion "27.0.3"
   signingConfigs {
     releaseConfig {
       keyAlias keystoreProperties['keyAlias']
@@ -22,7 +22,7 @@ android {
     minSdkVersion 16
     targetSdkVersion 27
     versionCode 2
-    versionName "1.0.1"
+    versionName "1.1.0"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     multiDexEnabled true
   }
@@ -62,7 +62,7 @@ dependencies {
   implementation "com.arello-mobile:moxy-android:$moxyVersion"
   implementation "com.arello-mobile:moxy-app-compat:$moxyVersion"
 
-  def firebaseVersion = "11.4.2"
+  def firebaseVersion = "11.8.0"
   implementation "com.google.firebase:firebase-core:$firebaseVersion"
   implementation "com.google.firebase:firebase-database:$firebaseVersion"
   implementation "com.google.firebase:firebase-storage:$firebaseVersion"
