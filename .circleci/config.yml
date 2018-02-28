@@ -15,8 +15,7 @@ jobs:
     # CircleCI 2.0 does not support environment variables that refer to each other the same way as 1.0 did.
     # If any of these refer to each other, rewrite them so that they don't or see https://circleci.com/docs/2.0/env-vars/#interpolating-environment-variables-to-set-other-environment-variables .
     environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+      JVM_OPTS: -Xmx3200m
     # In CircleCI 1.0 we used a pre-configured image with a large number of languages and other packages.
     # In CircleCI 2.0 you can now specify your own image, or use one of our pre-configured images.
     # The following configuration line tells CircleCI to use the specified docker image as the runtime environment for you job.
@@ -27,8 +26,7 @@ jobs:
     # To see the list of pre-built images that CircleCI provides for most common languages see
     # https://circleci.com/docs/2.0/circleci-images/
     docker:
-    - image: circleci/build-image:ubuntu-14.04-XXL-upstart-1189-5614f37
-      command: /sbin/init
+    - image: circleci/android:api-27-alpha
     steps:
     # Machine Setup
     #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
@@ -42,53 +40,19 @@ jobs:
     #   This would typically go in either a build or a build-and-test job when using workflows
     # Restore the dependency cache
     - restore_cache:
-        keys:
-        # This branch if available
-        - v1-dep-{{ .Branch }}-
-        # Default branch if not
-        - v1-dep-master-
-        # Any branch if there are none on the default branch - this should be unnecessary if you have your default branch configured correctly
-        - v1-dep-
-    # This is based on your 1.0 configuration file or project settings
-    - run: if [ ! -d "/usr/local/android-sdk-linux/platforms/android-27" ]; then echo y | android update sdk --no-ui --all --filter "android-27"; fi
-    - run: if [ ! -d "/usr/local/android-sdk-linux/build-tools/27.0.3" ]; then echo y | android update sdk --no-ui --all --filter "build-tools-27.0.3"; fi
-    - run: if [ ! -d "/usr/local/android-sdk-linux/extras/android/m2repository/com/android/support/design/25.3.1" ]; then echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"; fi
-    - run: echo y | android update sdk --no-ui --all --filter "tool,extra-android-support,extra-google-google_play_services,extra-google-m2repository"
-    - run: echo y | $ANDROID_HOME/tools/bin/sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
-    - run: cp keystore.properties.example keystore.properties
-    - run: cp api.properties.example api.properties
-    - run: cp app/google-services.json.example app/google-services.json
-    # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.
-    - run: if [ -a ./gradlew ]; then gradlew dependencies; else gradle dependencies; fi
-    # Save dependency cache
+        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+    - run:
+        name: Download Dependencies
+        command: ./gradlew androidDependencies
     - save_cache:
-        key: v1-dep-{{ .Branch }}-{{ epoch }}
         paths:
-        # This is a broad list of cache paths to include many possible development environments
-        # You can probably delete some of these entries
-        - vendor/bundle
-        - ~/virtualenvs
-        - ~/.m2
-        - ~/.ivy2
-        - ~/.bundle
-        - ~/.go_workspace
-        - ~/.gradle
-        - ~/.cache/bower
-        # These cache paths were specified in the 1.0 config
-        - /usr/local/android-sdk-linux/platforms/android-27
-        - /usr/local/android-sdk-linux/build-tools/27.0.3
-        - /usr/local/android-sdk-linux/extras/android/m2repository
-    # Test
-    #   This would typically be a build job when using workflows, possibly combined with build
-    # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.
-    - run: if [ -a ./gradlew ]; then gradlew test; else gradle test; fi
-    # Teardown
-    #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
-    # Save test results
+            - ~/.gradle
+        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+    - run:
+        name: Run Tests
+        command: ./gradlew lint test
+    - store_artifacts:
+        path: app/build/reports
+        destination: reports
     - store_test_results:
-        path: /tmp/circleci-test-results
-    # Save artifacts
-    - store_artifacts:
-        path: /tmp/circleci-artifacts
-    - store_artifacts:
-        path: /tmp/circleci-test-results
+        path: app/build/test-results
