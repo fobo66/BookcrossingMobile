@@ -25,6 +25,12 @@
     <init>(java.lang.Throwable);
 }
 
+# Unknown
+-dontwarn org.objectweb.asm.**
+-dontwarn net.minidev.asm.**
+-dontwarn org.codehaus.jettison.**
+-dontwarn com.jayway.jsonpath.**
+
 # Support library
 -keep public class android.support.v7.widget.** { *; }
 -keep public class android.support.v7.internal.widget.** { *; }
@@ -65,3 +71,11 @@
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
+
+# Glide
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}

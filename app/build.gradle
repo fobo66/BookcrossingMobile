@@ -25,7 +25,7 @@ android {
     minSdkVersion 16
     targetSdkVersion 27
     versionCode 2
-    versionName "1.1.0"
+    versionName "1.2.0"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     multiDexEnabled true
   }
@@ -34,7 +34,7 @@ android {
       resValue "string", "google_maps_key", apiProperties['google_maps_key']
     }
     release {
-      minifyEnabled true
+      minifyEnabled false // fuck proguard
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       signingConfig signingConfigs.releaseConfig
 
@@ -129,7 +129,7 @@ dependencies {
 
   implementation 'com.github.tiagohm.MarkdownView:library:0.17.0'
 
-  implementation 'com.algolia:instantsearch-android:1.1.4'
+  implementation 'com.algolia:instantsearch-android:1.8.0'
 
   implementation 'com.crashlytics.sdk.android:crashlytics:2.9.2'
 
