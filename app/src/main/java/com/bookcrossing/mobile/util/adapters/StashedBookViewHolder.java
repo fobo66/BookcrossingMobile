@@ -1,6 +1,5 @@
 package com.bookcrossing.mobile.util.adapters;
 
-import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import butterknife.OnClick;
@@ -22,12 +21,8 @@ public class StashedBookViewHolder extends BooksViewHolder {
   }
 
   @OnLongClick(R.id.cover) public boolean onLongClick() {
-    new AlertDialog.Builder(itemView.getContext())
-        .setItems(new String[]{"Remove from stash"}, new DialogInterface.OnClickListener() {
-          @Override public void onClick(DialogInterface dialogInterface, int i) {
-            itemPresenter.unstashCurrentBook(key);
-          }
-        })
+    new AlertDialog.Builder(itemView.getContext()).setItems(new String[] { "Remove from stash" },
+        (dialogInterface, i) -> itemPresenter.unstashCurrentBook(key))
         .show();
     return true;
   }

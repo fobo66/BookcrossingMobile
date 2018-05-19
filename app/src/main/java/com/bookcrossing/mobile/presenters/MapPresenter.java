@@ -5,8 +5,8 @@ import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.ui.map.MvpMapView;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.crash.FirebaseCrash;
 import durdinapps.rxfirebase2.DataSnapshotMapper;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import io.nlopez.smartlocation.rx.ObservableFactory;
@@ -43,7 +43,7 @@ import java.util.Map;
             getViewState().onBookMarkerLoaded(key, places.get(key));
               }
         }, throwable -> {
-          FirebaseCrash.report(throwable);
+          Crashlytics.logException(throwable);
           getViewState().onErrorToLoadMarker();
             }));
   }

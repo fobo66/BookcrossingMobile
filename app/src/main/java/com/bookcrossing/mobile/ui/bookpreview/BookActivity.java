@@ -2,14 +2,17 @@ package com.bookcrossing.mobile.ui.bookpreview;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,20 +24,20 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Coordinates;
+import com.bookcrossing.mobile.modules.GlideApp;
 import com.bookcrossing.mobile.presenters.BookPresenter;
 import com.bookcrossing.mobile.ui.main.MainActivity;
 import com.bookcrossing.mobile.ui.map.MapActivity;
 import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.adapters.PlacesHistoryViewHolder;
-import com.bumptech.glide.Glide;
+import com.crashlytics.android.Crashlytics;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
-import com.google.firebase.crash.FirebaseCrash;
 import com.jakewharton.rxbinding2.view.RxView;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class BookActivity extends MvpAppCompatActivity implements BookView {
 
@@ -85,23 +88,12 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
 
     setupPlacesHistory();
 
-    fabSubscription = RxView.clicks(favorite).subscribe(new Consumer<Object>() {
-      @Override public void accept(@NonNull Object o) throws Exception {
-        presenter.handleBookStashing(key);
-      }
-    });
+    fabSubscription = RxView.clicks(favorite).subscribe(o -> presenter.handleBookStashing(key));
 
-    acquireSubscription = RxView.clicks(acquireButton).subscribe(new Consumer<Object>() {
-      @Override public void accept(@NonNull Object o) throws Exception {
-        handleAcquiring();
-      }
-    });
+    acquireSubscription = RxView.clicks(acquireButton).subscribe(o -> handleAcquiring());
 
-    positionNameSubscription = RxView.clicks(position).subscribe(new Consumer<Object>() {
-      @Override public void accept(@NonNull Object o) throws Exception {
-        goToPosition(currentBookPosition);
-      }
-    });
+    positionNameSubscription =
+        RxView.clicks(position).subscribe(o -> goToPosition(currentBookPosition));
   }
 
   public void goToPosition(Coordinates coordinates) {
@@ -113,16 +105,24 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
   private void setupPlacesHistory() {
     RecyclerView.LayoutManager llm = new LinearLayoutManager(this);
     placesHistory.setLayoutManager(llm);
-    adapter = new FirebaseRecyclerAdapter<Coordinates, PlacesHistoryViewHolder>(Coordinates.class,
-        R.layout.places_history_list_item, PlacesHistoryViewHolder.class,
-        presenter.getPlacesHistory(key)) {
+    adapter = new FirebaseRecyclerAdapter<Coordinates, PlacesHistoryViewHolder>(
+        new FirebaseRecyclerOptions.Builder<Coordinates>().setQuery(presenter.getPlacesHistory(key),
+            Coordinates.class).build()) {
+      @NonNull @Override
+      public PlacesHistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+            .inflate(R.layout.places_history_list_item, parent, false);
+        return new PlacesHistoryViewHolder(view);
+      }
+
       @Override
-      protected void populateViewHolder(PlacesHistoryViewHolder viewHolder, Coordinates coordinates,
-          int position) {
-        viewHolder.bind(this.getRef(position).getKey(), coordinates);
+      protected void onBindViewHolder(@NonNull PlacesHistoryViewHolder holder, int position,
+          @NonNull Coordinates model) {
+        holder.bind(this.getRef(position).getKey(), model);
       }
     };
     placesHistory.setAdapter(adapter);
+    adapter.startListening();
   }
 
   @Override protected void onDestroy() {
@@ -130,6 +130,7 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
     fabSubscription.dispose();
     acquireSubscription.dispose();
     positionNameSubscription.dispose();
+    adapter.stopListening();
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -153,8 +154,7 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
   }
 
   private void reportAbuse() {
-    FirebaseCrash.report(
-        new Exception(String.format("Users complaining to book %s. Consider to check it", key)));
+    Crashlytics.log(String.format("Users complaining to book %s. Consider to check it", key));
     Toast.makeText(this, "Your report was sent", Toast.LENGTH_SHORT).show();
     reportWasSent = true;
   }
@@ -167,10 +167,8 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
 
   @Override public void onBookLoaded(Book book) {
     toolbar.setTitle(book.getName());
-    Glide.with(this)
-        .using(new FirebaseImageLoader())
-        .load(presenter.resolveCover(key))
-        .crossFade()
+    GlideApp.with(this)
+        .load(presenter.resolveCover(key)).transition(withCrossFade())
         .placeholder(R.drawable.ic_book_cover_placeholder)
         .thumbnail(0.6f)
         .into(cover);
@@ -185,8 +183,7 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
   }
 
   @Override public void onErrorToLoadBook() {
-    new AlertDialog.Builder(this)
-        .setMessage(R.string.failed_to_load_book_message)
+    new AlertDialog.Builder(this).setMessage(R.string.failed_to_load_book_message)
         .setTitle(R.string.error_dialog_title)
         .setPositiveButton(R.string.ok, (dialogInterface, i) -> startActivity(
             new Intent(BookActivity.this, MainActivity.class)))

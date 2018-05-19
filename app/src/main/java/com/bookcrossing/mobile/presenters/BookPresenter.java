@@ -3,7 +3,7 @@ package com.bookcrossing.mobile.presenters;
 import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.ui.bookpreview.BookView;
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
@@ -15,7 +15,7 @@ import durdinapps.rxfirebase2.RxFirebaseDatabase;
   public void subscribeToBookReference(String key) {
     unsubscribeOnDestroy(RxFirebaseDatabase.observeSingleValueEvent(books().child(key), Book.class)
         .subscribe(book -> getViewState().onBookLoaded(book), throwable -> {
-          FirebaseCrash.report(throwable);
+          Crashlytics.logException(throwable);
           getViewState().onErrorToLoadBook();
         }));
   }

@@ -1,6 +1,7 @@
 package com.bookcrossing.mobile.ui.profile;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,11 +13,14 @@ import butterknife.BindView;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Book;
+import com.bookcrossing.mobile.modules.GlideApp;
 import com.bookcrossing.mobile.presenters.ProfilePresenter;
 import com.bookcrossing.mobile.ui.base.BaseFragment;
 import com.bookcrossing.mobile.util.adapters.AcquiredBooksViewHolder;
-import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class ProfileFragment extends BaseFragment implements ProfileView {
 
@@ -47,31 +51,44 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
     if (presenter.isAuthenticated()) {
       setupAcquiredBookList();
 
-      Glide.with(this).fromUri().crossFade().load(presenter.getPhotoUrl()).into(profileImage);
+      GlideApp.with(this)
+          .load(presenter.getPhotoUrl())
+          .transition(withCrossFade())
+          .into(profileImage);
     } else {
       authenticate();
     }
   }
 
+  //        R.layout.acquired_book_list_item, AcquiredBooksViewHolder.class,
   private void setupAcquiredBookList() {
     LinearLayoutManager llm = new LinearLayoutManager(getActivity());
     acquiredBooksList.setLayoutManager(llm);
-    adapter = new FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder>(Book.class,
-        R.layout.acquired_book_list_item, AcquiredBooksViewHolder.class,
-        presenter.getAcquiredBooks()) {
-      @Override protected void populateViewHolder(AcquiredBooksViewHolder viewHolder, Book model,
-          int position) {
-        viewHolder.setKey(this.getRef(position).getKey());
-        viewHolder.bind(model);
+    adapter = new FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder>(
+        new FirebaseRecyclerOptions.Builder<Book>().setQuery(presenter.getAcquiredBooks(),
+            Book.class).build()) {
+      @NonNull @Override
+      public AcquiredBooksViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+            .inflate(R.layout.acquired_book_list_item, parent, false);
+        return new AcquiredBooksViewHolder(view);
+      }
+
+      @Override
+      protected void onBindViewHolder(@NonNull AcquiredBooksViewHolder holder, int position,
+          @NonNull Book model) {
+        holder.setKey(this.getRef(position).getKey());
+        holder.bind(model);
       }
     };
     acquiredBooksList.setAdapter(adapter);
+    adapter.startListening();
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
     if (presenter.isAuthenticated()) {
-      adapter.cleanup();
+      adapter.stopListening();
     }
   }
 }

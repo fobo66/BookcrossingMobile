@@ -8,7 +8,7 @@ import com.bookcrossing.mobile.ui.main.MainFragment;
 import com.bookcrossing.mobile.ui.profile.ProfileFragment;
 import com.bookcrossing.mobile.ui.settings.SettingsFragment;
 import com.bookcrossing.mobile.ui.stash.StashFragment;
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 
 /**
  * (c) 2017 Andrey Mukamolow <fobo66@protonmail.com>
@@ -39,7 +39,7 @@ public class NavigationDrawerResolver {
     try {
       return navigationDrawerItems.get(itemId).newInstance();
     } catch (Exception e) {
-      FirebaseCrash.report(e);
+      Crashlytics.logException(e);
       return new MainFragment();
     }
   }

@@ -46,7 +46,7 @@ public class BooksAdapter extends MvpBaseAdapter {
   }
 
   public void clear() {
-    items = Collections.emptyList();
+    items.clear();
     notifyDataSetChanged();
   }
 

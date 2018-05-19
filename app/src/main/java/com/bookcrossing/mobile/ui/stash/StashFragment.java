@@ -15,6 +15,7 @@ import com.bookcrossing.mobile.presenters.StashPresenter;
 import com.bookcrossing.mobile.ui.base.BaseFragment;
 import com.bookcrossing.mobile.util.adapters.StashedBookViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 
 public class StashFragment extends BaseFragment implements StashView {
 
@@ -49,20 +50,34 @@ public class StashFragment extends BaseFragment implements StashView {
     }
   }
 
+  @Override public void onDestroyView() {
+    super.onDestroyView();
+    adapter.stopListening();
+  }
+
   private void setupStash() {
     RecyclerView.LayoutManager gridLayoutManager =
         new GridLayoutManager(getActivity(), STASH_COLUMNS);
     rv.setLayoutManager(gridLayoutManager);
 
-    adapter = new FirebaseRecyclerAdapter<Boolean, StashedBookViewHolder>(Boolean.class,
-        R.layout.stash_item, StashedBookViewHolder.class, presenter.getStashedBooks()) {
-      @Override protected void populateViewHolder(StashedBookViewHolder viewHolder, Boolean model,
-          int position) {
-        viewHolder.setKey(this.getRef(position).getKey());
-        viewHolder.load();
+    adapter = new FirebaseRecyclerAdapter<Boolean, StashedBookViewHolder>(
+        new FirebaseRecyclerOptions.Builder<Boolean>().setQuery(presenter.getStashedBooks(),
+            Boolean.class).build()) {
+      @NonNull @Override
+      public StashedBookViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view =
+            LayoutInflater.from(parent.getContext()).inflate(R.layout.stash_item, parent, false);
+        return new StashedBookViewHolder(view);
+      }
+
+      @Override protected void onBindViewHolder(@NonNull StashedBookViewHolder holder, int position,
+          @NonNull Boolean model) {
+        holder.setKey(this.getRef(position).getKey());
+        holder.load();
       }
     };
 
     rv.setAdapter(adapter);
+    adapter.startListening();
   }
 }

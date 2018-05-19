@@ -18,9 +18,9 @@ import butterknife.BindView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
+import com.bookcrossing.mobile.modules.GlideApp;
 import com.bookcrossing.mobile.presenters.BookCreatePresenter;
 import com.bookcrossing.mobile.ui.base.BaseFragment;
-import com.bumptech.glide.Glide;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo;
@@ -33,6 +33,7 @@ import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 
 import static android.app.Activity.RESULT_OK;
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class BookCreateFragment extends BaseFragment implements BookCreateView {
 
@@ -169,7 +170,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
   }
 
   @Override public void onCoverChosen(Uri coverUri) {
-    Glide.with(this).fromUri().load(coverUri).crossFade().into(cover);
+    GlideApp.with(this).load(coverUri).transition(withCrossFade()).into(cover);
   }
 
   @Override public void onNameChange() {
@@ -182,10 +183,11 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
     MaterialDialog dialog =
         new MaterialDialog.Builder(getContext()).title(R.string.book_saved_dialog_title)
             .customView(R.layout.book_sticker_layout, true)
-            .positiveText(R.string.ok).onPositive((dialog1, which) -> {
-          renderSticker(dialog1.getCustomView().findViewById(R.id.sticker));
-          getActivity().getSupportFragmentManager().popBackStack();
-          listener.onBookReleased(newKey);
+            .positiveText(R.string.ok)
+            .onPositive((dialog1, which) -> {
+              renderSticker(dialog1.getCustomView().findViewById(R.id.sticker));
+              getActivity().getSupportFragmentManager().popBackStack();
+              listener.onBookReleased(newKey);
             })
             .build();
 
@@ -196,7 +198,8 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
   @Override public void onFailedToRelease() {
     new MaterialDialog.Builder(getContext()).content(R.string.failed_to_release_book_message)
         .title(R.string.error_dialog_title)
-        .positiveText(R.string.ok).onPositive((dialog, which) -> dialog.dismiss())
+        .positiveText(R.string.ok)
+        .onPositive((dialog, which) -> dialog.dismiss())
         .show();
   }
 

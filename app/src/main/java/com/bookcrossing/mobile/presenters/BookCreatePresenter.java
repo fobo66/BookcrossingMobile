@@ -6,7 +6,7 @@ import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Date;
 import com.bookcrossing.mobile.ui.create.BookCreateView;
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.zxing.BarcodeFormat;
@@ -100,7 +100,7 @@ import static android.graphics.Color.WHITE;
       uploadCover(key);
       getViewState().onReleased(key);
     }).addOnFailureListener(e -> {
-      FirebaseCrash.report(e);
+      Crashlytics.logException(e);
       getViewState().onFailedToRelease();
     });
   }
@@ -117,7 +117,7 @@ import static android.graphics.Color.WHITE;
       return encodeBookAsQrCode(buildBookUri(key).toString(), BarcodeFormat.QR_CODE, 450, 450);
     } catch (WriterException e) {
       e.printStackTrace();
-      FirebaseCrash.report(e);
+      Crashlytics.logException(e);
       return null;
     }
   }

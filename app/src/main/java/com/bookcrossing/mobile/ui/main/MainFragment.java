@@ -2,6 +2,7 @@ package com.bookcrossing.mobile.ui.main;
 
 import android.Manifest;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import com.bookcrossing.mobile.presenters.MainPresenter;
 import com.bookcrossing.mobile.ui.base.BaseFragment;
 import com.bookcrossing.mobile.util.adapters.BooksViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -49,14 +51,14 @@ public class MainFragment extends BaseFragment implements MainView {
   public MainFragment() {
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+  @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     return inflater.inflate(R.layout.fragment_main, container, false);
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    adapter.cleanup();
+    adapter.stopListening();
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -81,23 +83,31 @@ public class MainFragment extends BaseFragment implements MainView {
   private void setupBookList() {
     RecyclerView.LayoutManager llm = new LinearLayoutManager(getActivity());
     rv.setLayoutManager(llm);
-    adapter =
-        new FirebaseRecyclerAdapter<Book, BooksViewHolder>(Book.class, R.layout.book_list_item_main,
-            BooksViewHolder.class, presenter.getBooks()) {
-          @Override
-          protected void populateViewHolder(BooksViewHolder viewHolder, Book model, int position) {
-            viewHolder.setKey(this.getRef(position).getKey());
-            viewHolder.bind(model);
-          }
-        };
+    adapter = new FirebaseRecyclerAdapter<Book, BooksViewHolder>(
+        new FirebaseRecyclerOptions.Builder<Book>().setQuery(presenter.getBooks(), Book.class)
+            .build()) {
+      @NonNull @Override
+      public BooksViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+            .inflate(R.layout.book_list_item_main, parent, false);
+        return new BooksViewHolder(view);
+      }
+
+      @Override protected void onBindViewHolder(@NonNull BooksViewHolder holder, int position,
+          @NonNull Book model) {
+        holder.setKey(this.getRef(position).getKey());
+        holder.bind(model);
+      }
+    };
 
     rv.setAdapter(adapter);
     SnapHelper snapHelper = new LinearSnapHelper();
     snapHelper.attachToRecyclerView(rv);
+    adapter.startListening();
   }
 
   private void resolveCity() {
-    permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
+    subscriptions.add(permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
         .flatMap(granted -> {
           if (granted) {
             return presenter.resolveUserCity();
@@ -110,7 +120,7 @@ public class MainFragment extends BaseFragment implements MainView {
           } else {
             askUserToProvideDefaultCity();
           }
-        });
+        }));
   }
 
   private void askUserToProvideDefaultCity() {

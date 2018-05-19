@@ -13,11 +13,12 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenterTag;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Book;
+import com.bookcrossing.mobile.modules.GlideApp;
 import com.bookcrossing.mobile.presenters.BookItemPresenter;
 import com.bookcrossing.mobile.ui.bookpreview.BookItemView;
 import com.bookcrossing.mobile.util.listeners.BookListener;
-import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * Reusable ViewHolder. As for me, book representation across all RecyclerViews
@@ -67,11 +68,9 @@ public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
   }
 
   protected void loadCover() {
-    Glide.with(itemView.getContext())
-        .using(new FirebaseImageLoader())
+    GlideApp.with(itemView.getContext())
         .load(itemPresenter.resolveCover(key))
-        .crossFade()
-        .placeholder(R.drawable.ic_book_cover_placeholder)
+        .placeholder(R.drawable.ic_book_cover_placeholder).transition(withCrossFade())
         .thumbnail(0.6f)
         .into(cover);
   }
