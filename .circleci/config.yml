@@ -41,6 +41,9 @@ jobs:
         name: Prepare properties
         command: mv keystore.properties.example keystore.properties
     - run:
+        name: Prepare api keys
+        command: mv api.properties.example api.properties
+    - run:
         name: Download Dependencies
         command: ./gradlew androidDependencies
     - save_cache:
