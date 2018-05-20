@@ -48,9 +48,9 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
+    setupAcquiredBookList();
     if (presenter.isAuthenticated()) {
-      setupAcquiredBookList();
-
+      adapter.startListening();
       GlideApp.with(this)
           .load(presenter.getPhotoUrl())
           .transition(withCrossFade())
@@ -60,7 +60,6 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
     }
   }
 
-  //        R.layout.acquired_book_list_item, AcquiredBooksViewHolder.class,
   private void setupAcquiredBookList() {
     LinearLayoutManager llm = new LinearLayoutManager(getActivity());
     acquiredBooksList.setLayoutManager(llm);
@@ -82,7 +81,6 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
       }
     };
     acquiredBooksList.setAdapter(adapter);
-    adapter.startListening();
   }
 
   @Override public void onDestroyView() {
