@@ -38,11 +38,14 @@ jobs:
     - restore_cache:
         key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
     - run:
-        name: Prepare properties
+        name: Prepare keystore properties
         command: mv keystore.properties.example keystore.properties
     - run:
         name: Prepare api keys
         command: mv api.properties.example api.properties
+    - run:
+        name: Prepare google-services.json
+        command: mv google-services.json.example google-services.json
     - run:
         name: Download Dependencies
         command: ./gradlew androidDependencies
