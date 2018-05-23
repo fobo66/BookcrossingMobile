@@ -76,7 +76,9 @@ public class MainFragment extends BaseFragment implements MainView {
   }
 
   private void loadAds() {
-    AdRequest adRequest = new AdRequest.Builder().build();
+    AdRequest.Builder adBuilder = new AdRequest.Builder();
+    presenter.checkForConsent(adBuilder);
+    AdRequest adRequest = adBuilder.build();
     ad.loadAd(adRequest);
   }
 
@@ -107,20 +109,23 @@ public class MainFragment extends BaseFragment implements MainView {
   }
 
   private void resolveCity() {
-    subscriptions.add(permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
-        .flatMap(granted -> {
-          if (granted) {
-            return presenter.resolveUserCity();
-          }
-          return Observable.empty();
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-        .subscribe(addresses -> {
-          if (!addresses.isEmpty()) {
-            presenter.saveCity(addresses);
-          } else {
-            askUserToProvideDefaultCity();
-          }
-        }));
+    subscriptions.add(
+        permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
+            .flatMap(granted -> {
+              if (granted) {
+                return presenter.resolveUserCity();
+              }
+              return Observable.empty();
+            })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(addresses -> {
+              if (!addresses.isEmpty()) {
+                presenter.saveCity(addresses);
+              } else {
+                askUserToProvideDefaultCity();
+              }
+            }));
   }
 
   private void askUserToProvideDefaultCity() {

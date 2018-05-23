@@ -5,6 +5,7 @@ import com.bookcrossing.mobile.modules.App;
 import com.bookcrossing.mobile.modules.AppModule;
 import com.bookcrossing.mobile.modules.LocationModule;
 import com.bookcrossing.mobile.modules.PrefModule;
+import com.bookcrossing.mobile.presenters.MainPresenter;
 import com.bookcrossing.mobile.util.FirebaseWrapper;
 import com.bookcrossing.mobile.util.SystemServicesWrapper;
 import dagger.BindsInstance;
@@ -37,4 +38,6 @@ import javax.inject.Singleton;
   void inject(FirebaseWrapper firebaseWrapper);
 
   void inject(SystemServicesWrapper systemServicesWrapper);
+
+  void inject(MainPresenter presenter);
 }

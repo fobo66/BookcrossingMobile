@@ -45,7 +45,7 @@ jobs:
         command: mv api.properties.example api.properties
     - run:
         name: Prepare google-services.json
-        command: mv google-services.json.example google-services.json
+        command: mv app/google-services.json.example app/google-services.json
     - run:
         name: Download Dependencies
         command: ./gradlew androidDependencies

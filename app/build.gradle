@@ -24,14 +24,15 @@ android {
     applicationId "com.bookcrossing.mobile"
     minSdkVersion 16
     targetSdkVersion 27
-    versionCode 2
-    versionName "1.2.0"
+    versionCode 4
+    versionName "1.3.0"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     multiDexEnabled true
   }
   buildTypes {
     debug {
       resValue "string", "google_maps_key", apiProperties['google_maps_key']
+      resValue "string", "admob_publisher_id", apiProperties['admob_publisher_id']
     }
     release {
       minifyEnabled false // fuck proguard
@@ -40,6 +41,7 @@ android {
 
       resValue "string", "google_maps_key", apiProperties['google_maps_key']
       resValue "string", "admob_app_id", apiProperties['admob_app_id']
+      resValue "string", "admob_publisher_id", apiProperties['admob_publisher_id']
     }
   }
   compileOptions {
@@ -69,8 +71,10 @@ dependencies {
   implementation "com.google.firebase:firebase-database:15.0.1"
   implementation "com.google.firebase:firebase-storage:15.0.2"
   implementation "com.google.firebase:firebase-messaging:15.0.2"
-  implementation "com.google.firebase:firebase-ads:15.0.1"
   implementation "com.google.firebase:firebase-auth:15.1.0"
+
+  implementation "com.google.firebase:firebase-ads:15.0.1"
+  implementation 'com.google.android.ads.consent:consent-library:1.0.1'
 
   implementation "com.google.android.gms:play-services-maps:15.0.1"
   implementation "com.google.android.gms:play-services-location:15.0.1"

@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import butterknife.ButterKnife;
 import com.algolia.instantsearch.helpers.InstantSearch;
 import com.algolia.instantsearch.helpers.Searcher;
 import com.algolia.instantsearch.ui.views.Hits;
+import com.bookcrossing.mobile.BuildConfig;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.ui.base.BaseActivity;
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
@@ -32,11 +34,20 @@ import com.bookcrossing.mobile.ui.profile.ProfileFragment;
 import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.NavigationDrawerResolver;
 import com.bookcrossing.mobile.util.listeners.BookListener;
+import com.crashlytics.android.Crashlytics;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.FirebaseUiException;
 import com.firebase.ui.auth.IdpResponse;
-import com.firebase.ui.auth.ResultCodes;
+import com.google.ads.consent.ConsentForm;
+import com.google.ads.consent.ConsentFormListener;
+import com.google.ads.consent.ConsentInfoUpdateListener;
+import com.google.ads.consent.ConsentInformation;
+import com.google.ads.consent.ConsentStatus;
+import com.google.ads.consent.DebugGeography;
 import com.google.firebase.auth.FirebaseAuth;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import org.json.JSONException;
 
@@ -54,7 +65,6 @@ public class MainActivity extends BaseActivity
   @BindView(R.id.hits) public Hits hits;
 
   private ActionBarDrawerToggle drawerToggle;
-  private Searcher searcher;
   private InstantSearch instantSearch;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -63,19 +73,11 @@ public class MainActivity extends BaseActivity
     ButterKnife.bind(this);
 
     setupSearch();
-    setSupportActionBar(toolbar);
-    drawerToggle = setupDrawerToggle();
-    drawer.addDrawerListener(drawerToggle);
-    hits.setOnItemClickListener((recyclerView, position, v) -> {
-      try {
-        hits.setVisibility(View.GONE);
-        onBookSelected(hits.get(position).getString("objectID"));
-      } catch (JSONException e) {
-        Snackbar.make(coordinatorLayout, "Cannot open book info", Snackbar.LENGTH_SHORT).show();
-        e.printStackTrace();
-      }
-    });
+    setupToolbar();
+
     navigationView.setNavigationItemSelectedListener(this);
+
+    checkForConsent();
 
     FirebaseAuth auth = FirebaseAuth.getInstance();
     if (auth.getCurrentUser() != null) {
@@ -83,10 +85,77 @@ public class MainActivity extends BaseActivity
     } else {
       startActivityForResult(AuthUI.getInstance()
           .createSignInIntentBuilder()
-          .setAvailableProviders(Collections.singletonList(
-              new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
+          .setAvailableProviders(
+              Collections.singletonList(new AuthUI.IdpConfig.GoogleBuilder().build()))
           .build(), Constants.RC_SIGN_IN);
     }
+  }
+
+  private void setupToolbar() {
+    setSupportActionBar(toolbar);
+    drawerToggle = setupDrawerToggle();
+    drawer.addDrawerListener(drawerToggle);
+  }
+
+  private void checkForConsent() {
+    final ConsentInformation consentInformation = ConsentInformation.getInstance(this);
+
+    if (BuildConfig.DEBUG) {
+      consentInformation.
+          setDebugGeography(DebugGeography.DEBUG_GEOGRAPHY_EEA);
+      consentInformation.addTestDevice("F77E11EA7DA28B9331BCEB0D39F3AF77");
+    }
+
+    String[] publisherIds = { getResources().getString(R.string.admob_publisher_id) };
+    consentInformation.requestConsentInfoUpdate(publisherIds, new ConsentInfoUpdateListener() {
+      @Override public void onConsentInfoUpdated(ConsentStatus consentStatus) {
+        if (consentInformation.isRequestLocationInEeaOrUnknown()) {
+          if (consentStatus == ConsentStatus.UNKNOWN) {
+            URL privacyUrl;
+            try {
+              privacyUrl = new URL(Constants.PRIVACY_POLICY_URL);
+            } catch (MalformedURLException e) {
+              throw new RuntimeException(e);
+            }
+            ConsentForm form = new ConsentForm.Builder(MainActivity.this, privacyUrl).withListener(
+                new ConsentFormListener() {
+                  @Override public void onConsentFormLoaded() {
+                    // Consent form loaded successfully.
+                  }
+
+                  @Override public void onConsentFormOpened() {
+                    // Consent form was displayed.
+                  }
+
+                  @Override public void onConsentFormClosed(ConsentStatus consentStatus,
+                      Boolean userPrefersAdFree) {
+                    saveConsentStatus(consentStatus);
+                  }
+
+                  @Override public void onConsentFormError(String errorDescription) {
+                    Crashlytics.log(errorDescription);
+                  }
+                }).withPersonalizedAdsOption().withNonPersonalizedAdsOption().build();
+
+            form.load();
+            form.show();
+          } else {
+            saveConsentStatus(consentStatus);
+          }
+        }
+      }
+
+      @Override public void onFailedToUpdateConsentInfo(String errorDescription) {
+        // User's consent status failed to update.
+      }
+    });
+  }
+
+  private void saveConsentStatus(ConsentStatus consentStatus) {
+    PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+        .edit()
+        .putString(Constants.KEY_CONSENT_STATUS, consentStatus.toString())
+        .apply();
   }
 
   private void resolveNavigationToFragment(Bundle savedInstanceState) {
@@ -106,7 +175,7 @@ public class MainActivity extends BaseActivity
         push(new MainFragment());
       }
     } else {
-      push(new MainFragment());
+      pushFirst(new MainFragment());
     }
   }
 
@@ -122,10 +191,23 @@ public class MainActivity extends BaseActivity
   }
 
   private void setupSearch() {
-    searcher =
-        Searcher.create(getString(R.string.algolia_app_id), getString(R.string.algolia_api_key),
-            getString(R.string.algolia_index_name));
+    Searcher searcher = Searcher.create(getString(R.string.algolia_app_id), getString(R.string.algolia_api_key),
+        getString(R.string.algolia_index_name));
     instantSearch = new InstantSearch(hits, searcher);
+
+    setupSearchHits();
+  }
+
+  private void setupSearchHits() {
+    hits.setOnItemClickListener((recyclerView, position, v) -> {
+      try {
+        hits.setVisibility(View.GONE);
+        onBookSelected(hits.get(position).getString("objectID"));
+      } catch (JSONException e) {
+        Snackbar.make(coordinatorLayout, "Cannot open book info", Snackbar.LENGTH_SHORT).show();
+        e.printStackTrace();
+      }
+    });
   }
 
   private void pushRecentFragment() {
@@ -147,6 +229,12 @@ public class MainActivity extends BaseActivity
   public void push(Fragment fragment) {
     getSupportFragmentManager().beginTransaction()
         .addToBackStack(null)
+        .replace(R.id.fragmentContainer, fragment)
+        .commit();
+  }
+
+  public void pushFirst(Fragment fragment) {
+    getSupportFragmentManager().beginTransaction()
         .replace(R.id.fragmentContainer, fragment)
         .commit();
   }
@@ -187,8 +275,8 @@ public class MainActivity extends BaseActivity
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == Constants.RC_SIGN_IN) {
       IdpResponse response = IdpResponse.fromResultIntent(data);
-      if (resultCode == ResultCodes.OK) {
-        push(new MainFragment());
+      if (resultCode == RESULT_OK) {
+        pushFirst(new MainFragment());
         return;
       } else {
 
@@ -198,17 +286,22 @@ public class MainActivity extends BaseActivity
           return;
         }
 
-        if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
-          Snackbar.make(coordinatorLayout,
-              getResources().getString(R.string.no_internet_connection), Snackbar.LENGTH_LONG)
-              .show();
-          return;
-        }
+        FirebaseUiException error = response.getError();
 
-        if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-          Snackbar.make(coordinatorLayout, getResources().getString(R.string.unknown_signin_error),
-              Snackbar.LENGTH_LONG).show();
-          return;
+        if (error != null) {
+          if (error.getErrorCode() == ErrorCodes.NO_NETWORK) {
+            Snackbar.make(coordinatorLayout,
+                getResources().getString(R.string.no_internet_connection), Snackbar.LENGTH_LONG)
+                .show();
+            return;
+          }
+
+          if (error.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
+            Snackbar.make(coordinatorLayout,
+                getResources().getString(R.string.unknown_signin_error), Snackbar.LENGTH_LONG)
+                .show();
+            return;
+          }
         }
       }
 
@@ -231,15 +324,6 @@ public class MainActivity extends BaseActivity
     Intent bookIntent = new Intent(this, BookActivity.class);
     bookIntent.putExtra(Constants.EXTRA_KEY, bookKey);
     startActivity(bookIntent);
-  }
-
-  @Override public void onBackPressed() {
-    super.onBackPressed();
-    Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
-
-    if (currentFragment == null) {
-      finish();
-    }
   }
 
   @Override public void onBookReleased(String bookKey) {

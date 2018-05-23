@@ -10,4 +10,7 @@ public class Constants {
   public static final String DEFAULT_USER = "user";
   public static final String EXTRA_COORDINATES = "coordinates";
   public static final String EXTRA_TARGET_FRAGMENT = "targetFragment";
+  public static final String KEY_CONSENT_STATUS = "consent_status";
+  public static final String PRIVACY_POLICY_URL =
+      "https://fobo66.github.io/BookcrossingMobile/privacy_policy.html";
 }
