@@ -40,7 +40,8 @@ public class StashFragment extends BaseFragment implements StashView {
     return inflater.inflate(R.layout.fragment_stash, container, false);
   }
 
-  @Override public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
+  @Override
+  public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
     if (presenter.isAuthenticated()) {

@@ -2,6 +2,7 @@ package com.bookcrossing.mobile.ui.settings;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
@@ -28,7 +29,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     delegate = new BookListenerDelegate(context);
   }
 
-  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     delegate.setTitle(R.string.action_settings);
   }

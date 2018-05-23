@@ -45,7 +45,7 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
     return R.string.profileTitle;
   }
 
-  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
     setupAcquiredBookList();

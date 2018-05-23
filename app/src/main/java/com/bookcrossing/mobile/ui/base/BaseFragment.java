@@ -2,6 +2,7 @@ package com.bookcrossing.mobile.ui.base;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.view.View;
@@ -38,7 +39,7 @@ public abstract class BaseFragment extends MvpAppCompatFragment {
     listener.detachListener();
   }
 
-  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     unbinder = ButterKnife.bind(this, view);
     setActivityTitle();
@@ -52,7 +53,7 @@ public abstract class BaseFragment extends MvpAppCompatFragment {
     startActivityForResult(AuthUI.getInstance()
         .createSignInIntentBuilder()
         .setAvailableProviders(
-            Collections.singletonList(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
+            Collections.singletonList(new AuthUI.IdpConfig.GoogleBuilder().build()))
         .build(), Constants.RC_SIGN_IN);
   }
 

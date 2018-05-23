@@ -1,6 +1,7 @@
 package com.bookcrossing.mobile.ui.map;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -20,8 +21,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import io.reactivex.Observable;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Consumer;
 
 public class MapActivity extends BaseActivity
     implements MvpMapView, OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
@@ -43,13 +42,12 @@ public class MapActivity extends BaseActivity
     mapFragment.getMapAsync(this);
   }
 
-  @Override public void onMapReady(GoogleMap googleMap) {
+  // permission is actually checked, but inside RxPermission
+  @SuppressLint("MissingPermission") @Override public void onMapReady(GoogleMap googleMap) {
     map = googleMap;
-    subscriptions.add(requestLocationPermission().subscribe(new Consumer<Boolean>() {
-      @Override public void accept(@NonNull Boolean granted) throws Exception {
-        if (granted) {
-          map.setMyLocationEnabled(true);
-        }
+    subscriptions.add(requestLocationPermission().subscribe(granted -> {
+      if (granted) {
+        map.setMyLocationEnabled(true);
       }
     }));
     map.setOnInfoWindowClickListener(this);
@@ -100,7 +98,7 @@ public class MapActivity extends BaseActivity
   }
 
   @Override public void onUserLocationReceived(LatLng coordinates) {
-    map.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, DEFAULT_ZOOM_LEVEL));
+    map.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinates, DEFAULT_ZOOM_LEVEL));
   }
 
   @Override public void onInfoWindowClick(Marker marker) {

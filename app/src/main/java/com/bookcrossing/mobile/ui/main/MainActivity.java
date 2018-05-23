@@ -44,7 +44,6 @@ import com.google.ads.consent.ConsentFormListener;
 import com.google.ads.consent.ConsentInfoUpdateListener;
 import com.google.ads.consent.ConsentInformation;
 import com.google.ads.consent.ConsentStatus;
-import com.google.ads.consent.DebugGeography;
 import com.google.firebase.auth.FirebaseAuth;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -101,8 +100,8 @@ public class MainActivity extends BaseActivity
     final ConsentInformation consentInformation = ConsentInformation.getInstance(this);
 
     if (BuildConfig.DEBUG) {
-      consentInformation.
-          setDebugGeography(DebugGeography.DEBUG_GEOGRAPHY_EEA);
+      //consentInformation.
+      //    setDebugGeography(DebugGeography.DEBUG_GEOGRAPHY_EEA);
       consentInformation.addTestDevice("F77E11EA7DA28B9331BCEB0D39F3AF77");
     }
 
@@ -167,12 +166,12 @@ public class MainActivity extends BaseActivity
         } else if (whereToGo.equalsIgnoreCase("ProfileFragment")) {
           push(new ProfileFragment());
         } else {
-          push(new MainFragment());
+          pushFirst(new MainFragment());
         }
       } else if (savedInstanceState != null) {
         pushRecentFragment();
       } else {
-        push(new MainFragment());
+        pushFirst(new MainFragment());
       }
     } else {
       pushFirst(new MainFragment());
@@ -242,9 +241,7 @@ public class MainActivity extends BaseActivity
   public void replace(Fragment fragment) {
     getSupportFragmentManager().popBackStackImmediate(null,
         FragmentManager.POP_BACK_STACK_INCLUSIVE);
-    getSupportFragmentManager().beginTransaction()
-        .replace(R.id.fragmentContainer, fragment)
-        .commit();
+    pushFirst(fragment);
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {

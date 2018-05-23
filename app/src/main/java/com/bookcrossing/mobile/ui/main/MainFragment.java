@@ -61,7 +61,7 @@ public class MainFragment extends BaseFragment implements MainView {
     adapter.stopListening();
   }
 
-  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
     permissions = new RxPermissions(getActivity());
