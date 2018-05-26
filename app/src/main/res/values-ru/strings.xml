@@ -74,4 +74,8 @@
   <string name="enter_city_content">Ошибка получения твоего города. Попробуйте ввести его вручную в настройках, чтобы мы могли автоматически распознавать позицию оставленной книги.</string>
   <string name="enter_city_title">Введите свой город</string>
   <string name="city_hint">Город</string>
+  <string name="consent_preference_not_set">Не установлен</string>
+  <string name="consent_preference_non_personalized">Не персонализировать рекламу</string>
+  <string name="consent_preference_personalized">Персонализировать рекламу</string>
+  <string name="pref_title_ads_consent">Согласие на сбор данных для рекламы</string>
 </resources>

@@ -6,7 +6,7 @@
     <item>@string/consent_preference_personalized</item>
   </string-array>
 
-  <string-array name="consent_values">
+  <string-array name="consent_values" translatable="false">
     <item>UNKNOWN</item>
     <item>NON_PERSONALIZED</item>
     <item>PERSONALIZED</item>
