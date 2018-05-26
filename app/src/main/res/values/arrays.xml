@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="consent_preference_names">
+    <item>@string/consent_preference_not_set</item>
+    <item>@string/consent_preference_non_personalized</item>
+    <item>@string/consent_preference_personalized</item>
+  </string-array>
+
+  <string-array name="consent_values">
+    <item>UNKNOWN</item>
+    <item>NON_PERSONALIZED</item>
+    <item>PERSONALIZED</item>
+  </string-array>
+</resources>

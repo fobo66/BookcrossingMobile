@@ -5,6 +5,13 @@
       android:key="defaultCity"
       android:title="@string/pref_title_default_city"/>
 
+  <ListPreference
+      android:defaultValue="UNKNOWN"
+      android:entries="@array/consent_preference_names"
+      android:entryValues="@array/consent_values"
+      android:key="consent_status"
+      android:title="@string/pref_title_ads_consent"/>
+
   <Preference
       android:title="@string/title_activity_about">
     <intent

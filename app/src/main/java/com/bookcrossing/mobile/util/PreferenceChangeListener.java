@@ -16,7 +16,7 @@ public class PreferenceChangeListener implements Preference.OnPreferenceChangeLi
       ListPreference listPreference = (ListPreference) preference;
       int index = listPreference.findIndexOfValue(stringValue);
 
-      preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
+      preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : "");
     } else {
       preference.setSummary(stringValue);
     }

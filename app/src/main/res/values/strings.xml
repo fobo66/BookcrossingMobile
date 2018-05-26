@@ -96,4 +96,9 @@
     <item>From gallery</item>
     <item>From camera</item>
   </string-array>
+
+  <string name="consent_preference_not_set">Not set</string>
+  <string name="consent_preference_non_personalized">Do not personalize ads</string>
+  <string name="consent_preference_personalized">Personalize ads</string>
+  <string name="pref_title_ads_consent">Ads consent</string>
 </resources>

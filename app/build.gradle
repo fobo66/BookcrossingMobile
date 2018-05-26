@@ -74,7 +74,7 @@ dependencies {
   implementation "com.google.firebase:firebase-auth:15.1.0"
 
   implementation "com.google.firebase:firebase-ads:15.0.1"
-  implementation 'com.google.android.ads.consent:consent-library:1.0.1'
+  implementation 'com.google.android.ads.consent:consent-library:1.0.3'
 
   implementation "com.google.android.gms:play-services-maps:15.0.1"
   implementation "com.google.android.gms:play-services-location:15.0.1"

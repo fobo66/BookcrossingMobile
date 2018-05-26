@@ -16,6 +16,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,7 +25,6 @@ import butterknife.ButterKnife;
 import com.algolia.instantsearch.helpers.InstantSearch;
 import com.algolia.instantsearch.helpers.Searcher;
 import com.algolia.instantsearch.ui.views.Hits;
-import com.bookcrossing.mobile.BuildConfig;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.ui.base.BaseActivity;
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
@@ -52,6 +52,8 @@ import org.json.JSONException;
 
 public class MainActivity extends BaseActivity
     implements BookListener, NavigationView.OnNavigationItemSelectedListener {
+
+  private static final String TAG = MainActivity.class.getSimpleName();
 
   @BindView(R.id.coord_layout) public CoordinatorLayout coordinatorLayout;
 
@@ -99,12 +101,6 @@ public class MainActivity extends BaseActivity
   private void checkForConsent() {
     final ConsentInformation consentInformation = ConsentInformation.getInstance(this);
 
-    if (BuildConfig.DEBUG) {
-      //consentInformation.
-      //    setDebugGeography(DebugGeography.DEBUG_GEOGRAPHY_EEA);
-      consentInformation.addTestDevice("F77E11EA7DA28B9331BCEB0D39F3AF77");
-    }
-
     String[] publisherIds = { getResources().getString(R.string.admob_publisher_id) };
     consentInformation.requestConsentInfoUpdate(publisherIds, new ConsentInfoUpdateListener() {
       @Override public void onConsentInfoUpdated(ConsentStatus consentStatus) {
@@ -119,15 +115,16 @@ public class MainActivity extends BaseActivity
             ConsentForm form = new ConsentForm.Builder(MainActivity.this, privacyUrl).withListener(
                 new ConsentFormListener() {
                   @Override public void onConsentFormLoaded() {
-                    // Consent form loaded successfully.
+                    Log.d(TAG, "onConsentFormLoaded: Consent form loaded successfully.");
                   }
 
                   @Override public void onConsentFormOpened() {
-                    // Consent form was displayed.
+                    Log.d(TAG, "onConsentFormOpened: Consent form was displayed.");
                   }
 
                   @Override public void onConsentFormClosed(ConsentStatus consentStatus,
                       Boolean userPrefersAdFree) {
+                    Log.d(TAG, "onConsentFormClosed: " + consentStatus);
                     saveConsentStatus(consentStatus);
                   }
 
