@@ -16,7 +16,7 @@ request, make sure your changes follow our code style.
 
 ## Write tests
 
-Currently the project has no test, because we don't clearly understand what to cover with tests. 
+Currently the project has no test, but we intend to cover it with UI tests.
 So, if you are the QA specialist, feel free to consult us, suggest test cases or write test by 
 yourself (if you want).
 
@@ -24,5 +24,5 @@ yourself (if you want).
 
 Strings for translation are available on 
 [Transifex](https://www.transifex.com/bookcrossing-mobile/bookcrossing-mobile-app).
-For now, app is translated to Russian only, and we work hard under German translation. You can help 
+For now, app is translated to Russian only, and we work hard on German translation. You can help
 also with Spanish or Hindi right now, or request new language as well.
