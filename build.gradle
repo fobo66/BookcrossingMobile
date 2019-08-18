@@ -8,7 +8,7 @@ buildscript {
   }
   dependencies {
     classpath 'com.android.tools.build:gradle:3.5.0-rc03'
-    classpath 'com.google.gms:google-services:3.2.0'
+    classpath 'com.google.gms:google-services:4.3.0'
     classpath 'io.fabric.tools:gradle:1.25.4'
   }
 }
@@ -23,18 +23,6 @@ allprojects {
     google()
     maven { url 'https://maven.fabric.io/public' }
     maven { url "https://jitpack.io" }
-  }
-}
-
-configurations.all {
-  resolutionStrategy {
-    force "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"
-    force "com.android.support:support-v13:$rootProject.ext.supportLibraryVersion"
-    force "com.android.support:cardview-v7:$rootProject.ext.supportLibraryVersion"
-    force "com.android.support:customtabs:$rootProject.ext.supportLibraryVersion"
-    force "com.android.support:palette-v7:$rootProject.ext.supportLibraryVersion"
-    force "com.android.support:preference-v14:$rootProject.ext.supportLibraryVersion"
-    force "com.android.support:animated-vector-drawable:$rootProject.ext.supportLibraryVersion"
   }
 }
 
