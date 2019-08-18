@@ -130,7 +130,7 @@ dependencies {
   implementation 'io.nlopez.smartlocation:library:3.3.3'
   implementation 'io.nlopez.smartlocation:rx:3.3.3'
 
-  implementation 'com.github.tiagohm.MarkdownView:library:0.17.0'
+  implementation 'com.github.tiagohm.MarkdownView:library:0.19.0'
 
   implementation 'com.algolia:instantsearch-android:1.8.0'
 
