@@ -111,7 +111,7 @@ dependencies {
   implementation 'com.firebaseui:firebase-ui-storage:3.3.1'
   implementation 'com.firebaseui:firebase-ui-database:3.3.1'
   implementation 'com.firebaseui:firebase-ui-auth:3.3.1'
-  implementation 'com.github.frangsierra:rx2firebase:1.1.3'
+  implementation 'com.github.frangsierra:rx2firebase:1.5.7'
 
   def butterknifeVersion = '8.8.1'
   implementation "com.jakewharton:butterknife:$butterknifeVersion"
