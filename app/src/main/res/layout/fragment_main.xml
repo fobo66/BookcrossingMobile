@@ -33,14 +33,13 @@
       app:layout_constraintRight_toRightOf="@+id/books_rv"
       app:srcCompat="@drawable/ic_add_white_24dp"
       />
+
   <com.google.android.gms.ads.AdView
-      xmlns:ads="http://schemas.android.com/apk/res-auto"
       android:id="@+id/adView"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      ads:adSize="BANNER"
-      ads:adUnitId="@string/admob_app_id"
-      >
-  </com.google.android.gms.ads.AdView>
+      app:adSize="BANNER"
+      app:adUnitId="@string/admob_app_id"
+      app:layout_constraintTop_toTopOf="parent"></com.google.android.gms.ads.AdView>
 
 </android.support.constraint.ConstraintLayout>
