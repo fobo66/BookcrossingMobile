@@ -8,30 +8,35 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import butterknife.BindString;
-import butterknife.BindView;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.modules.GlideApp;
 import com.bookcrossing.mobile.presenters.BookCreatePresenter;
 import com.bookcrossing.mobile.ui.base.BaseFragment;
+import com.bookcrossing.mobile.util.Constants;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo;
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData;
 import com.miguelbcr.ui.rx_paparazzo2.entities.Response;
+
+import java.util.concurrent.TimeUnit;
+
+import butterknife.BindString;
+import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import java.util.concurrent.TimeUnit;
 
 import static android.app.Activity.RESULT_OK;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
@@ -50,7 +55,8 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
 
   @BindView(R.id.input_description) public TextView bookDescriptionInput;
 
-  @BindView(R.id.publish_book) public Button publishButton;
+    @BindView(R.id.publish_book)
+    public Button releaseButton;
 
   @BindString(R.string.rendered_sticker_name) public String stickerName;
 
@@ -73,27 +79,32 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
   @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    coverChooserDialog = new MaterialDialog.Builder(getContext()).title("Choose source")
-        .items(R.array.cover_chooser_dialog_items)
-        .itemsCallback((dialog, itemView, position, text) -> {
-          Observable<Response<BookCreateFragment, FileData>> chooserObservable;
-          if (position == 0) {
-            chooserObservable = requestCoverImageFromGallery();
-          } else {
-            chooserObservable = requestCoverImageFromCamera();
-          }
-          subscriptions.add(chooserObservable.subscribe(result -> {
-            if (result.resultCode() == RESULT_OK) {
-              result.targetUI().presenter.saveCoverTemporarily(result.data());
-            }
-          }));
-        })
-        .build();
+      buildCoverChooserDialog();
     registerSubscriptions();
   }
 
+    private void buildCoverChooserDialog() {
+        coverChooserDialog = new MaterialDialog.Builder(requireContext()).title("Choose source")
+                .items(R.array.cover_chooser_dialog_items)
+                .itemsCallback((dialog, itemView, position, text) -> {
+                    Observable<Response<BookCreateFragment, FileData>> chooserObservable;
+                    if (position == 0) {
+                        chooserObservable = requestCoverImageFromGallery();
+                    } else {
+                        chooserObservable = requestCoverImageFromCamera();
+                    }
+                    subscriptions.add(chooserObservable.subscribe(result -> {
+                        if (result.resultCode() == RESULT_OK) {
+                            result.targetUI().presenter.saveCoverTemporarily(result.data());
+                        }
+                    }));
+                })
+                .build();
+    }
+
   private void registerSubscriptions() {
     registerBookSubscriptions();
+      registerPublishButtonEnableSubscription();
     registerPublishButtonClickSubscription();
   }
 
@@ -106,40 +117,59 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
   }
 
   private void registerPublishButtonClickSubscription() {
-    Disposable publishSubscription = RxView.clicks(publishButton).subscribe(o -> publishBook());
+      Disposable publishSubscription = RxView.clicks(releaseButton)
+              .debounce(Constants.DEFAULT_DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+              .observeOn(AndroidSchedulers.mainThread())
+              .subscribe(o -> publishBook());
     subscriptions.add(publishSubscription);
   }
 
+    private void registerPublishButtonEnableSubscription() {
+        Disposable publishSubscription = Observable.zip(
+                RxTextView.textChanges(bookNameInput),
+                RxTextView.textChanges(bookAuthorInput),
+                RxTextView.textChanges(bookPositionInput),
+                RxTextView.textChanges(bookDescriptionInput),
+                (name, author, position, description) ->
+                        !TextUtils.isEmpty(name) &&
+                                !TextUtils.isEmpty(author) &&
+                                !TextUtils.isEmpty(position) &&
+                                !TextUtils.isEmpty(description)
+        )
+                .subscribe(enabled -> releaseButton.setEnabled(enabled));
+        subscriptions.add(publishSubscription);
+    }
+
   private void registerDescriptionInputSubscription() {
     Disposable descriptionSubscription = RxTextView.afterTextChangeEvents(bookDescriptionInput)
-        .debounce(300, TimeUnit.MILLISECONDS)
-        .filter(event -> !event.view().getText().toString().contains("*#[]?"))
+            .debounce(Constants.DEFAULT_DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+            .filter(event -> !event.view().getText().toString().contains(Constants.PROHIBITED_SYMBOLS))
         .subscribe(event -> presenter.onDescriptionChange(event.view().getText().toString()));
     subscriptions.add(descriptionSubscription);
   }
 
   private void registerPositionInputSubscription() {
     Disposable positionSubscription = RxTextView.afterTextChangeEvents(bookPositionInput)
-        .debounce(300, TimeUnit.MILLISECONDS)
-        .filter(event -> !event.view().getText().toString().contains("*#[]?"))
+            .debounce(Constants.DEFAULT_DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+            .filter(event -> !event.view().getText().toString().contains(Constants.PROHIBITED_SYMBOLS))
         .subscribe(event -> presenter.onPositionChange(event.view().getText().toString()));
     subscriptions.add(positionSubscription);
   }
 
   private void registerAuthorInputSubscription() {
     Disposable authorSubscription = RxTextView.afterTextChangeEvents(bookAuthorInput)
-        .debounce(300, TimeUnit.MILLISECONDS)
-        .filter(event -> !event.view().getText().toString().contains("*#[]?"))
+            .debounce(Constants.DEFAULT_DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+            .filter(event -> !event.view().getText().toString().contains(Constants.PROHIBITED_SYMBOLS))
         .subscribe(event -> presenter.onAuthorChange(event.view().getText().toString()));
     subscriptions.add(authorSubscription);
   }
 
   private void registerNameInputSubscription() {
     Disposable nameSubscription = RxTextView.afterTextChangeEvents(bookNameInput)
-        .debounce(300, TimeUnit.MILLISECONDS)
+            .debounce(Constants.DEFAULT_DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
         .filter(event -> {
           String textFieldValue = event.view().getText().toString();
-          return !textFieldValue.contains("*#[]?") && !textFieldValue.isEmpty();
+            return !textFieldValue.contains(Constants.PROHIBITED_SYMBOLS) && !textFieldValue.isEmpty();
         })
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(event -> presenter.onNameChange(event.view().getText().toString()));
@@ -147,7 +177,9 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
   }
 
   private void registerCoverClickSubscription() {
-    Disposable coverSubscription = RxView.clicks(cover).subscribe(o -> coverChooserDialog.show());
+      Disposable coverSubscription = RxView.clicks(cover)
+              .debounce(Constants.DEFAULT_DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+              .subscribe(o -> coverChooserDialog.show());
     subscriptions.add(coverSubscription);
   }
 
@@ -166,7 +198,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
   }
 
   private void publishBook() {
-    publishButton.setEnabled(false);
+      releaseButton.setEnabled(false);
     presenter.publishBook();
   }
 
@@ -182,7 +214,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
 
   @Override public void onReleased(final String newKey) {
     MaterialDialog dialog =
-        new MaterialDialog.Builder(getContext()).title(R.string.book_saved_dialog_title)
+            new MaterialDialog.Builder(requireContext()).title(R.string.book_saved_dialog_title)
             .customView(R.layout.book_sticker_layout, true)
             .positiveText(R.string.ok)
             .onPositive((dialog1, which) -> {
@@ -197,7 +229,7 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
   }
 
   @Override public void onFailedToRelease() {
-    new MaterialDialog.Builder(getContext()).content(R.string.failed_to_release_book_message)
+      new MaterialDialog.Builder(requireContext()).content(R.string.failed_to_release_book_message)
         .title(R.string.error_dialog_title)
         .positiveText(R.string.ok)
         .onPositive((dialog, which) -> dialog.dismiss())
@@ -212,12 +244,12 @@ public class BookCreateFragment extends BaseFragment implements BookCreateView {
   }
 
   private void renderSticker(View sticker) {
-    sticker.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
-    Bitmap b =
+      sticker.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white));
+      Bitmap stickerBitmap =
         Bitmap.createBitmap(sticker.getWidth(), sticker.getHeight(), Bitmap.Config.ARGB_8888);
-    Canvas c = new Canvas(b);
-    sticker.draw(c);
-    MediaStore.Images.Media.insertImage(getContext().getContentResolver(), b, stickerName,
+      Canvas canvas = new Canvas(stickerBitmap);
+      sticker.draw(canvas);
+      MediaStore.Images.Media.insertImage(requireContext().getContentResolver(), stickerBitmap, stickerName,
         stickerDescription);
   }
 }
