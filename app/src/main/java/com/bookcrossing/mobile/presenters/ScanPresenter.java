@@ -1,6 +1,8 @@
 package com.bookcrossing.mobile.presenters;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.ui.scan.ScanView;
 import com.bookcrossing.mobile.util.Constants;
@@ -14,14 +16,14 @@ import com.bookcrossing.mobile.util.Constants;
 
   public void checkBookcrossingUri(String possibleBookcrossingUri) {
     Uri uri = Uri.parse(possibleBookcrossingUri);
-    if (isValidBookcrossingUri(uri)) {
+      if (uri != null && isValidBookcrossingUri(uri)) {
       getViewState().onBookCodeScanned(uri);
     } else {
       getViewState().onIncorrectCodeScanned();
     }
   }
 
-  private boolean isValidBookcrossingUri(Uri uri) {
+    private boolean isValidBookcrossingUri(@NonNull Uri uri) {
     return uri.getAuthority().equalsIgnoreCase(Constants.PACKAGE_NAME)
         && uri.getScheme()
         .equalsIgnoreCase("bookcrossing")

@@ -2,6 +2,7 @@ package com.bookcrossing.mobile.presenters;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Date;
@@ -15,6 +16,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData;
+
 import java.util.Calendar;
 import java.util.EnumMap;
 import java.util.Map;
@@ -45,8 +47,8 @@ import static android.graphics.Color.WHITE;
     getViewState().onCoverChosen(tempCoverUri);
   }
 
-  private Bitmap encodeBookAsQrCode(String contents, BarcodeFormat format, int img_width,
-      int img_height) throws WriterException {
+    private Bitmap encodeBookAsQrCode(String contents, BarcodeFormat format, int imgWidth,
+                                      int imgHeight) throws WriterException {
     if (contents == null) {
       return null;
     }
@@ -55,8 +57,8 @@ import static android.graphics.Color.WHITE;
     MultiFormatWriter writer = new MultiFormatWriter();
     BitMatrix bitMatrix;
     try {
-      bitMatrix = writer.encode(contents, format, img_width, img_height, hints);
-    } catch (IllegalArgumentException iae) {
+        bitMatrix = writer.encode(contents, format, imgWidth, imgHeight, hints);
+    } catch (IllegalArgumentException e) {
       return null;
     }
     int width = bitMatrix.getWidth();

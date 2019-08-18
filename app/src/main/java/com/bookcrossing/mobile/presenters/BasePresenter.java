@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.location.Address;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+
 import com.arellomobile.mvp.MvpPresenter;
 import com.arellomobile.mvp.MvpView;
 import com.bookcrossing.mobile.R;
@@ -13,11 +14,13 @@ import com.bookcrossing.mobile.util.FirebaseWrapper;
 import com.bookcrossing.mobile.util.SystemServicesWrapper;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.List;
+
 import io.nlopez.smartlocation.rx.ObservableFactory;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import java.util.List;
 
 /**
  * (c) 2016 Andrey Mukamolow aka fobo66 <fobo66@protonmail.com>
@@ -102,7 +105,7 @@ public class BasePresenter<V extends MvpView> extends MvpPresenter<V> {
             systemServicesWrapper.getApp().getApplicationContext(), location, 1));
   }
 
-  public void saveCity(@io.reactivex.annotations.NonNull List<Address> addresses) {
+    public void saveCity(@NonNull List<Address> addresses) {
     if (!addresses.isEmpty()) {
       city = addresses.get(0).getLocality();
       saveCity(city);

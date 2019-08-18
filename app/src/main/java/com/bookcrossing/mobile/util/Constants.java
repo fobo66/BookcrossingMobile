@@ -13,4 +13,6 @@ public class Constants {
   public static final String KEY_CONSENT_STATUS = "consent_status";
   public static final String PRIVACY_POLICY_URL =
       "https://fobo66.github.io/BookcrossingMobile/privacy_policy.html";
+  public static final int DEFAULT_DEBOUNCE_TIMEOUT = 300;
+  public static final String PROHIBITED_SYMBOLS = "*#[]?";
 }

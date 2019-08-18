@@ -8,16 +8,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.presenters.ScanPresenter;
 import com.bookcrossing.mobile.ui.base.BaseActivity;
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Consumer;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * (c) 2017 Andrey Mukamolow <fobo66@protonmail.com>
@@ -42,11 +42,9 @@ public class ScanActivity extends BaseActivity
     ButterKnife.bind(this);
     permissions = new RxPermissions(this);
     subscriptions.add(
-        permissions.request(Manifest.permission.CAMERA).subscribe(new Consumer<Boolean>() {
-          @Override public void accept(@NonNull Boolean granted) throws Exception {
-            if (granted) {
-              setupScannerView();
-            }
+            permissions.request(Manifest.permission.CAMERA).subscribe(granted -> {
+                if (granted) {
+                    setupScannerView();
           }
         }));
   }
