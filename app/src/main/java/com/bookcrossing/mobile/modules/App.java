@@ -1,6 +1,7 @@
 package com.bookcrossing.mobile.modules;
 
 import android.support.multidex.MultiDexApplication;
+
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.components.AppComponent;
 import com.bookcrossing.mobile.components.DaggerAppComponent;
@@ -28,7 +29,6 @@ public class App extends MultiDexApplication {
     MobileAds.initialize(this, getResources().getString(R.string.admob_app_id));
     component = DaggerAppComponent.builder()
         .application(this)
-        .appModule(new AppModule(this))
         .prefModule(new PrefModule())
         .apiModule(new ApiModule())
         .locationModule(new LocationModule())
