@@ -64,7 +64,7 @@ dependencies {
   implementation "com.arello-mobile:moxy-app-compat:$moxyVersion"
 
   implementation "com.google.firebase:firebase-core:16.0.3"
-  implementation "com.google.firebase:firebase-database:16.0.2"
+  implementation "com.google.firebase:firebase-database:19.0.0"
   implementation "com.google.firebase:firebase-storage:16.0.2"
   implementation "com.google.firebase:firebase-messaging:17.3.2"
   implementation "com.google.firebase:firebase-auth:16.0.3"
