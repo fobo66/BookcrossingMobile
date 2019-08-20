@@ -1,4 +1,7 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
 //loadProperties
@@ -138,10 +141,11 @@ dependencies {
 
   testImplementation 'junit:junit:4.12'
 
-  annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
-  annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
-  annotationProcessor "com.arello-mobile:moxy-compiler:$moxyVersion"
-  annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
+  kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+  kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
+  kapt "com.arello-mobile:moxy-compiler:$moxyVersion"
+  kapt "com.github.bumptech.glide:compiler:$glideVersion"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 apply plugin: 'com.google.gms.google-services'
