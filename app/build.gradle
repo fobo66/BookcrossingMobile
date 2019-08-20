@@ -107,7 +107,7 @@ dependencies {
 
   implementation 'com.github.miguelbcr:RxPaparazzo:0.5.4-2.x'
 
-  implementation 'com.firebaseui:firebase-ui:3.3.1'
+  implementation 'com.firebaseui:firebase-ui:5.0.0'
   implementation 'com.firebaseui:firebase-ui-storage:3.3.1'
   implementation 'com.firebaseui:firebase-ui-database:3.3.1'
   implementation 'com.firebaseui:firebase-ui-auth:3.3.1'
