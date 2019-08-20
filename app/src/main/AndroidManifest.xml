@@ -85,15 +85,6 @@
           android:value="com.bookcrossing.mobile.ui.main.MainActivity"/>
     </activity>
 
-    <activity
-        android:name=".ui.about.AboutActivity"
-        android:label="@string/title_activity_about"
-        android:parentActivityName=".ui.main.MainActivity">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="com.bookcrossing.mobile.ui.main.MainActivity"/>
-    </activity>
-
     <meta-data
         android:name="com.google.android.geo.API_KEY"
         android:value="@string/google_maps_key"/>
