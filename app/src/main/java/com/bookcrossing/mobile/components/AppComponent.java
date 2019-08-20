@@ -14,7 +14,7 @@ import dagger.BindsInstance;
 import dagger.Component;
 
 /**
- * (c) 2016 Andrey Mukamolow aka fobo66 <fobo66@protonmail.com>
+ * (c) 2016 Andrey Mukamolov aka fobo66 <fobo66@protonmail.com>
  * Created by fobo66 on 15.11.2016.
  */
 @Singleton @Component(modules = {

@@ -16,7 +16,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import java.util.Collections;
 
 /**
- * (c) 2016 Andrey Mukamolow aka fobo66 <fobo66@protonmail.com>
+ * (c) 2016 Andrey Mukamolov aka fobo66 <fobo66@protonmail.com>
  * Created by fobo66 on 16.11.2016.
  */
 

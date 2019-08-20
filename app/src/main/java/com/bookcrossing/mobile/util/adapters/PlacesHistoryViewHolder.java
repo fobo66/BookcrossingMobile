@@ -9,7 +9,7 @@ import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 
 /**
- * (c) 2017 Andrey Mukamolow <fobo66@protonmail.com>
+ * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>
  * Created 10.06.17.
  */
 

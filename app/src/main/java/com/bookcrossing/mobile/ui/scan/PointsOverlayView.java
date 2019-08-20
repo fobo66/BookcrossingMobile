@@ -12,7 +12,7 @@ import android.view.View;
 import com.bookcrossing.mobile.R;
 
 /**
- * (c) 2017 Andrey Mukamolow <fobo66@protonmail.com>
+ * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>
  * Created 18.06.17.
  */
 

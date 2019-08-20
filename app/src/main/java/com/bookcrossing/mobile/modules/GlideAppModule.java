@@ -11,7 +11,7 @@ import com.google.firebase.storage.StorageReference;
 import java.io.InputStream;
 
 /**
- * (c) 2018 Andrey Mukamolow <fobo66@protonmail.com>
+ * (c) 2018 Andrey Mukamolov <fobo66@protonmail.com>
  * Created 5/19/18.
  */
 @GlideModule public class GlideAppModule extends AppGlideModule {

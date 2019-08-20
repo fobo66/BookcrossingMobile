@@ -8,7 +8,7 @@ import com.bookcrossing.mobile.ui.scan.ScanView;
 import com.bookcrossing.mobile.util.Constants;
 
 /**
- * (c) 2017 Andrey Mukamolow <fobo66@protonmail.com>
+ * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>
  * Created 11.06.17.
  */
 

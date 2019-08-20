@@ -4,7 +4,7 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 
 /**
- * (c) 2017 Andrey Mukamolow <fobo66@protonmail.com>
+ * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>
  * Created 03.06.17.
  */
 

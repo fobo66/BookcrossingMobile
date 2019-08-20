@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
 /**
- * (c) 2016 Andrey Mukamolow aka fobo66 <fobo66@protonmail.com>
+ * (c) 2016 Andrey Mukamolov aka fobo66 <fobo66@protonmail.com>
  * Created by fobo66 on 01.12.2016.
  */
 

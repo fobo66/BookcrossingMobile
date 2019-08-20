@@ -11,7 +11,7 @@ import com.bookcrossing.mobile.ui.stash.StashFragment;
 import com.crashlytics.android.Crashlytics;
 
 /**
- * (c) 2017 Andrey Mukamolow <fobo66@protonmail.com>
+ * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>
  * Created 23.06.17.
  *
  * Class for gracefully resolving NavigationDrawer item's click

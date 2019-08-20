@@ -26,7 +26,7 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
  * So, maybe this solution sucks, but it's ok for now.
  * If I find better solution, I'll refactor this.
  *
- * (c) 2017 Andrey Mukamolow aka fobo66 <fobo66@protonmail.com>
+ * (c) 2017 Andrey Mukamolov aka fobo66 <fobo66@protonmail.com>
  * Created by fobo66 on 04.01.2017.
  */
 

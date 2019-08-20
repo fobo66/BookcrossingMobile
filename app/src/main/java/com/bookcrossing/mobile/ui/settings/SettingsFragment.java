@@ -14,7 +14,7 @@ import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.PreferenceChangeListener;
 
 /**
- * (c) 2017 Andrey Mukamolow <fobo66@protonmail.com>
+ * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>
  * Created 04.06.17.
  */
 

@@ -10,7 +10,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo;
 
 /**
- * (c) 2016 Andrey Mukamolow aka fobo66 <fobo66@protonmail.com>
+ * (c) 2016 Andrey Mukamolov aka fobo66 <fobo66@protonmail.com>
  * Created by fobo66 on 15.11.2016.
  */
 
