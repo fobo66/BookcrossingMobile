@@ -68,17 +68,13 @@ dependencies {
   implementation "com.arello-mobile:moxy-android:$moxyVersion"
   implementation "com.arello-mobile:moxy-app-compat:$moxyVersion"
 
-  implementation "com.google.firebase:firebase-core:16.0.3"
-  implementation "com.google.firebase:firebase-database:16.0.2"
-  implementation "com.google.firebase:firebase-storage:16.0.2"
-  implementation "com.google.firebase:firebase-messaging:17.3.2"
   implementation "com.google.firebase:firebase-auth:16.0.3"
-
-  implementation "com.google.firebase:firebase-ads:15.0.1"
+  implementation "com.google.firebase:firebase-messaging:17.6.0"
+  implementation "com.google.firebase:firebase-ads:16.0.1"
   implementation 'com.google.android.ads.consent:consent-library:1.0.7'
 
-  implementation "com.google.android.gms:play-services-maps:15.0.1"
-  implementation "com.google.android.gms:play-services-location:15.0.1"
+  implementation "com.google.android.gms:play-services-maps:16.1.0"
+  implementation "com.google.android.gms:play-services-location:16.0.0"
   implementation "com.google.android.gms:play-services-auth:16.0.0"
   implementation 'com.google.android.gms:play-services-oss-licenses:16.0.2'
 
@@ -113,10 +109,11 @@ dependencies {
 
   implementation 'com.github.miguelbcr:RxPaparazzo:0.5.4-2.x'
 
-  implementation 'com.firebaseui:firebase-ui:3.3.1'
-  implementation 'com.firebaseui:firebase-ui-storage:3.3.1'
-  implementation 'com.firebaseui:firebase-ui-database:3.3.1'
-  implementation 'com.firebaseui:firebase-ui-auth:3.3.1'
+  def firebaseUiVersion = '4.3.2'
+  implementation "com.firebaseui:firebase-ui:$firebaseUiVersion"
+  implementation "com.firebaseui:firebase-ui-storage:$firebaseUiVersion"
+  implementation "com.firebaseui:firebase-ui-database:$firebaseUiVersion"
+  implementation "com.firebaseui:firebase-ui-auth:$firebaseUiVersion"
   implementation 'com.github.frangsierra:rx2firebase:1.5.7'
 
   def butterknifeVersion = '8.8.1'
