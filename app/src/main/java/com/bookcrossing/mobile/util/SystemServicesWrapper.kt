@@ -12,12 +12,16 @@ import javax.inject.Inject
  * Created by fobo66 on 25.4.17.
  */
 
-class SystemServicesWrapper @Inject constructor(
-        private val preferencesLazy: Lazy<SharedPreferences>,
-        private val appLazy: Lazy<App>,
-        private val locationLazy: Lazy<SmartLocation>,
-        private val locationRepositoryLazy: Lazy<LocationRepository>
-) {
+class SystemServicesWrapper {
+
+    @Inject
+    lateinit var preferencesLazy: Lazy<SharedPreferences>
+    @Inject
+    lateinit var appLazy: Lazy<App>
+    @Inject
+    lateinit var locationLazy: Lazy<SmartLocation>
+    @Inject
+    lateinit var locationRepositoryLazy: Lazy<LocationRepository>
 
 
     val preferences: SharedPreferences

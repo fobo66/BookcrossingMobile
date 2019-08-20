@@ -28,7 +28,7 @@ import com.jakewharton.rxbinding2.view.RxView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import butterknife.BindView;
-import io.reactivex.Observable;
+import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -113,17 +113,17 @@ public class MainFragment extends BaseFragment implements MainView {
   private void resolveCity() {
     subscriptions.add(
         permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
-            .flatMap(granted -> {
+                .flatMapMaybe(granted -> {
               if (granted) {
                 return presenter.resolveUserCity();
               }
-              return Observable.empty();
+                  return Maybe.empty();
             })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(addresses -> {
-              if (!addresses.isEmpty()) {
-                presenter.saveCity(addresses);
+                .subscribe(city -> {
+                  if (!city.isEmpty()) {
+                    presenter.saveCity(city);
               } else {
                 askUserToProvideDefaultCity();
               }

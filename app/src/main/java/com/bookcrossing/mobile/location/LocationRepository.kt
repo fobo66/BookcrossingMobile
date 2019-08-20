@@ -10,6 +10,7 @@ import com.mapbox.api.geocoding.v5.MapboxGeocoding
 import com.mapbox.geojson.Point.fromLngLat
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class LocationRepository @Inject constructor(
@@ -26,7 +27,7 @@ class LocationRepository @Inject constructor(
         }
     }
 
-    fun resolveUserCity(location: Location): Maybe<String> {
+    fun resolveUserCity(location: Location): Maybe<String?> {
         val reverseGeocodeRequest = MapboxGeocoding.builder()
                 .accessToken(resourceProvider.getString(R.string.mapbox_access_token))
                 .languages(localeProvider.currentLocale.language)
@@ -40,5 +41,6 @@ class LocationRepository @Inject constructor(
                 .filter { features -> features.isNotEmpty() }
                 .map { features -> features[0] }
                 .map { feature -> feature.text() }
+                .subscribeOn(Schedulers.io())
     }
 }

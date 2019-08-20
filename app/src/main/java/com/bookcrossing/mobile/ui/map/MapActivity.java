@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Coordinates;
@@ -20,6 +21,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 
 public class MapActivity extends BaseActivity
@@ -68,11 +71,11 @@ public class MapActivity extends BaseActivity
   }
 
   private void requestUserLocation() {
-    subscriptions.add(requestLocationPermission().flatMap(granted -> {
+    subscriptions.add(requestLocationPermission().flatMapMaybe(granted -> {
       if (granted) {
-        return presenter.requestUserLocation();
+        return presenter.requestUserLocation().toMaybe();
       } else {
-        return Observable.empty();
+        return Maybe.empty();
       }
     })
         .subscribe(location -> onUserLocationReceived(
