@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import com.bookcrossing.mobile.location.LocationRepository
 import com.bookcrossing.mobile.modules.App
 import dagger.Lazy
-import io.nlopez.smartlocation.SmartLocation
 import javax.inject.Inject
 
 /**
@@ -19,8 +18,6 @@ class SystemServicesWrapper {
     @Inject
     lateinit var appLazy: Lazy<App>
     @Inject
-    lateinit var locationLazy: Lazy<SmartLocation>
-    @Inject
     lateinit var locationRepositoryLazy: Lazy<LocationRepository>
 
 
@@ -30,8 +27,6 @@ class SystemServicesWrapper {
     val app: App
         get() = appLazy.get()
 
-    val location: SmartLocation
-        get() = locationLazy.get()
 
     val locationRepository: LocationRepository
         get() = locationRepositoryLazy.get()
