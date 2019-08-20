@@ -1,9 +1,6 @@
 package com.bookcrossing.mobile.components
 
-import com.bookcrossing.mobile.modules.ApiModule
-import com.bookcrossing.mobile.modules.App
-import com.bookcrossing.mobile.modules.LocationModule
-import com.bookcrossing.mobile.modules.PrefModule
+import com.bookcrossing.mobile.modules.*
 import com.bookcrossing.mobile.presenters.MainPresenter
 import com.bookcrossing.mobile.util.FirebaseWrapper
 import com.bookcrossing.mobile.util.SystemServicesWrapper
@@ -16,7 +13,7 @@ import javax.inject.Singleton
  * Created by fobo66 on 15.11.2016.
  */
 @Singleton
-@Component(modules = [PrefModule::class, LocationModule::class, ApiModule::class])
+@Component(modules = [PrefModule::class, LocationModule::class, ApiModule::class, ProvidersModule::class])
 interface AppComponent {
     @Component.Builder
     interface Builder {

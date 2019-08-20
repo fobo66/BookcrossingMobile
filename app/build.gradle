@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
@@ -35,6 +34,7 @@ android {
   buildTypes {
     debug {
       resValue "string", "google_maps_key", apiProperties['google_maps_key']
+      resValue "string", "mapbox_access_token", apiProperties['mapbox_access_token']
       resValue "string", "admob_publisher_id", apiProperties['admob_publisher_id']
     }
     release {
@@ -43,6 +43,7 @@ android {
       signingConfig signingConfigs.releaseConfig
 
       resValue "string", "google_maps_key", apiProperties['google_maps_key']
+      resValue "string", "mapbox_access_token", apiProperties['mapbox_access_token']
       resValue "string", "admob_app_id", apiProperties['admob_app_id']
       resValue "string", "admob_publisher_id", apiProperties['admob_publisher_id']
     }
@@ -107,7 +108,7 @@ dependencies {
   def glideVersion = '4.9.0'
   implementation "com.github.bumptech.glide:glide:$glideVersion"
 
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.11'
   implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
   implementation 'com.github.miguelbcr:RxPaparazzo:0.5.4-2.x'
@@ -132,8 +133,8 @@ dependencies {
   implementation 'com.google.zxing:core:3.4.0'
   implementation 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.2'
 
-  implementation 'io.nlopez.smartlocation:library:3.3.3'
-  implementation 'io.nlopez.smartlocation:rx:3.3.3'
+  implementation 'com.mapbox.mapboxsdk:mapbox-sdk-core:4.8.0'
+  implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:4.8.0'
 
   implementation 'com.github.tiagohm.MarkdownView:library:0.19.0'
 
