@@ -35,7 +35,6 @@ public class BasePresenter<V extends MvpView> extends MvpPresenter<V> {
 
   public BasePresenter() {
     firebaseWrapper = new FirebaseWrapper();
-    systemServicesWrapper = new SystemServicesWrapper();
     App.getComponent().inject(firebaseWrapper);
     App.getComponent().inject(systemServicesWrapper);
   }

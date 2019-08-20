@@ -12,7 +12,7 @@ import android.support.v7.widget.SnapHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.BindView;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
@@ -26,6 +26,8 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+
+import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -64,7 +66,7 @@ public class MainFragment extends BaseFragment implements MainView {
   @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    permissions = new RxPermissions(getActivity());
+      permissions = new RxPermissions(requireActivity());
 
     resolveCity();
 
@@ -129,7 +131,7 @@ public class MainFragment extends BaseFragment implements MainView {
   }
 
   private void askUserToProvideDefaultCity() {
-    new MaterialDialog.Builder(getContext()).title(R.string.enter_city_title)
+      new MaterialDialog.Builder(requireContext()).title(R.string.enter_city_title)
         .content(R.string.enter_city_content)
         .input(R.string.city_hint, R.string.default_city, false,
             (dialog, input) -> presenter.saveCity(input.toString()))

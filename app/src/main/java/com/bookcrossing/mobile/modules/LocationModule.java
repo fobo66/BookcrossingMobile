@@ -1,9 +1,13 @@
 package com.bookcrossing.mobile.modules;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import io.nlopez.smartlocation.SmartLocation;
-import javax.inject.Singleton;
 
 /**
  * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>
@@ -13,5 +17,11 @@ import javax.inject.Singleton;
 @Module public class LocationModule {
   @Provides @Singleton public SmartLocation provideSmartLocation(App app) {
     return SmartLocation.with(app.getApplicationContext());
+  }
+
+  @Provides
+  @Singleton
+  public FusedLocationProviderClient provideFusedLocationProviderClient(App app) {
+    return LocationServices.getFusedLocationProviderClient(app.getApplicationContext());
   }
 }
