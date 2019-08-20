@@ -1,19 +1,21 @@
 package com.bookcrossing.mobile.presenters;
 
 import android.location.Location;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.ui.map.MvpMapView;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.model.LatLng;
-import durdinapps.rxfirebase2.DataSnapshotMapper;
-import durdinapps.rxfirebase2.RxFirebaseDatabase;
-import io.nlopez.smartlocation.rx.ObservableFactory;
-import io.reactivex.Observable;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import durdinapps.rxfirebase2.DataSnapshotMapper;
+import durdinapps.rxfirebase2.RxFirebaseDatabase;
+import io.reactivex.Single;
 
 @InjectViewState public class MapPresenter extends BasePresenter<MvpMapView> {
 
@@ -60,7 +62,7 @@ import java.util.Map;
     return bookMap.get(getKey(coordinates)).getDescription();
   }
 
-  public Observable<Location> requestUserLocation() {
-    return ObservableFactory.from(systemServicesWrapper.getLocation().location().oneFix());
+    public Single<Location> requestUserLocation() {
+        return systemServicesWrapper.getLocationRepository().getLastKnownUserLocation();
   }
 }
