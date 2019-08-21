@@ -109,7 +109,7 @@ dependencies {
 
   implementation 'com.github.miguelbcr:RxPaparazzo:0.5.4-2.x'
 
-  def firebaseUiVersion = '4.3.2'
+  def firebaseUiVersion = '5.0.0'
   implementation "com.firebaseui:firebase-ui:$firebaseUiVersion"
   implementation "com.firebaseui:firebase-ui-storage:$firebaseUiVersion"
   implementation "com.firebaseui:firebase-ui-database:$firebaseUiVersion"
