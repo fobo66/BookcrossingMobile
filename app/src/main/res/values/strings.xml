@@ -87,7 +87,7 @@
   <string name="rendered_sticker_description">Glue it on the flyleaf</string>
   <string name="profileTitle">Profile</string>
   <string name="profile">Profile</string>
-  <string name="title_activity_about">About</string>
+  <string name="title_activity_oss_licenses">Open source licenses</string>
   <string name="city_hint">Enter your city</string>
   <string name="enter_city_title">Enter your city</string>
   <string name="enter_city_content">There was an error with receiving your city. Please enter it manually, so we can automatically detect book\'s coordinates where you freed it</string>

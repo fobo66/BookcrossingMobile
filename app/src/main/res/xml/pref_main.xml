@@ -12,11 +12,10 @@
       android:key="consent_status"
       android:title="@string/pref_title_ads_consent"/>
 
-  <Preference
-      android:title="@string/title_activity_about">
+  <Preference android:title="@string/title_activity_oss_licenses">
     <intent
         android:action="android.intent.action.VIEW"
-        android:targetClass="com.bookcrossing.mobile.ui.about.AboutActivity"
+        android:targetClass="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
         android:targetPackage="com.bookcrossing.mobile"/>
   </Preference>
 
