@@ -133,7 +133,7 @@ dependencies {
   implementation 'com.mapbox.mapboxsdk:mapbox-sdk-core:4.8.0'
   implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:4.8.0'
 
-  implementation 'com.algolia:instantsearch-android:1.8.0'
+  implementation 'com.algolia:instantsearch-android:2.0.0'
 
   implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
