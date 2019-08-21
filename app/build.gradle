@@ -62,11 +62,13 @@ dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
   androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-  def moxyVersion = '1.5.6'
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-  implementation "com.arello-mobile:moxy:$moxyVersion"
-  implementation "com.arello-mobile:moxy-android:$moxyVersion"
-  implementation "com.arello-mobile:moxy-app-compat:$moxyVersion"
+  def moxyVersion = '1.7.0'
+
+  implementation "tech.schoolhelper:moxy-x:$moxyVersion"
+  implementation "tech.schoolhelper:moxy-x-android:$moxyVersion"
+  implementation "tech.schoolhelper:moxy-x-app-compat:$moxyVersion"
 
   implementation "com.google.firebase:firebase-auth:16.0.3"
   implementation "com.google.firebase:firebase-messaging:17.6.0"
@@ -141,9 +143,8 @@ dependencies {
 
   kapt "com.google.dagger:dagger-compiler:$daggerVersion"
   kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
-  kapt "com.arello-mobile:moxy-compiler:$moxyVersion"
+  kapt "tech.schoolhelper:moxy-x-compiler:$moxyVersion"
   kapt "com.github.bumptech.glide:compiler:$glideVersion"
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -8,8 +8,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Optional;
 import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.PresenterType;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenterTag;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Book;
@@ -32,9 +30,7 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 
 public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
 
-  private static final String TAG = "BooksViewHolder";
-
-  @InjectPresenter(type = PresenterType.GLOBAL, tag = BookItemPresenter.TAG)
+  @InjectPresenter(tag = BookItemPresenter.TAG)
   public BookItemPresenter itemPresenter;
 
   protected String key;
@@ -43,13 +39,9 @@ public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
     super(view);
   }
 
-  @ProvidePresenterTag(presenterClass = BookItemPresenter.class, type = PresenterType.GLOBAL)
+  @ProvidePresenterTag(presenterClass = BookItemPresenter.class)
   String provideRepositoryPresenterTag() {
     return BookItemPresenter.TAG;
-  }
-
-  @ProvidePresenter(type = PresenterType.GLOBAL) BookItemPresenter providePresenter() {
-    return new BookItemPresenter();
   }
 
   @Nullable @BindView(R.id.cover) ImageView cover;
