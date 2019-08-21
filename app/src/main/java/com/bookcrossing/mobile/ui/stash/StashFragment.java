@@ -53,7 +53,9 @@ public class StashFragment extends BaseFragment implements StashView {
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    adapter.stopListening();
+    if (adapter != null) {
+      adapter.stopListening();
+    }
   }
 
   private void setupStash() {
