@@ -70,7 +70,7 @@ dependencies {
 
   implementation "com.google.firebase:firebase-auth:16.0.3"
   implementation "com.google.firebase:firebase-messaging:17.6.0"
-  implementation "com.google.firebase:firebase-ads:16.0.1"
+  implementation "com.google.firebase:firebase-ads:18.1.1"
   implementation 'com.google.android.ads.consent:consent-library:1.0.7'
 
   implementation "com.google.android.gms:play-services-maps:16.1.0"
