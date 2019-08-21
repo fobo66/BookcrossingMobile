@@ -73,7 +73,7 @@ dependencies {
   implementation "com.google.firebase:firebase-ads:16.0.1"
   implementation 'com.google.android.ads.consent:consent-library:1.0.7'
 
-  implementation "com.google.android.gms:play-services-maps:16.1.0"
+  implementation "com.google.android.gms:play-services-maps:17.0.0"
   implementation "com.google.android.gms:play-services-location:16.0.0"
   implementation "com.google.android.gms:play-services-auth:16.0.0"
   implementation 'com.google.android.gms:play-services-oss-licenses:16.0.2'
