@@ -82,7 +82,7 @@ class MainFragment : BaseFragment(), MainView {
 
     permissions = RxPermissions(requireActivity())
 
-    resolveCity()
+    //resolveCity()
 
     setupBookList()
 
