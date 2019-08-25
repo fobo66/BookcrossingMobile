@@ -101,4 +101,6 @@
   <string name="consent_preference_non_personalized">Do not personalize ads</string>
   <string name="consent_preference_personalized">Personalize ads</string>
   <string name="pref_title_ads_consent">Ads consent</string>
+  <string name="cover_chooser_title">Choose source</string>
+  <string name="release_book_dialog_title">Specify new book\'s position</string>
 </resources>
