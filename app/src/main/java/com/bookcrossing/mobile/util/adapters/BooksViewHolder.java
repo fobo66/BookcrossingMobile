@@ -1,9 +1,9 @@
 package com.bookcrossing.mobile.util.adapters;
 
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Optional;

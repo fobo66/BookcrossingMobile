@@ -2,7 +2,7 @@ package com.bookcrossing.mobile.presenters;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.modules.App;
 import com.bookcrossing.mobile.ui.main.MainView;

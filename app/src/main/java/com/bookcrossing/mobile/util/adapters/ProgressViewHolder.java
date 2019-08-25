@@ -1,8 +1,8 @@
 package com.bookcrossing.mobile.util.adapters;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import com.bookcrossing.mobile.R;
 

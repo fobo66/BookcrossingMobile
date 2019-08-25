@@ -1,7 +1,6 @@
 package com.bookcrossing.mobile.modules;
 
-import android.support.multidex.MultiDexApplication;
-
+import androidx.multidex.MultiDexApplication;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.components.AppComponent;
 import com.bookcrossing.mobile.components.DaggerAppComponent;

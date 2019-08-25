@@ -1,8 +1,7 @@
 package com.bookcrossing.mobile.presenters;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
 import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.ui.scan.ScanView;
 import com.bookcrossing.mobile.util.Constants;

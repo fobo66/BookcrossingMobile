@@ -1,7 +1,7 @@
 package com.bookcrossing.mobile.util;
 
 import android.content.Context;
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 import com.bookcrossing.mobile.util.listeners.BookListener;
 
 /**

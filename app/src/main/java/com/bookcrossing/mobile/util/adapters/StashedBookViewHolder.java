@@ -1,7 +1,7 @@
 package com.bookcrossing.mobile.util.adapters;
 
-import android.support.v7.app.AlertDialog;
 import android.view.View;
+import androidx.appcompat.app.AlertDialog;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import com.bookcrossing.mobile.R;
