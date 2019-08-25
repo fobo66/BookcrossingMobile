@@ -118,7 +118,7 @@ dependencies {
   implementation "com.firebaseui:firebase-ui-auth:$firebaseUiVersion"
   implementation 'com.github.frangsierra:rx2firebase:1.5.7'
 
-  def butterknifeVersion = '8.8.1'
+  def butterknifeVersion = '10.1.0'
   implementation "com.jakewharton:butterknife:$butterknifeVersion"
 
   implementation 'com.android.support.constraint:constraint-layout:1.1.3'
