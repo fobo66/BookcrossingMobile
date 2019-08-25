@@ -70,7 +70,7 @@ dependencies {
   implementation "tech.schoolhelper:moxy-x-android:$moxyVersion"
   implementation "tech.schoolhelper:moxy-x-app-compat:$moxyVersion"
 
-  implementation "com.google.firebase:firebase-auth:16.0.3"
+  implementation "com.google.firebase:firebase-auth:19.0.0"
   implementation "com.google.firebase:firebase-messaging:17.6.0"
   implementation "com.google.firebase:firebase-ads:16.0.1"
   implementation 'com.google.android.ads.consent:consent-library:1.0.7'
