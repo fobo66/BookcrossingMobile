@@ -80,7 +80,6 @@ dependencies {
   implementation "com.google.android.gms:play-services-auth:17.0.0"
   implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 
-
   implementation 'com.google.android.material:material:1.0.0'
   implementation 'androidx.browser:browser:1.0.0'
   implementation 'androidx.cardview:cardview:1.0.0'
@@ -91,7 +90,6 @@ dependencies {
   implementation 'androidx.legacy:legacy-support-v13:1.0.0'
   implementation 'androidx.vectordrawable:vectordrawable:1.0.1'
   implementation 'androidx.appcompat:appcompat:1.0.2'
-
 
   def rxBindingsVersion = '3.0.0'
   implementation "com.jakewharton.rxbinding3:rxbinding:$rxBindingsVersion"
@@ -110,6 +108,7 @@ dependencies {
   implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
   implementation 'com.github.miguelbcr:RxPaparazzo:2.x-SNAPSHOT'
+  implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
 
   def firebaseUiVersion = '5.0.0'
   implementation "com.firebaseui:firebase-ui:$firebaseUiVersion"
@@ -135,7 +134,7 @@ dependencies {
   implementation 'com.mapbox.mapboxsdk:mapbox-sdk-core:4.8.0'
   implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:4.8.0'
 
-  implementation 'com.algolia:instantsearch-android:2.0.0'
+  implementation 'com.algolia:instantsearch-android:1.8.0'
 
   implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 

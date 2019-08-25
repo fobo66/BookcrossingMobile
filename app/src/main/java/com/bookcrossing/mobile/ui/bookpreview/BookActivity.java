@@ -34,7 +34,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.jakewharton.rxbinding2.view.RxView;
+import com.jakewharton.rxbinding3.view.RxView;
 import io.reactivex.disposables.Disposable;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
