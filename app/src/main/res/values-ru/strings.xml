@@ -16,7 +16,7 @@
   <string name="stash">Полка</string>
   <string name="book_sticker_get_app">Нет такого приложения? Скачай его в Google Play</string>
   <string name="book_sticker_heading_text">Поздравляю! Ты нашёл(а) свободную книгу.</string>
-  <string name="book_submit_acquisition">Отправить</string>
+  <string name="book_submit_acquisition">Забрать</string>
   <string name="books_map">Карта книг</string>
   <string name="cover_description">Обложка книги</string>
   <string name="error_dialog_title">Ошибка загрузки</string>

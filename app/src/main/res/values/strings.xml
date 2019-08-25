@@ -48,7 +48,7 @@
     </string>
   <string name="title_activity_book_acquire">Acquire</string>
   <string name="acquire_a_book_heading">You\'re going to acquire a book</string>
-  <string name="book_submit_acquisition">Submit</string>
+  <string name="book_submit_acquisition">Acquire</string>
   <string name="hint_book_code">Enter book\'s code</string>
 
   <string name="extra_insideAppRequest" translatable="false">fromInsideAppRequest</string>

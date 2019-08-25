@@ -1,3 +1,18 @@
+/*
+ *    Copyright  2019 Andrey Mukamolov
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package com.bookcrossing.mobile.ui.acquire;
 
 import android.content.Intent;
@@ -12,12 +27,17 @@ import butterknife.ButterKnife;
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
+import com.bookcrossing.mobile.models.BookCode;
 import com.bookcrossing.mobile.presenters.BookAcquirePresenter;
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 import com.bookcrossing.mobile.ui.scan.ScanActivity;
 import com.bookcrossing.mobile.util.Constants;
 import com.jakewharton.rxbinding2.view.RxView;
+import com.jakewharton.rxbinding2.widget.RxTextView;
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
 
 public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcquireView {
 
@@ -25,7 +45,7 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
 
   @BindView(R.id.toolbar) public Toolbar toolbar;
 
-  @BindView(R.id.submit) public Button submitButton;
+  @BindView(R.id.acquireButton) public Button acquireButton;
 
   @BindView(R.id.scan_code) public Button scanCodeButton;
 
@@ -55,11 +75,21 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
       }
     }
 
-    acquisitionDisposable = RxView.clicks(submitButton)
-        .filter(o -> presenter.isKeyValid(codeInput.getText().toString()))
-        .subscribe(o -> presenter.handleAcquisition(codeInput.getText().toString()));
+    acquisitionDisposable = onAcquireButtonClicked()
+        .withLatestFrom(onCodeValueChanged(), (o, code) -> code.toString())
+        .flatMapMaybe(code -> presenter.validateCode(code))
+        .flatMap(code -> {
+          if (code instanceof BookCode.CorrectCode) {
+            return presenter.processBookAcquisition(((BookCode.CorrectCode) code).getCode())
+                .andThen(Observable.just(code));
+          }
+
+          return Observable.just(code);
+        })
+        .subscribe(code -> presenter.handleAcquisitionResult(code));
 
     scanDisposable = RxView.clicks(scanCodeButton)
+        .throttleFirst(300, TimeUnit.MILLISECONDS)
         .subscribe(o -> startActivity(new Intent(BookAcquireActivity.this, ScanActivity.class)));
   }
 
@@ -77,5 +107,14 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
     Intent intent = new Intent(this, BookActivity.class);
     intent.putExtra(Constants.EXTRA_KEY, keyToAcquire);
     startActivity(intent);
+  }
+
+  @NotNull private Observable<Object> onAcquireButtonClicked() {
+    return RxView.clicks(acquireButton)
+        .throttleFirst(300, TimeUnit.MILLISECONDS);
+  }
+
+  @NotNull private Observable<CharSequence> onCodeValueChanged() {
+    return RxTextView.textChanges(codeInput);
   }
 }
