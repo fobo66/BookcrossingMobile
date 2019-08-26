@@ -1,14 +1,10 @@
 package com.bookcrossing.mobile.util;
 
-import android.util.SparseArray;
+import android.util.SparseIntArray;
+
 import androidx.annotation.IdRes;
-import androidx.fragment.app.Fragment;
+
 import com.bookcrossing.mobile.R;
-import com.bookcrossing.mobile.ui.main.MainFragment;
-import com.bookcrossing.mobile.ui.profile.ProfileFragment;
-import com.bookcrossing.mobile.ui.settings.SettingsFragment;
-import com.bookcrossing.mobile.ui.stash.StashFragment;
-import com.crashlytics.android.Crashlytics;
 
 /**
  * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>
@@ -20,14 +16,15 @@ import com.crashlytics.android.Crashlytics;
  */
 
 public class NavigationDrawerResolver {
-  private static final SparseArray<Class<? extends Fragment>> navigationDrawerItems;
+  private static final SparseIntArray navigationDrawerItems;
 
   static {
-    navigationDrawerItems = new SparseArray<>();
-    navigationDrawerItems.put(R.id.nav_catalogue, MainFragment.class);
-    navigationDrawerItems.put(R.id.nav_stash, StashFragment.class);
-    navigationDrawerItems.put(R.id.nav_profile, ProfileFragment.class);
-    navigationDrawerItems.put(R.id.nav_settings, SettingsFragment.class);
+    navigationDrawerItems = new SparseIntArray();
+    navigationDrawerItems.put(R.id.nav_catalogue, R.id.mainFragment);
+    navigationDrawerItems.put(R.id.nav_stash, R.id.stashFragment);
+    navigationDrawerItems.put(R.id.nav_books_map, R.id.mapActivity);
+    navigationDrawerItems.put(R.id.nav_profile, R.id.profileFragment);
+    navigationDrawerItems.put(R.id.nav_settings, R.id.settingsFragment);
   }
 
   /**
@@ -35,12 +32,8 @@ public class NavigationDrawerResolver {
    * @param itemId NavigationDrawer's MenuItem id
    * @return Fragment that should be inflated
    */
-  public static Fragment resolveNavigationDrawerItem(@IdRes int itemId) {
-    try {
-      return navigationDrawerItems.get(itemId).newInstance();
-    } catch (Exception e) {
-      Crashlytics.logException(e);
-      return new MainFragment();
-    }
+  @IdRes
+  public static int resolveNavigationDrawerItem(@IdRes int itemId) {
+    return navigationDrawerItems.get(itemId);
   }
 }
