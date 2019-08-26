@@ -78,6 +78,6 @@
   <string name="consent_preference_non_personalized">Не персонализировать рекламу</string>
   <string name="consent_preference_personalized">Персонализировать рекламу</string>
   <string name="pref_title_ads_consent">Согласие на сбор данных для рекламы</string>
-  <string name="cover_chooser_title">Choose source</string>
-  <string name="release_book_dialog_title">Specify new book\'s position</string>
+    <string name="cover_chooser_title">Выберите обложку</string>
+    <string name="release_book_dialog_title">Укажите новое местоположение книги</string>
 </resources>
