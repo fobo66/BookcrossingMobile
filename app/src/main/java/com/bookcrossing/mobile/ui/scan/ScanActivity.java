@@ -59,7 +59,7 @@ public class ScanActivity extends BaseActivity
 
   @Override protected void onResume() {
     super.onResume();
-    Toast.makeText(ScanActivity.this, R.string.scan_activity_initial_message, Toast.LENGTH_SHORT)
+      Toast.makeText(this, R.string.scan_activity_initial_message, Toast.LENGTH_SHORT)
         .show();
   }
 

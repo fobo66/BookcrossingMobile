@@ -103,4 +103,5 @@
   <string name="pref_title_ads_consent">Ads consent</string>
   <string name="cover_chooser_title">Choose source</string>
   <string name="release_book_dialog_title">Specify new book\'s position</string>
+  <string name="stash_notification_channel">Stashed books updates</string>
 </resources>
