@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -223,7 +222,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
         .customView(R.layout.book_sticker_layout)
         .positiveButton(R.string.ok) { dialog ->
           renderSticker(dialog.getCustomView().findViewById(R.id.sticker))
-          activity!!.supportFragmentManager.popBackStack()
+            requireActivity().supportFragmentManager.popBackStack()
           listener.onBookReleased(newKey)
         }
 
@@ -256,9 +255,6 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     val stickerBitmap = Bitmap.createBitmap(sticker.width, sticker.height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(stickerBitmap)
     sticker.draw(canvas)
-    MediaStore.Images.Media.insertImage(
-        requireContext().contentResolver, stickerBitmap, stickerName,
-        stickerDescription
-    )
+      presenter.saveSticker(stickerBitmap, stickerName, stickerDescription)
   }
 }
