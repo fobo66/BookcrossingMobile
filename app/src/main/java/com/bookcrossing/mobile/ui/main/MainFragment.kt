@@ -82,13 +82,16 @@ class MainFragment : BaseFragment(), MainView {
 
     permissions = RxPermissions(requireActivity())
 
-    //resolveCity()
-
     setupBookList()
 
     subscriptions.add(fab.clicks().subscribe { listener.onBookAdd() })
 
     loadAds()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    resolveCity()
   }
 
   private fun loadAds() {
@@ -124,8 +127,7 @@ class MainFragment : BaseFragment(), MainView {
     }
 
     rv.adapter = adapter
-    val snapHelper = LinearSnapHelper()
-    snapHelper.attachToRecyclerView(rv)
+    LinearSnapHelper().attachToRecyclerView(rv)
     adapter.startListening()
   }
 
@@ -151,7 +153,7 @@ class MainFragment : BaseFragment(), MainView {
 
   private fun askUserToProvideDefaultCity() {
     MaterialDialog(requireContext())
-        .title(R.string.enter_city_title, null)
+            .title(R.string.enter_city_title)
         .message(R.string.enter_city_content)
         .input(hintRes = R.string.city_hint, callback =
         { _, input -> presenter.saveCity(input.toString()) })
