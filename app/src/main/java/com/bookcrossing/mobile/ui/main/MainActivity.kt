@@ -134,7 +134,7 @@ class MainActivity : BaseActivity(), BookListener, NavigationView.OnNavigationIt
             }
 
             override fun onFailedToUpdateConsentInfo(errorDescription: String) {
-                // User's consent status failed to update.
+                Log.d(TAG, "User's consent status failed to update: $errorDescription")
             }
         })
     }
@@ -213,7 +213,7 @@ class MainActivity : BaseActivity(), BookListener, NavigationView.OnNavigationIt
                 return true
             }
             R.id.menu_action_logout -> {
-                AuthUI.getInstance().signOut(this).addOnCompleteListener { task -> finish() }
+                AuthUI.getInstance().signOut(this).addOnCompleteListener { finish() }
                 return true
             }
         }
@@ -281,11 +281,12 @@ class MainActivity : BaseActivity(), BookListener, NavigationView.OnNavigationIt
     }
 
     override fun onBookReleased(bookKey: String) {
-        supportFragmentManager.popBackStack()
+        findNavController(R.id.nav_host_fragment).popBackStack()
         onBookSelected(bookKey)
     }
 
     override fun onBookAdd() {
+        hits.visibility = View.GONE
         findNavController(R.id.nav_host_fragment).navigate(R.id.bookCreateFragment)
     }
 

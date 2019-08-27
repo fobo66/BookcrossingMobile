@@ -89,11 +89,6 @@ class MainFragment : BaseFragment(), MainView {
     loadAds()
   }
 
-  override fun onResume() {
-    super.onResume()
-    resolveCity()
-  }
-
   private fun loadAds() {
     val adBuilder = AdRequest.Builder()
     presenter.checkForConsent(adBuilder)
