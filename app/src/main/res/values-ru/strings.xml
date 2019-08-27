@@ -81,4 +81,9 @@
   <string name="cover_chooser_title">Выберите обложку</string>
   <string name="release_book_dialog_title">Укажите новое местоположение книги</string>
   <string name="stash_notification_channel">Обновления о сохранённых книгах</string>
+    <string name="stash_notification_title_acquired">Отложенная книга взята</string>
+    <string name="stash_notification_title_free">Отложенная книга освобождена</string>
+    <string name="stash_notification_body_acquired">Одна из книг, которую вы отложили, была взята кем-то</string>
+    <string name="stash_notification_body_free">Одна из книг, которую вы отложили, была снова освобождена!</string>
+    <string name="stash_notification_channel_description">Notifications about the books you\'ve stashed</string>
 </resources>

@@ -104,4 +104,9 @@
   <string name="cover_chooser_title">Choose source</string>
   <string name="release_book_dialog_title">Specify new book\'s position</string>
   <string name="stash_notification_channel">Stashed books updates</string>
+  <string name="stash_notification_channel_description">Notifications about the books you\'ve stashed</string>
+  <string name="stash_notification_title_acquired">Stashed book acquired</string>
+  <string name="stash_notification_body_acquired">One of the books you\'ve stashed was acquired by someone</string>
+  <string name="stash_notification_title_free">Stashed book released</string>
+  <string name="stash_notification_body_free">One of the books you\'ve stashed was released! Go find it</string>
 </resources>
