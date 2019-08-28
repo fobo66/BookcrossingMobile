@@ -1,80 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph"
-    app:startDestination="@id/mainFragment">
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/nav_graph"
+  app:startDestination="@id/mainFragment">
 
-    <activity
-        android:id="@+id/bookActivity"
-        android:name="com.bookcrossing.mobile.ui.bookpreview.BookActivity"
-        android:label="activity_book"
-      tools:layout="@layout/activity_book">
-      <argument
-        android:name="key"
-        app:argType="string" />
-    </activity>
-    <activity
-        android:id="@+id/mapActivity"
-        android:name="com.bookcrossing.mobile.ui.map.MapActivity"
-        android:label="activity_map"
-        tools:layout="@layout/activity_map" />
-    <fragment
-        android:id="@+id/mainFragment"
-        android:name="com.bookcrossing.mobile.ui.main.MainFragment"
-        android:label="fragment_main"
-        tools:layout="@layout/fragment_main">
-        <action
-            android:id="@+id/action_mainFragment_to_bookActivity"
-            app:destination="@id/bookActivity" />
-        <action
-            android:id="@+id/action_mainFragment_to_mapActivity"
-            app:destination="@id/mapActivity" />
-        <action
-            android:id="@+id/action_mainFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_stashFragment"
-            app:destination="@id/stashFragment" />
-        <action
-            android:id="@+id/action_mainFragment_pop"
-            app:popUpTo="@id/mainFragment"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_mainFragment_self"
-            app:destination="@+id/mainFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_bookCreateFragment"
-            app:destination="@id/bookCreateFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/bookCreateFragment"
-        android:name="com.bookcrossing.mobile.ui.create.BookCreateFragment"
-        android:label="@string/add_new_book_title"
-        tools:layout="@layout/fragment_book_create">
-        <action
-            android:id="@+id/action_bookCreateFragment_pop"
-            app:popUpTo="@id/bookCreateFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.bookcrossing.mobile.ui.settings.SettingsFragment"
-        android:label="@string/action_settings">
-    </fragment>
-    <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.bookcrossing.mobile.ui.profile.ProfileFragment"
-        android:label="@string/profileTitle"
-        tools:layout="@layout/fragment_profile">
-    </fragment>
-    <fragment
-        android:id="@+id/stashFragment"
-        android:name="com.bookcrossing.mobile.ui.stash.StashFragment"
-        android:label="@string/stash"
-        tools:layout="@layout/fragment_stash">
-    </fragment>
+  <activity
+    android:id="@+id/bookActivity"
+    android:name="com.bookcrossing.mobile.ui.bookpreview.BookActivity"
+    android:label="activity_book"
+    tools:layout="@layout/activity_book">
+    <argument
+      android:name="key"
+      app:argType="string" />
+  </activity>
+  <activity
+    android:id="@+id/mapActivity"
+    android:name="com.bookcrossing.mobile.ui.map.MapActivity"
+    android:label="activity_map"
+    tools:layout="@layout/activity_map" />
+  <fragment
+    android:id="@+id/mainFragment"
+    android:name="com.bookcrossing.mobile.ui.main.MainFragment"
+    android:label="@string/mainTitle"
+    tools:layout="@layout/fragment_main">
+    <action
+      android:id="@+id/action_mainFragment_to_bookActivity"
+      app:destination="@id/bookActivity" />
+    <action
+      android:id="@+id/action_mainFragment_to_mapActivity"
+      app:destination="@id/mapActivity" />
+    <action
+      android:id="@+id/action_mainFragment_to_settingsFragment"
+      app:destination="@id/settingsFragment" />
+    <action
+      android:id="@+id/action_mainFragment_to_profileFragment"
+      app:destination="@id/profileFragment" />
+    <action
+      android:id="@+id/action_mainFragment_to_stashFragment"
+      app:destination="@id/stashFragment" />
+    <action
+      android:id="@+id/action_mainFragment_pop"
+      app:popUpTo="@id/mainFragment"
+      app:popUpToInclusive="true" />
+    <action
+      android:id="@+id/action_mainFragment_self"
+      app:destination="@+id/mainFragment" />
+    <action
+      android:id="@+id/action_mainFragment_to_bookCreateFragment"
+      app:destination="@id/bookCreateFragment" />
+  </fragment>
+  <fragment
+    android:id="@+id/bookCreateFragment"
+    android:name="com.bookcrossing.mobile.ui.create.BookCreateFragment"
+    android:label="@string/add_new_book_title"
+    tools:layout="@layout/fragment_book_create">
+    <action
+      android:id="@+id/action_bookCreateFragment_pop"
+      app:popUpTo="@id/bookCreateFragment"
+      app:popUpToInclusive="true" />
+  </fragment>
+  <fragment
+    android:id="@+id/settingsFragment"
+    android:name="com.bookcrossing.mobile.ui.settings.SettingsFragment"
+    android:label="@string/action_settings"></fragment>
+  <fragment
+    android:id="@+id/profileFragment"
+    android:name="com.bookcrossing.mobile.ui.profile.ProfileFragment"
+    android:label="@string/profileTitle"
+    tools:layout="@layout/fragment_profile"></fragment>
+  <fragment
+    android:id="@+id/stashFragment"
+    android:name="com.bookcrossing.mobile.ui.stash.StashFragment"
+    android:label="@string/stash"
+    tools:layout="@layout/fragment_stash"></fragment>
 </navigation>

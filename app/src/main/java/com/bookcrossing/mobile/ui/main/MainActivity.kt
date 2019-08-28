@@ -4,14 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
-import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -66,8 +64,8 @@ class MainActivity : BaseActivity(), BookListener {
     setContentView(R.layout.activity_main)
     ButterKnife.bind(this)
 
-    setupSearch()
     setupToolbar()
+    setupSearch()
 
     checkForConsent()
 
@@ -96,6 +94,7 @@ class MainActivity : BaseActivity(), BookListener {
     val appBarConfiguration = AppBarConfiguration(navController.graph, drawer)
     toolbar.setupWithNavController(navController, appBarConfiguration)
     navigationView.setupWithNavController(navController)
+    toolbar.inflateMenu(R.menu.menu_main)
   }
 
   private fun checkForConsent() {
@@ -185,19 +184,13 @@ class MainActivity : BaseActivity(), BookListener {
     }
   }
 
-  override fun onCreateOptionsMenu(menu: Menu): Boolean {
-    menuInflater.inflate(R.menu.menu_main, menu)
-    instantSearch.registerSearchView(this, menu, R.id.menu_action_search)
-    return true
-  }
-
   private fun setupSearch() {
     val searcher = Searcher.create(
       getString(R.string.algolia_app_id), getString(R.string.algolia_api_key),
       getString(R.string.algolia_index_name)
     )
     instantSearch = InstantSearch(hits, searcher)
-
+    instantSearch.registerSearchView(this, toolbar.menu, R.id.menu_action_search)
     setupSearchHits()
   }
 
@@ -215,10 +208,6 @@ class MainActivity : BaseActivity(), BookListener {
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (item.itemId) {
-      android.R.id.home -> {
-        drawer.openDrawer(GravityCompat.START)
-        return true
-      }
       R.id.menu_action_search -> {
         if (hits.visibility == View.GONE) {
           hits.visibility = View.VISIBLE
