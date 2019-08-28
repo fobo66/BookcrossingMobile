@@ -55,6 +55,10 @@ android {
     jvmTarget = "1.8"
   }
 
+  kapt {
+    useBuildCache = true
+  }
+
   packagingOptions {
     exclude 'META-INF/rxjava.properties'
   }
