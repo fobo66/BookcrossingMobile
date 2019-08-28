@@ -21,9 +21,6 @@
         android:label="fragment_main"
         tools:layout="@layout/fragment_main">
         <action
-            android:id="@+id/action_mainFragment_to_bookCreateFragment"
-            app:destination="@id/bookCreateFragment" />
-        <action
             android:id="@+id/action_mainFragment_to_bookActivity"
             app:destination="@id/bookActivity" />
         <action
@@ -45,11 +42,14 @@
         <action
             android:id="@+id/action_mainFragment_self"
             app:destination="@+id/mainFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_bookCreateFragment"
+            app:destination="@id/bookCreateFragment" />
     </fragment>
     <fragment
         android:id="@+id/bookCreateFragment"
         android:name="com.bookcrossing.mobile.ui.create.BookCreateFragment"
-        android:label="fragment_book_create"
+        android:label="@string/add_new_book_title"
         tools:layout="@layout/fragment_book_create">
         <action
             android:id="@+id/action_bookCreateFragment_pop"
@@ -59,30 +59,18 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.bookcrossing.mobile.ui.settings.SettingsFragment"
-        android:label="SettingsFragment">
-        <action
-            android:id="@+id/action_settingsFragment_pop"
-            app:popUpTo="@id/settingsFragment"
-            app:popUpToInclusive="true" />
+        android:label="@string/action_settings">
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.bookcrossing.mobile.ui.profile.ProfileFragment"
-        android:label="fragment_profile"
+        android:label="@string/profileTitle"
         tools:layout="@layout/fragment_profile">
-        <action
-            android:id="@+id/action_profileFragment_pop"
-            app:popUpTo="@id/profileFragment"
-            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/stashFragment"
         android:name="com.bookcrossing.mobile.ui.stash.StashFragment"
-        android:label="fragment_stash"
+        android:label="@string/stash"
         tools:layout="@layout/fragment_stash">
-        <action
-            android:id="@+id/action_stashFragment_pop"
-            app:popUpTo="@id/stashFragment"
-            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

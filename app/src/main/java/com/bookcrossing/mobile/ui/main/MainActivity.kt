@@ -1,20 +1,20 @@
 package com.bookcrossing.mobile.ui.main
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.annotation.IdRes
 import androidx.annotation.StringRes
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -25,13 +25,16 @@ import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity
 import com.bookcrossing.mobile.util.Constants
-import com.bookcrossing.mobile.util.NavigationDrawerResolver
 import com.bookcrossing.mobile.util.listeners.BookListener
 import com.crashlytics.android.Crashlytics
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
-import com.google.ads.consent.*
+import com.google.ads.consent.ConsentForm
+import com.google.ads.consent.ConsentFormListener
+import com.google.ads.consent.ConsentInfoUpdateListener
+import com.google.ads.consent.ConsentInformation
+import com.google.ads.consent.ConsentStatus
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -39,7 +42,7 @@ import org.json.JSONException
 import java.net.MalformedURLException
 import java.net.URL
 
-class MainActivity : BaseActivity(), BookListener, NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : BaseActivity(), BookListener {
 
     @BindView(R.id.coord_layout)
     lateinit var coordinatorLayout: CoordinatorLayout
@@ -56,7 +59,6 @@ class MainActivity : BaseActivity(), BookListener, NavigationView.OnNavigationIt
     @BindView(R.id.hits)
     lateinit var hits: Hits
 
-    private lateinit var drawerToggle: ActionBarDrawerToggle
     private lateinit var instantSearch: InstantSearch
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,8 +68,6 @@ class MainActivity : BaseActivity(), BookListener, NavigationView.OnNavigationIt
 
         setupSearch()
         setupToolbar()
-
-        navigationView.setNavigationItemSelectedListener(this)
 
         checkForConsent()
 
@@ -83,10 +83,16 @@ class MainActivity : BaseActivity(), BookListener, NavigationView.OnNavigationIt
         }
     }
 
-    private fun setupToolbar() {
-        setSupportActionBar(toolbar)
-        drawerToggle = setupDrawerToggle()
-        drawer.addDrawerListener(drawerToggle)
+  override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+    super.onSaveInstanceState(outState, outPersistentState)
+    outState.putBundle("navHostState", findNavController(R.id.nav_host_fragment).saveState())
+  }
+
+  private fun setupToolbar() {
+    val navController = findNavController(R.id.nav_host_fragment)
+    val appBarConfiguration = AppBarConfiguration(navController.graph, drawer)
+    toolbar.setupWithNavController(navController, appBarConfiguration)
+    navigationView.setupWithNavController(navController)
     }
 
     private fun checkForConsent() {
@@ -121,6 +127,10 @@ class MainActivity : BaseActivity(), BookListener, NavigationView.OnNavigationIt
                                     }
 
                                     override fun onConsentFormError(errorDescription: String?) {
+                                      Log.d(
+                                        TAG,
+                                        "User's consent status failed to update: $errorDescription"
+                                      )
                                         Crashlytics.log(errorDescription)
                                     }
                                 }).withPersonalizedAdsOption().withNonPersonalizedAdsOption().build()
@@ -147,18 +157,26 @@ class MainActivity : BaseActivity(), BookListener, NavigationView.OnNavigationIt
     }
 
     private fun resolveNavigationToFragment(savedInstanceState: Bundle?) {
-        if (intent != null && savedInstanceState == null) {
+      val navController = findNavController(R.id.nav_host_fragment)
+      if (intent != null) {
             val whereToGo = intent.getStringExtra(Constants.EXTRA_TARGET_FRAGMENT)
             when {
                 whereToGo != null -> when {
-                    "BookCreateFragment".equals(whereToGo, ignoreCase = true) -> findNavController(R.id.nav_host_fragment).navigate(R.id.bookCreateFragment)
-                    "ProfileFragment".equals(whereToGo, ignoreCase = true) -> findNavController(R.id.nav_host_fragment).navigate(R.id.profileFragment)
-                    else -> findNavController(R.id.nav_host_fragment).navigate(R.id.mainFragment)
+                  "BookCreateFragment".equals(
+                    whereToGo,
+                    ignoreCase = true
+                  ) -> navController.navigate(R.id.bookCreateFragment)
+                  "ProfileFragment".equals(
+                    whereToGo,
+                    ignoreCase = true
+                  ) -> navController.navigate(R.id.profileFragment)
                 }
-                else -> findNavController(R.id.nav_host_fragment).navigate(R.id.mainFragment)
+              savedInstanceState != null -> navController.restoreState(
+                savedInstanceState.getBundle(
+                  "navHostState"
+                )
+              )
             }
-        } else {
-            findNavController(R.id.nav_host_fragment).navigate(R.id.mainFragment)
         }
     }
 
@@ -166,11 +184,6 @@ class MainActivity : BaseActivity(), BookListener, NavigationView.OnNavigationIt
         menuInflater.inflate(R.menu.menu_main, menu)
         instantSearch.registerSearchView(this, menu, R.id.menu_action_search)
         return true
-    }
-
-    private fun setupDrawerToggle(): ActionBarDrawerToggle {
-        return ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open,
-                R.string.drawer_close)
     }
 
     private fun setupSearch() {
@@ -193,11 +206,6 @@ class MainActivity : BaseActivity(), BookListener, NavigationView.OnNavigationIt
         }
     }
 
-    private fun selectDrawerItem(@IdRes itemId: Int) {
-        findNavController(R.id.nav_host_fragment).navigate(NavigationDrawerResolver.resolveNavigationDrawerItem(itemId))
-        drawer.closeDrawer(navigationView)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
@@ -218,11 +226,6 @@ class MainActivity : BaseActivity(), BookListener, NavigationView.OnNavigationIt
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        selectDrawerItem(item.itemId)
-        return true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -262,16 +265,6 @@ class MainActivity : BaseActivity(), BookListener, NavigationView.OnNavigationIt
             Snackbar.make(coordinatorLayout, resources.getString(R.string.sign_in_failed),
                     Snackbar.LENGTH_LONG).show()
         }
-    }
-
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
-        drawerToggle.syncState()
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        drawerToggle.onConfigurationChanged(newConfig)
     }
 
     override fun onBookSelected(bookKey: String) {
