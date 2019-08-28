@@ -1,7 +1,6 @@
 package com.bookcrossing.mobile.util;
 
 import android.content.Context;
-import androidx.annotation.StringRes;
 import com.bookcrossing.mobile.util.listeners.BookListener;
 
 /**
@@ -35,9 +34,5 @@ public class BookListenerDelegate implements BookListener {
 
   @Override public void onBookAdd() {
     listener.onBookAdd();
-  }
-
-  @Override public void setTitle(@StringRes int fragmentTitleId) {
-    listener.setTitle(fragmentTitleId);
   }
 }

@@ -2,9 +2,6 @@ package com.bookcrossing.mobile.ui.settings;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import com.bookcrossing.mobile.R;
@@ -44,11 +41,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     findPreference(Constants.EXTRA_DEFAULT_CITY).setOnPreferenceChangeListener(null);
     findPreference(Constants.KEY_CONSENT_STATUS).setOnPreferenceChangeListener(null);
-  }
-
-  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-    delegate.setTitle(R.string.action_settings);
   }
 
   @Override public void onDetach() {
