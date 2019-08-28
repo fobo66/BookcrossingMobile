@@ -9,7 +9,11 @@
         android:id="@+id/bookActivity"
         android:name="com.bookcrossing.mobile.ui.bookpreview.BookActivity"
         android:label="activity_book"
-        tools:layout="@layout/activity_book" />
+      tools:layout="@layout/activity_book">
+      <argument
+        android:name="key"
+        app:argType="string" />
+    </activity>
     <activity
         android:id="@+id/mapActivity"
         android:name="com.bookcrossing.mobile.ui.map.MapActivity"
