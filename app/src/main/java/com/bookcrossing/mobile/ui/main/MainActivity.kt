@@ -6,7 +6,6 @@ import android.os.PersistableBundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import androidx.annotation.StringRes
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -286,10 +285,6 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
   override fun onBookAdd() {
     hits.visibility = View.GONE
     findNavController(R.id.nav_host_fragment).navigate(R.id.bookCreateFragment)
-  }
-
-  override fun setTitle(@StringRes fragmentTitleId: Int) {
-    toolbar.setTitle(fragmentTitleId)
   }
 
   companion object {
