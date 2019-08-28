@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
@@ -40,7 +41,7 @@ import org.json.JSONException
 import java.net.MalformedURLException
 import java.net.URL
 
-class MainActivity : BaseActivity(), BookListener {
+class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
 
   @BindView(R.id.coord_layout)
   lateinit var coordinatorLayout: CoordinatorLayout
@@ -95,6 +96,7 @@ class MainActivity : BaseActivity(), BookListener {
     toolbar.setupWithNavController(navController, appBarConfiguration)
     navigationView.setupWithNavController(navController)
     toolbar.inflateMenu(R.menu.menu_main)
+    toolbar.setOnMenuItemClickListener(this)
   }
 
   private fun checkForConsent() {
@@ -206,8 +208,8 @@ class MainActivity : BaseActivity(), BookListener {
     }
   }
 
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    when (item.itemId) {
+  override fun onMenuItemClick(item: MenuItem?): Boolean {
+    when (item?.itemId) {
       R.id.menu_action_search -> {
         if (hits.visibility == View.GONE) {
           hits.visibility = View.VISIBLE
@@ -221,7 +223,7 @@ class MainActivity : BaseActivity(), BookListener {
         return true
       }
     }
-    return super.onOptionsItemSelected(item)
+    return false
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
