@@ -93,7 +93,7 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
     acquireSubscription = RxView.clicks(acquireButton).subscribe(o -> handleAcquiring());
 
     positionNameSubscription =
-        RxView.clicks(position).subscribe(o -> goToPosition(currentBookPosition));
+      RxView.clicks(position).subscribe(o -> goToPosition(currentBookPosition));
   }
 
   public void goToPosition(Coordinates coordinates) {
@@ -106,18 +106,18 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
     RecyclerView.LayoutManager llm = new LinearLayoutManager(this);
     placesHistory.setLayoutManager(llm);
     adapter = new FirebaseRecyclerAdapter<Coordinates, PlacesHistoryViewHolder>(
-        new FirebaseRecyclerOptions.Builder<Coordinates>().setQuery(presenter.getPlacesHistory(key),
-            Coordinates.class).build()) {
+      new FirebaseRecyclerOptions.Builder<Coordinates>().setQuery(presenter.getPlacesHistory(key),
+        Coordinates.class).setLifecycleOwner(this).build()) {
       @NonNull @Override
       public PlacesHistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.places_history_list_item, parent, false);
+          .inflate(R.layout.places_history_list_item, parent, false);
         return new PlacesHistoryViewHolder(view);
       }
 
       @Override
       protected void onBindViewHolder(@NonNull PlacesHistoryViewHolder holder, int position,
-          @NonNull Coordinates model) {
+        @NonNull Coordinates model) {
         holder.bind(this.getRef(position).getKey(), model);
       }
     };
@@ -168,10 +168,11 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
   @Override public void onBookLoaded(Book book) {
     toolbar.setTitle(book.getName());
     GlideApp.with(this)
-        .load(presenter.resolveCover(key)).transition(withCrossFade())
-        .placeholder(R.drawable.ic_book_cover_placeholder)
-        .thumbnail(0.6f)
-        .into(cover);
+      .load(presenter.resolveCover(key))
+      .transition(withCrossFade())
+      .placeholder(R.drawable.ic_book_cover_placeholder)
+      .thumbnail(0.6f)
+      .into(cover);
     author.setText(book.getAuthor());
     position.setText(String.format("%s, %s", book.getCity(), book.getPositionName()));
     wentFree.setReferenceTime(book.getWentFreeAt().getTimestamp());
@@ -184,10 +185,10 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
 
   @Override public void onErrorToLoadBook() {
     new AlertDialog.Builder(this).setMessage(R.string.failed_to_load_book_message)
-        .setTitle(R.string.error_dialog_title)
-        .setPositiveButton(R.string.ok, (dialogInterface, i) -> startActivity(
-            new Intent(BookActivity.this, MainActivity.class)))
-        .show();
+      .setTitle(R.string.error_dialog_title)
+      .setPositiveButton(R.string.ok,
+        (dialogInterface, i) -> startActivity(new Intent(BookActivity.this, MainActivity.class)))
+      .show();
   }
 
   @Override public void onBookStashed() {
