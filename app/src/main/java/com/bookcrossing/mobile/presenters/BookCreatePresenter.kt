@@ -19,7 +19,8 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
-import java.util.*
+import java.util.Calendar
+import java.util.EnumMap
 
 @InjectViewState
 class BookCreatePresenter : BasePresenter<BookCreateView>() {
@@ -108,7 +109,8 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     private fun setPublicationDate() {
         val calendar = Calendar.getInstance()
         val date = Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH), java.util.Date().time)
+          calendar.get(Calendar.DAY_OF_MONTH), calendar.timeInMillis
+        )
         book.wentFreeAt = date
     }
 
