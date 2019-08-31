@@ -15,7 +15,7 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
  * Created 23.05.17.
  */
 
-public class HitsCoverImageView extends android.support.v7.widget.AppCompatImageView
+public class HitsCoverImageView extends androidx.appcompat.widget.AppCompatImageView
     implements AlgoliaHitView {
 
   public HitsCoverImageView(Context context, AttributeSet attrs) {

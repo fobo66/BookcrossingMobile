@@ -1,6 +1,6 @@
 package com.bookcrossing.mobile.util
 
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 
 interface ResourceProvider {
     fun getString(@StringRes stringRes: Int): String

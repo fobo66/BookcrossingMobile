@@ -42,7 +42,7 @@
     </activity>
 
     <provider
-        android:name="android.support.v4.content.FileProvider"
+        android:name="androidx.core.content.FileProvider"
         android:authorities="${applicationId}.file_provider"
         android:exported="false"
         android:grantUriPermissions="true">
@@ -88,6 +88,22 @@
     <meta-data
         android:name="com.google.android.geo.API_KEY"
         android:value="@string/google_maps_key"/>
+
+    <meta-data
+        android:name="com.google.android.gms.ads.APPLICATION_ID"
+        android:value="${admob}" />
+
+      <meta-data
+          android:name="com.google.firebase.messaging.default_notification_icon"
+          android:resource="@drawable/ic_book_black_24dp" />
+      <meta-data
+          android:name="com.google.firebase.messaging.default_notification_color"
+          android:resource="@color/colorPrimary" />
+
+      <meta-data
+          android:name="com.google.firebase.messaging.default_notification_channel_id"
+          android:value="stash" />
+
 
     <service
         android:name=".util.StashService"

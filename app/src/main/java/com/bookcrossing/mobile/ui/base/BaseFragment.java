@@ -2,10 +2,10 @@ package com.bookcrossing.mobile.ui.base;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.view.View;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.arellomobile.mvp.MvpAppCompatFragment;
@@ -28,7 +28,7 @@ public abstract class BaseFragment extends MvpAppCompatFragment {
 
   public abstract @StringRes int title();
 
-  @Override public void onAttach(Context context) {
+  @Override public void onAttach(@NonNull Context context) {
     super.onAttach(context);
 
     listener = new BookListenerDelegate(context);
@@ -42,11 +42,6 @@ public abstract class BaseFragment extends MvpAppCompatFragment {
   @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     unbinder = ButterKnife.bind(this, view);
-    setActivityTitle();
-  }
-
-  private void setActivityTitle() {
-    listener.setTitle(title());
   }
 
   protected void authenticate() {

@@ -1,14 +1,14 @@
 package com.bookcrossing.mobile.ui.profile;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
@@ -37,7 +37,7 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
   private FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder> adapter;
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+    Bundle savedInstanceState) {
     return inflater.inflate(R.layout.fragment_profile, container, false);
   }
 
@@ -52,9 +52,9 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
     if (presenter.isAuthenticated()) {
       adapter.startListening();
       GlideApp.with(this)
-          .load(presenter.getPhotoUrl())
-          .transition(withCrossFade())
-          .into(profileImage);
+        .load(presenter.getPhotoUrl())
+        .transition(withCrossFade())
+        .into(profileImage);
     } else {
       authenticate();
     }
@@ -64,18 +64,19 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
     LinearLayoutManager llm = new LinearLayoutManager(getActivity());
     acquiredBooksList.setLayoutManager(llm);
     adapter = new FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder>(
-        new FirebaseRecyclerOptions.Builder<Book>().setQuery(presenter.getAcquiredBooks(),
-            Book.class).build()) {
+      new FirebaseRecyclerOptions.Builder<Book>().setQuery(presenter.getAcquiredBooks(), Book.class)
+        .setLifecycleOwner(getViewLifecycleOwner())
+        .build()) {
       @NonNull @Override
       public AcquiredBooksViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.acquired_book_list_item, parent, false);
+          .inflate(R.layout.acquired_book_list_item, parent, false);
         return new AcquiredBooksViewHolder(view);
       }
 
       @Override
       protected void onBindViewHolder(@NonNull AcquiredBooksViewHolder holder, int position,
-          @NonNull Book model) {
+        @NonNull Book model) {
         holder.setKey(this.getRef(position).getKey());
         holder.bind(model);
       }

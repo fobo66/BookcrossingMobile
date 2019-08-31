@@ -1,7 +1,7 @@
 package com.bookcrossing.mobile.util;
 
-import android.support.v7.preference.ListPreference;
-import android.support.v7.preference.Preference;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
 
 /**
  * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>

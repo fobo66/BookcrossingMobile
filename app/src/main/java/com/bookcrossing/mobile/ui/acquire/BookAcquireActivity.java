@@ -17,11 +17,9 @@ package com.bookcrossing.mobile.ui.acquire;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputEditText;
-import android.support.v7.widget.Toolbar;
 import android.widget.Button;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.arellomobile.mvp.MvpAppCompatActivity;
@@ -32,11 +30,14 @@ import com.bookcrossing.mobile.presenters.BookAcquirePresenter;
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 import com.bookcrossing.mobile.ui.scan.ScanActivity;
 import com.bookcrossing.mobile.util.Constants;
-import com.jakewharton.rxbinding2.view.RxView;
-import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.jakewharton.rxbinding3.view.RxView;
+import com.jakewharton.rxbinding3.widget.RxTextView;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import java.util.concurrent.TimeUnit;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 
 public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcquireView {
@@ -109,7 +110,7 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
     startActivity(intent);
   }
 
-  @NotNull private Observable<Object> onAcquireButtonClicked() {
+  @NotNull private Observable<Unit> onAcquireButtonClicked() {
     return RxView.clicks(acquireButton)
         .throttleFirst(300, TimeUnit.MILLISECONDS);
   }

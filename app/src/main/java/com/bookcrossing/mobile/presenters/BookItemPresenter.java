@@ -1,6 +1,6 @@
 package com.bookcrossing.mobile.presenters;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.arellomobile.mvp.InjectViewState;
 import com.bookcrossing.mobile.ui.bookpreview.BookItemView;
 
