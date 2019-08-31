@@ -28,7 +28,7 @@ public abstract class BaseFragment extends MvpAppCompatFragment {
 
   public abstract @StringRes int title();
 
-  @Override public void onAttach(Context context) {
+  @Override public void onAttach(@NonNull Context context) {
     super.onAttach(context);
 
     listener = new BookListenerDelegate(context);
@@ -42,11 +42,6 @@ public abstract class BaseFragment extends MvpAppCompatFragment {
   @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     unbinder = ButterKnife.bind(this, view);
-    setActivityTitle();
-  }
-
-  private void setActivityTitle() {
-    listener.setTitle(title());
   }
 
   protected void authenticate() {

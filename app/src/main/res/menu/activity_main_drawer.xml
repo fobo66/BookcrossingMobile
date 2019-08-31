@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_catalogue"
+        android:id="@id/mainFragment"
         android:icon="@drawable/ic_book_black_24dp"
         android:title="@string/mainTitle" />
     <item
-        android:id="@+id/nav_stash"
+        android:id="@id/stashFragment"
         android:icon="@drawable/ic_turned_in_white_24dp"
         android:title="@string/stash" />
     <item
-        android:id="@+id/nav_books_map"
+        android:id="@id/mapActivity"
         android:icon="@drawable/ic_room_white_24dp"
         android:title="@string/books_map"/>
     <item
-        android:id="@+id/nav_profile"
+        android:id="@id/profileFragment"
         android:icon="@drawable/ic_account_circle_black_24dp"
         android:title="@string/profile"/>
     <item
-        android:id="@+id/nav_settings"
+        android:id="@id/settingsFragment"
         android:icon="@drawable/ic_settings_black_24dp"
         android:title="@string/action_settings"/>
 </menu>

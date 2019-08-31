@@ -45,13 +45,17 @@ import io.reactivex.schedulers.Schedulers
 
 class MainFragment : BaseFragment(), MainView {
 
-  @BindView(R.id.books_rv) lateinit var rv: RecyclerView
+  @BindView(R.id.books_rv)
+  lateinit var rv: RecyclerView
 
-  @BindView(R.id.addBookButton) lateinit var fab: FloatingActionButton
+  @BindView(R.id.addBookButton)
+  lateinit var fab: FloatingActionButton
 
-  @BindView(R.id.adView) lateinit var ad: AdView
+  @BindView(R.id.adView)
+  lateinit var ad: AdView
 
-  @InjectPresenter lateinit var presenter: MainPresenter
+  @InjectPresenter
+  lateinit var presenter: MainPresenter
 
   private lateinit var adapter: FirebaseRecyclerAdapter<Book, BooksViewHolder>
 
@@ -89,11 +93,6 @@ class MainFragment : BaseFragment(), MainView {
     loadAds()
   }
 
-  override fun onResume() {
-    super.onResume()
-    resolveCity()
-  }
-
   private fun loadAds() {
     val adBuilder = AdRequest.Builder()
     presenter.checkForConsent(adBuilder)
@@ -104,15 +103,16 @@ class MainFragment : BaseFragment(), MainView {
   private fun setupBookList() {
     rv.layoutManager = LinearLayoutManager(activity)
     adapter = object : FirebaseRecyclerAdapter<Book, BooksViewHolder>(
-        FirebaseRecyclerOptions.Builder<Book>().setQuery(presenter.books, Book::class.java)
-            .build()
+      FirebaseRecyclerOptions.Builder<Book>().setQuery(presenter.books, Book::class.java)
+        .setLifecycleOwner(viewLifecycleOwner)
+        .build()
     ) {
       override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
       ): BooksViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.book_list_item_main, parent, false)
+          .inflate(R.layout.book_list_item_main, parent, false)
         return BooksViewHolder(view)
       }
 
@@ -133,30 +133,30 @@ class MainFragment : BaseFragment(), MainView {
 
   private fun resolveCity() {
     subscriptions.add(
-        permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
-            .flatMapMaybe { granted ->
-              if (granted) {
-                return@flatMapMaybe presenter.resolveUserCity()
-              }
-              Maybe.empty<String>()
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { city ->
-              if (city.isNotEmpty()) {
-                presenter.saveCity(city)
-              } else {
-                askUserToProvideDefaultCity()
-              }
-            })
+      permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
+        .flatMapMaybe { granted ->
+          if (granted) {
+            return@flatMapMaybe presenter.resolveUserCity()
+          }
+          Maybe.empty<String>()
+        }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { city ->
+          if (city.isNotEmpty()) {
+            presenter.saveCity(city)
+          } else {
+            askUserToProvideDefaultCity()
+          }
+        })
   }
 
   private fun askUserToProvideDefaultCity() {
     MaterialDialog(requireContext())
-            .title(R.string.enter_city_title)
-        .message(R.string.enter_city_content)
-        .input(hintRes = R.string.city_hint, callback =
-        { _, input -> presenter.saveCity(input.toString()) })
-        .show()
+      .title(R.string.enter_city_title)
+      .message(R.string.enter_city_content)
+      .input(hintRes = R.string.city_hint, callback =
+      { _, input -> presenter.saveCity(input.toString()) })
+      .show()
   }
 }

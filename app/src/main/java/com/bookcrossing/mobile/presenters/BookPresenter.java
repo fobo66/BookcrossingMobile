@@ -52,4 +52,9 @@ import durdinapps.rxfirebase2.RxFirebaseDatabase;
   public DatabaseReference getPlacesHistory(String key) {
     return placesHistory(key);
   }
+
+  public void reportAbuse(String key) {
+    Crashlytics.log(String.format("Users complaining to book %s. Consider to check it", key));
+    getViewState().onAbuseReported();
+  }
 }

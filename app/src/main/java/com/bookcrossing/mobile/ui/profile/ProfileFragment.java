@@ -37,7 +37,7 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
   private FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder> adapter;
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+    Bundle savedInstanceState) {
     return inflater.inflate(R.layout.fragment_profile, container, false);
   }
 
@@ -52,9 +52,9 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
     if (presenter.isAuthenticated()) {
       adapter.startListening();
       GlideApp.with(this)
-          .load(presenter.getPhotoUrl())
-          .transition(withCrossFade())
-          .into(profileImage);
+        .load(presenter.getPhotoUrl())
+        .transition(withCrossFade())
+        .into(profileImage);
     } else {
       authenticate();
     }
@@ -64,18 +64,19 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
     LinearLayoutManager llm = new LinearLayoutManager(getActivity());
     acquiredBooksList.setLayoutManager(llm);
     adapter = new FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder>(
-        new FirebaseRecyclerOptions.Builder<Book>().setQuery(presenter.getAcquiredBooks(),
-            Book.class).build()) {
+      new FirebaseRecyclerOptions.Builder<Book>().setQuery(presenter.getAcquiredBooks(), Book.class)
+        .setLifecycleOwner(getViewLifecycleOwner())
+        .build()) {
       @NonNull @Override
       public AcquiredBooksViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.acquired_book_list_item, parent, false);
+          .inflate(R.layout.acquired_book_list_item, parent, false);
         return new AcquiredBooksViewHolder(view);
       }
 
       @Override
       protected void onBindViewHolder(@NonNull AcquiredBooksViewHolder holder, int position,
-          @NonNull Book model) {
+        @NonNull Book model) {
         holder.setKey(this.getRef(position).getKey());
         holder.bind(model);
       }

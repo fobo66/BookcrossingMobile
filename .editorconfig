@@ -1,0 +1,31 @@
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = false
+indent_style = space
+indent_size = 2
+
+[{*.sht, *.html, *.shtm, *.shtml, *.htm}]
+indent_style = space
+indent_size = 4
+
+[*.json]
+indent_style = space
+indent_size = 2
+
+[*.properties]
+indent_style = space
+indent_size = 4
+
+[.editorconfig]
+indent_style = space
+indent_size = 4
+
+[{*.cp, *.ii, *.cc, *.hpp, *.cpp, *.tcc, *.hp, *.cxx, *.h++, *.icc, *.mm, *.inl, *.hxx, *.hh, *.m, *.i, *.h, *.c, *.c++, *.pch}]
+indent_style = space
+indent_size = 4
+
+[{.analysis_options, *.yml, *.yaml}]
+indent_style = space
+indent_size = 2
+
