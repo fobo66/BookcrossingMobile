@@ -3,7 +3,6 @@ package com.bookcrossing.mobile.ui.bookpreview;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ import com.bookcrossing.mobile.ui.main.MainActivity;
 import com.bookcrossing.mobile.ui.map.MapActivity;
 import com.bookcrossing.mobile.util.Constants;
 import com.bookcrossing.mobile.util.adapters.PlacesHistoryViewHolder;
-import com.crashlytics.android.Crashlytics;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
@@ -39,7 +37,8 @@ import io.reactivex.disposables.Disposable;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
-public class BookActivity extends MvpAppCompatActivity implements BookView {
+public class BookActivity extends MvpAppCompatActivity
+  implements BookView, Toolbar.OnMenuItemClickListener {
 
   @InjectPresenter public BookPresenter presenter;
 
@@ -67,21 +66,16 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
   private Disposable positionNameSubscription;
   private FirebaseRecyclerAdapter<Coordinates, PlacesHistoryViewHolder> adapter;
   private Coordinates currentBookPosition;
-  private boolean reportWasSent = false;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_book);
     ButterKnife.bind(this);
 
-    setSupportActionBar(toolbar);
-    if (getSupportActionBar() != null) {
-      getSupportActionBar().setHomeButtonEnabled(true);
-      getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
+    setupToolbar();
 
     if (getIntent() != null) {
-      this.key = getIntent().getStringExtra(Constants.EXTRA_KEY);
+      key = getIntent().getStringExtra(Constants.EXTRA_KEY);
       presenter.subscribeToBookReference(key);
       presenter.checkStashingState(key);
     }
@@ -94,6 +88,13 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
 
     positionNameSubscription =
       RxView.clicks(position).subscribe(o -> goToPosition(currentBookPosition));
+  }
+
+  private void setupToolbar() {
+    toolbar.inflateMenu(R.menu.menu_book);
+    toolbar.setOnMenuItemClickListener(this);
+    toolbar.setNavigationIcon(R.drawable.ic_back);
+    toolbar.setNavigationOnClickListener(view -> onBackPressed());
   }
 
   public void goToPosition(Coordinates coordinates) {
@@ -133,30 +134,12 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
     adapter.stopListening();
   }
 
-  @Override public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.menu_book, menu);
-    return true;
-  }
-
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onMenuItemClick(MenuItem item) {
     if (item.getItemId() == R.id.menu_action_report) {
-      reportAbuse();
+      presenter.reportAbuse(key);
       return true;
     }
-    return super.onOptionsItemSelected(item);
-  }
-
-  @Override public boolean onPrepareOptionsMenu(Menu menu) {
-    if (reportWasSent) {
-      menu.findItem(R.id.menu_action_report).setVisible(false);
-    }
-    return super.onPrepareOptionsMenu(menu);
-  }
-
-  private void reportAbuse() {
-    Crashlytics.log(String.format("Users complaining to book %s. Consider to check it", key));
-    Toast.makeText(this, "Your report was sent", Toast.LENGTH_SHORT).show();
-    reportWasSent = true;
+    return false;
   }
 
   private void handleAcquiring() {
@@ -170,7 +153,6 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
     GlideApp.with(this)
       .load(presenter.resolveCover(key))
       .transition(withCrossFade())
-      .placeholder(R.drawable.ic_book_cover_placeholder)
       .thumbnail(0.6f)
       .into(cover);
     author.setText(book.getAuthor());
@@ -197,5 +179,9 @@ public class BookActivity extends MvpAppCompatActivity implements BookView {
 
   @Override public void onBookUnstashed() {
     favorite.setImageResource(R.drawable.ic_turned_in_not_white_24dp);
+  }
+
+  @Override public void onAbuseReported() {
+    Toast.makeText(this, R.string.report_abuse_success, Toast.LENGTH_SHORT).show();
   }
 }
