@@ -40,7 +40,7 @@ android {
   }
   buildTypes {
     release {
-      minifyEnabled false // fuck proguard
+      minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       signingConfig signingConfigs.releaseConfig
 
