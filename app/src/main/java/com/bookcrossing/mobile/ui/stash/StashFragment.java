@@ -30,10 +30,6 @@ public class StashFragment extends BaseFragment implements StashView {
   public StashFragment() {
   }
 
-  @Override public int title() {
-    return R.string.stash;
-  }
-
   @Nullable @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
     @Nullable Bundle savedInstanceState) {

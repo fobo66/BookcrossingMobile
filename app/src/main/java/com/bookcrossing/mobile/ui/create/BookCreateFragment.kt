@@ -60,10 +60,6 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   private var coverChooserDialog: MaterialDialog? = null
 
-  override fun title(): Int {
-    return R.string.add_new_book_title
-  }
-
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,

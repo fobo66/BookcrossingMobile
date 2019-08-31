@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.arellomobile.mvp.MvpAppCompatFragment;
@@ -25,8 +24,6 @@ public abstract class BaseFragment extends MvpAppCompatFragment {
   protected Unbinder unbinder;
   protected CompositeDisposable subscriptions = new CompositeDisposable();
   protected BookListenerDelegate listener;
-
-  public abstract @StringRes int title();
 
   @Override public void onAttach(@NonNull Context context) {
     super.onAttach(context);
