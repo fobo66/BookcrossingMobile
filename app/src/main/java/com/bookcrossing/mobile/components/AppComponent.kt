@@ -1,7 +1,12 @@
 package com.bookcrossing.mobile.components
 
-import com.bookcrossing.mobile.modules.*
+import com.bookcrossing.mobile.modules.ApiModule
+import com.bookcrossing.mobile.modules.App
+import com.bookcrossing.mobile.modules.LocationModule
+import com.bookcrossing.mobile.modules.PrefModule
+import com.bookcrossing.mobile.modules.ProvidersModule
 import com.bookcrossing.mobile.presenters.MainPresenter
+import com.bookcrossing.mobile.presenters.SearchPresenter
 import com.bookcrossing.mobile.util.FirebaseWrapper
 import com.bookcrossing.mobile.util.SystemServicesWrapper
 import dagger.BindsInstance
@@ -36,4 +41,6 @@ interface AppComponent {
     fun inject(systemServicesWrapper: SystemServicesWrapper)
 
     fun inject(presenter: MainPresenter)
+
+  fun inject(presenter: SearchPresenter)
 }

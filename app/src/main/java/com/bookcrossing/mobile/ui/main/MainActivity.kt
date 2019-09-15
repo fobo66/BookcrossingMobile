@@ -1,3 +1,19 @@
+/*
+ *    Copyright 2016 Andrey Mukamolov
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package com.bookcrossing.mobile.ui.main
 
 import android.content.Intent
@@ -5,7 +21,6 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -17,9 +32,6 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.algolia.instantsearch.helpers.InstantSearch
-import com.algolia.instantsearch.helpers.Searcher
-import com.algolia.instantsearch.ui.views.Hits
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.bookcrossing.mobile.util.Constants
@@ -36,7 +48,6 @@ import com.google.ads.consent.ConsentStatus
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import org.json.JSONException
 import java.net.MalformedURLException
 import java.net.URL
 
@@ -54,18 +65,12 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
   @BindView(R.id.drawer_layout)
   lateinit var drawer: DrawerLayout
 
-  @BindView(R.id.hits)
-  lateinit var hits: Hits
-
-  private lateinit var instantSearch: InstantSearch
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
     ButterKnife.bind(this)
 
     setupToolbar()
-    setupSearch()
 
     checkForConsent()
 
@@ -185,36 +190,11 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
     }
   }
 
-  private fun setupSearch() {
-    val searcher = Searcher.create(
-      getString(R.string.algolia_app_id), getString(R.string.algolia_api_key),
-      getString(R.string.algolia_index_name)
-    )
-    instantSearch = InstantSearch(hits, searcher)
-    instantSearch.registerSearchView(this, toolbar.menu, R.id.menu_action_search)
-    setupSearchHits()
-  }
-
-  private fun setupSearchHits() {
-    hits.setOnItemClickListener { _, position, _ ->
-      try {
-        hits.visibility = View.GONE
-        onBookSelected(hits.get(position).getString("objectID"))
-      } catch (e: JSONException) {
-        Snackbar.make(coordinatorLayout, "Cannot open book info", Snackbar.LENGTH_SHORT).show()
-        e.printStackTrace()
-      }
-    }
-  }
-
   override fun onMenuItemClick(item: MenuItem?): Boolean {
     when (item?.itemId) {
       R.id.menu_action_search -> {
-        if (hits.visibility == View.GONE) {
-          hits.visibility = View.VISIBLE
-        } else {
-          hits.visibility = View.GONE
-        }
+        findNavController(R.id.nav_host_fragment).navigate(R.id.searchFragment)
+        item.expandActionView()
         return true
       }
       R.id.menu_action_logout -> {
@@ -283,7 +263,6 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
   }
 
   override fun onBookAdd() {
-    hits.visibility = View.GONE
     findNavController(R.id.nav_host_fragment).navigate(R.id.bookCreateFragment)
   }
 

@@ -49,6 +49,9 @@
     <action
       android:id="@+id/action_mainFragment_to_bookCreateFragment"
       app:destination="@id/bookCreateFragment" />
+    <action
+      android:id="@+id/action_mainFragment_to_searchFragment"
+      app:destination="@id/searchFragment" />
   </fragment>
   <fragment
     android:id="@+id/bookCreateFragment"
@@ -74,4 +77,9 @@
     android:name="com.bookcrossing.mobile.ui.stash.StashFragment"
     android:label="@string/stash"
     tools:layout="@layout/fragment_stash"></fragment>
+  <fragment
+    android:id="@+id/searchFragment"
+    android:name="com.bookcrossing.mobile.ui.search.SearchFragment"
+    android:label="fragment_search_list"
+    tools:layout="@layout/fragment_search_list" />
 </navigation>
