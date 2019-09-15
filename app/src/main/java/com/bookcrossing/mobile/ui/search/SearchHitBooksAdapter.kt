@@ -1,3 +1,19 @@
+/*
+ *    Copyright 2019 Andrey Mukamolov
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package com.bookcrossing.mobile.ui.search
 
 
@@ -5,6 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -29,7 +46,6 @@ class SearchHitBooksAdapter : PagedListAdapter<SearchHitBook, ViewHolder>(Search
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
     val item = books[position]
     holder.bind(item)
-
   }
 
   override fun getItemCount(): Int = books.size
@@ -38,6 +54,15 @@ class SearchHitBooksAdapter : PagedListAdapter<SearchHitBook, ViewHolder>(Search
 
     @BindView(R.id.search_hit_cover)
     lateinit var cover: ImageView
+
+    @BindView(R.id.search_hit_book_name)
+    lateinit var bookName: TextView
+
+    @BindView(R.id.search_hit_author)
+    lateinit var author: TextView
+
+    @BindView(R.id.search_hit_current_position)
+    lateinit var currentPosition: TextView
 
     init {
       ButterKnife.bind(itemView)
@@ -48,6 +73,10 @@ class SearchHitBooksAdapter : PagedListAdapter<SearchHitBook, ViewHolder>(Search
         .load(FirebaseStorage.getInstance().getReference(book.key + ".jpg"))
         .placeholder(R.drawable.ic_book_cover_placeholder).transition(withCrossFade())
         .into(cover)
+
+      bookName.text = book.name
+      author.text = book.author
+      currentPosition.text = book.position
     }
   }
 
