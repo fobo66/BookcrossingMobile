@@ -18,16 +18,17 @@ package com.bookcrossing.mobile.presenters;
 
 import androidx.annotation.NonNull;
 import com.arellomobile.mvp.InjectViewState;
-import com.bookcrossing.mobile.ui.bookpreview.BookItemView;
+import com.bookcrossing.mobile.ui.stash.BookCoverView;
 
-@InjectViewState public class BookItemPresenter extends BasePresenter<BookItemView> {
+/**
+ * (c) 2019 Andrey Mukamolov <fobo66@protonmail.com>
+ * Created 2019-09-16.
+ */
+@InjectViewState public class StashedBookItemPresenter extends BasePresenter<BookCoverView> {
+  public static final String TAG = "StashedBookItemPresenter";
 
-  public static final String TAG = "BookItemPresenter";
-
-  public void releaseCurrentBook(@NonNull String key, @NonNull String position) {
-    acquiredBooks().child(key).removeValue();
-    books().child(key).child("city").setValue(getCity());
-    books().child(key).child("positionName").setValue(position);
-    books().child(key).child("free").setValue(true);
+  public void unstashCurrentBook(@NonNull String key) {
+    stash().child(key).removeValue();
+    firebaseWrapper.getFcm().unsubscribeFromTopic(key);
   }
 }
