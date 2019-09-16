@@ -43,9 +43,6 @@ class SearchFragment : BaseFragment(), SearchView {
   @BindView(R.id.search_hits)
   lateinit var searchHits: RecyclerView
 
-  @BindView(R.id.toolbar)
-  lateinit var toolbar: Toolbar
-
   private val connection = ConnectionHandler()
 
   override fun onCreateView(
@@ -58,6 +55,8 @@ class SearchFragment : BaseFragment(), SearchView {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
+    val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
+
     presenter.searchableBooks.observe(this, Observer { hits ->
       presenter.adapter.submitList(hits)
     })
@@ -69,7 +68,7 @@ class SearchFragment : BaseFragment(), SearchView {
     }
 
     val searchBoxView =
-      SearchBoxViewAppCompat(toolbar.menu.getItem(R.id.menu_action_search).actionView as androidx.appcompat.widget.SearchView)
+      SearchBoxViewAppCompat(toolbar.menu.findItem(R.id.menu_action_search).actionView as androidx.appcompat.widget.SearchView)
     connection += presenter.searchBox.connectView(searchBoxView)
   }
 
