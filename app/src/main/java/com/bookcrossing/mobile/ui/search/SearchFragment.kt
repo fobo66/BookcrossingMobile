@@ -1,6 +1,5 @@
 /*
- *    Copyright 2019 Andrey Mukamolov
- *
+ *    Copyright  2019 Andrey Mukamolov
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -31,7 +30,6 @@ import com.algolia.instantsearch.helper.android.searchbox.SearchBoxViewAppCompat
 import com.algolia.instantsearch.helper.android.searchbox.connectView
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.bookcrossing.mobile.R
-import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.presenters.SearchPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 
@@ -49,7 +47,7 @@ class SearchFragment : BaseFragment(), SearchView {
     inflater: LayoutInflater, container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    return inflater.inflate(layout.fragment_search_list, container, false)
+    return inflater.inflate(R.layout.fragment_search_list, container, false)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -1,6 +1,5 @@
 /*
- *    Copyright 2019 Andrey Mukamolov
- *
+ *    Copyright  2019 Andrey Mukamolov
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -24,19 +23,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
-import butterknife.ButterKnife
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.models.SearchHitBook
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.ui.search.SearchHitBooksAdapter.ViewHolder
+import com.bookcrossing.mobile.util.adapters.BaseViewHolder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.google.firebase.storage.FirebaseStorage
 
 class SearchHitBooksAdapter : PagedListAdapter<SearchHitBook, ViewHolder>(SearchHitBooksAdapter) {
 
-  private val books = mutableListOf<SearchHitBook>()
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val view = LayoutInflater.from(parent.context)
       .inflate(R.layout.hits_item, parent, false)
@@ -44,13 +41,13 @@ class SearchHitBooksAdapter : PagedListAdapter<SearchHitBook, ViewHolder>(Search
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val item = books[position]
-    holder.bind(item)
+    val item = getItem(position)
+    if (item != null) {
+      holder.bind(item)
+    }
   }
 
-  override fun getItemCount(): Int = books.size
-
-  inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+  inner class ViewHolder(itemView: View) : BaseViewHolder(itemView) {
 
     @BindView(R.id.search_hit_cover)
     lateinit var cover: ImageView
@@ -64,29 +61,25 @@ class SearchHitBooksAdapter : PagedListAdapter<SearchHitBook, ViewHolder>(Search
     @BindView(R.id.search_hit_current_position)
     lateinit var currentPosition: TextView
 
-    init {
-      ButterKnife.bind(itemView)
-    }
-
     fun bind(book: SearchHitBook) {
       GlideApp.with(itemView.context)
-        .load(FirebaseStorage.getInstance().getReference(book.key + ".jpg"))
+        .load(FirebaseStorage.getInstance().getReference(book.objectID + ".jpg"))
         .placeholder(R.drawable.ic_book_cover_placeholder).transition(withCrossFade())
         .into(cover)
 
       bookName.text = book.name
       author.text = book.author
-      currentPosition.text = book.position
+      currentPosition.text = book.positionName
     }
   }
 
   companion object : DiffUtil.ItemCallback<SearchHitBook>() {
     override fun areItemsTheSame(oldItem: SearchHitBook, newItem: SearchHitBook): Boolean {
-      return oldItem.key == newItem.key
+      return oldItem == newItem
     }
 
     override fun areContentsTheSame(oldItem: SearchHitBook, newItem: SearchHitBook): Boolean {
-      return oldItem == newItem
+      return oldItem.objectID == newItem.objectID
     }
 
   }
