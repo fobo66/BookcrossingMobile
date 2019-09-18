@@ -75,11 +75,11 @@ class SearchHitBooksAdapter : PagedListAdapter<SearchHitBook, ViewHolder>(Search
 
   companion object : DiffUtil.ItemCallback<SearchHitBook>() {
     override fun areItemsTheSame(oldItem: SearchHitBook, newItem: SearchHitBook): Boolean {
-      return oldItem == newItem
+      return oldItem.objectID == newItem.objectID
     }
 
     override fun areContentsTheSame(oldItem: SearchHitBook, newItem: SearchHitBook): Boolean {
-      return oldItem.objectID == newItem.objectID
+      return oldItem == newItem
     }
 
   }
