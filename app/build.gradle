@@ -1,10 +1,10 @@
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+apply plugin: "com.android.application"
+apply plugin: "com.google.android.gms.oss-licenses-plugin"
 apply plugin: "androidx.navigation.safeargs"
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlinx-serialization'
-apply plugin: 'io.fabric'
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-kapt"
+apply plugin: "kotlinx-serialization"
+apply plugin: "io.fabric"
 
 /*
  *    Copyright  2019 Andrey Mukamolov
@@ -22,7 +22,7 @@ apply plugin: 'io.fabric'
  */
 
 //loadProperties
-apply from: 'https://gist.githubusercontent.com/fobo66/17d5116b5c7bccf5f28036f401f3c09d/raw/ad621696be25a46919f7556207a104d1fe82b993/propertiesLoader.gradle'
+apply from: "https://gist.githubusercontent.com/fobo66/17d5116b5c7bccf5f28036f401f3c09d/raw/ad621696be25a46919f7556207a104d1fe82b993/propertiesLoader.gradle"
 
 def keystoreProperties = loadProperties("keystore.properties")
 
@@ -33,10 +33,10 @@ android {
   compileSdkVersion 29
   signingConfigs {
     releaseConfig {
-      keyAlias keystoreProperties['keyAlias']
-      keyPassword keystoreProperties['keyPassword']
-      storeFile file(keystoreProperties['storeFile'])
-      storePassword keystoreProperties['storePassword']
+      keyAlias keystoreProperties["keyAlias"]
+      keyPassword keystoreProperties["keyPassword"]
+      storeFile file(keystoreProperties["storeFile"])
+      storePassword keystoreProperties["storePassword"]
     }
   }
   defaultConfig {
@@ -48,19 +48,19 @@ android {
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     multiDexEnabled true
 
-    manifestPlaceholders = [admob: apiProperties['admob_app_id']]
+    manifestPlaceholders = [admob: apiProperties["admob_app_id"]]
 
-    resValue "string", "google_maps_key", apiProperties['google_maps_key']
-    resValue "string", "mapbox_access_token", apiProperties['mapbox_access_token']
-    resValue "string", "admob_publisher_id", apiProperties['admob_publisher_id']
+    resValue "string", "google_maps_key", apiProperties["google_maps_key"]
+    resValue "string", "mapbox_access_token", apiProperties["mapbox_access_token"]
+    resValue "string", "admob_publisher_id", apiProperties["admob_publisher_id"]
   }
   buildTypes {
     release {
       minifyEnabled true
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+      proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
       signingConfig signingConfigs.releaseConfig
 
-      resValue "string", "admob_app_id", apiProperties['admob_app_id']
+      resValue "string", "admob_app_id", apiProperties["admob_app_id"]
     }
   }
   compileOptions {
@@ -83,23 +83,23 @@ android {
   }
 
   packagingOptions {
-    exclude 'META-INF/rxjava.properties'
-    exclude 'META-INF/*.kotlin_module'
+    exclude "META-INF/rxjava.properties"
+    exclude "META-INF/*.kotlin_module"
   }
 }
 
 dependencies {
-  implementation fileTree(include: ['*.jar'], dir: 'libs')
-  testImplementation 'junit:junit:4.12'
+  implementation fileTree(include: ["*.jar"], dir: "libs")
+  testImplementation "junit:junit:4.12"
   testImplementation "org.mockito:mockito-core:3.0.0"
-  testImplementation 'org.robolectric:robolectric:4.3'
-  testImplementation 'androidx.test:core:1.2.0'
-  androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-  androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+  testImplementation "org.robolectric:robolectric:4.3"
+  testImplementation "androidx.test:core:1.2.0"
+  androidTestImplementation "androidx.test.ext:junit:1.1.1"
+  androidTestImplementation "androidx.test.espresso:espresso-core:3.2.0"
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-  def moxyVersion = '1.7.0'
+  def moxyVersion = "1.7.0"
 
   implementation "tech.schoolhelper:moxy-x:$moxyVersion"
   implementation "tech.schoolhelper:moxy-x-android:$moxyVersion"
@@ -108,24 +108,27 @@ dependencies {
   implementation "com.google.firebase:firebase-auth:19.0.0"
   implementation "com.google.firebase:firebase-messaging:20.0.0"
   implementation "com.google.firebase:firebase-ads:18.2.0"
-  implementation 'com.google.android.ads.consent:consent-library:1.0.7'
+  implementation "com.google.android.ads.consent:consent-library:1.0.7"
 
   implementation "com.google.android.gms:play-services-maps:17.0.0"
   implementation "com.google.android.gms:play-services-location:17.0.0"
   implementation "com.google.android.gms:play-services-auth:17.0.0"
-  implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
+  implementation "com.google.android.gms:play-services-oss-licenses:17.0.0"
 
-  implementation 'com.google.android.material:material:1.0.0'
-  implementation 'androidx.browser:browser:1.0.0'
-  implementation 'androidx.cardview:cardview:1.0.0'
-  implementation 'androidx.palette:palette:1.0.0'
-  implementation 'androidx.preference:preference:1.1.0'
-  implementation 'androidx.core:core:1.1.0'
-  implementation 'androidx.core:core-ktx:1.1.0'
-  implementation 'androidx.fragment:fragment:1.1.0'
-  implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-  implementation 'androidx.appcompat:appcompat:1.1.0'
-  implementation 'androidx.recyclerview:recyclerview:1.0.0'
+  implementation "com.google.android.material:material:1.0.0"
+  implementation "androidx.browser:browser:1.0.0"
+  implementation "androidx.cardview:cardview:1.0.0"
+  implementation "androidx.palette:palette-ktx:1.0.0"
+  implementation "androidx.preference:preference-ktx:1.1.0"
+
+  def androidxCoreVersion = "1.1.0"
+  implementation "androidx.core:core:$androidxCoreVersion"
+  implementation "androidx.core:core-ktx:$androidxCoreVersion"
+
+  implementation "androidx.fragment:fragment-ktx:1.1.0"
+  implementation "androidx.vectordrawable:vectordrawable:1.1.0"
+  implementation "androidx.appcompat:appcompat:1.1.0"
+  implementation "androidx.recyclerview:recyclerview:1.0.0"
 
   implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
   implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
@@ -134,55 +137,57 @@ dependencies {
   implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
   implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
 
-  def rxBindingsVersion = '3.0.0'
+  def rxBindingsVersion = "3.0.0"
   implementation "com.jakewharton.rxbinding3:rxbinding:$rxBindingsVersion"
   implementation "com.jakewharton.rxbinding3:rxbinding-material:$rxBindingsVersion"
   implementation "com.jakewharton.rxbinding3:rxbinding-recyclerview:$rxBindingsVersion"
   implementation "com.jakewharton.rxbinding3:rxbinding-appcompat:$rxBindingsVersion"
 
-  def daggerVersion = '2.24'
-  implementation 'com.google.code.findbugs:jsr305:3.0.2'
+  def daggerVersion = "2.24"
+  implementation "com.google.code.findbugs:jsr305:3.0.2"
   implementation "com.google.dagger:dagger:$daggerVersion"
 
-  def glideVersion = '4.9.0'
+  def glideVersion = "4.9.0"
   implementation "com.github.bumptech.glide:glide:$glideVersion"
 
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.12'
-  implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
-  implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+  implementation "io.reactivex.rxjava2:rxjava:2.2.12"
+  implementation "io.reactivex.rxjava2:rxkotlin:2.4.0"
+  implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
 
-  implementation 'com.github.miguelbcr:RxPaparazzo:2.x-SNAPSHOT'
-  implementation 'com.github.VictorAlbertos:RxActivityResult:0.5.0-2.x'
-  implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
+  implementation "com.github.miguelbcr:RxPaparazzo:2.x-SNAPSHOT"
+  implementation "com.github.VictorAlbertos:RxActivityResult:0.5.0-2.x"
+  implementation "com.github.tbruyelle:rxpermissions:0.10.2"
 
-  def firebaseUiVersion = '6.0.2'
+  def firebaseUiVersion = "6.0.2"
   implementation "com.firebaseui:firebase-ui:$firebaseUiVersion"
   implementation "com.firebaseui:firebase-ui-storage:$firebaseUiVersion"
   implementation "com.firebaseui:firebase-ui-database:$firebaseUiVersion"
   implementation "com.firebaseui:firebase-ui-auth:$firebaseUiVersion"
-  implementation 'com.github.frangsierra:rx2firebase:1.5.7'
+  implementation "com.github.frangsierra:rx2firebase:1.5.7"
 
-  def butterknifeVersion = '10.2.0'
+  def butterknifeVersion = "10.2.0"
   implementation "com.jakewharton:butterknife:$butterknifeVersion"
 
-  implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-  implementation 'androidx.multidex:multidex:2.0.1'
+  implementation "androidx.constraintlayout:constraintlayout:1.1.3"
+  implementation "androidx.multidex:multidex:2.0.1"
 
-  implementation 'com.afollestad.material-dialogs:core:3.1.1'
-  implementation 'com.afollestad.material-dialogs:input:3.1.1'
-  implementation 'com.github.curioustechizen.android-ago:library:1.4.0'
+  def materialDialogsVersion = "3.1.1"
+  implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
+  implementation "com.afollestad.material-dialogs:input:$materialDialogsVersion"
 
-  implementation 'com.google.zxing:android-integration:3.3.0'
-  implementation 'com.google.zxing:android-core:3.3.0'
-  implementation 'com.google.zxing:core:3.4.0'
-  implementation 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.3'
+  implementation "com.github.curioustechizen.android-ago:library:1.4.0"
 
-  implementation 'com.mapbox.mapboxsdk:mapbox-sdk-core:4.8.0'
-  implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:4.8.0'
+  implementation "com.google.zxing:android-integration:3.3.0"
+  implementation "com.google.zxing:android-core:3.3.0"
+  implementation "com.google.zxing:core:3.4.0"
+  implementation "com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.3"
 
-  implementation 'com.algolia:instantsearch-android:2.1.0'
+  implementation "com.mapbox.mapboxsdk:mapbox-sdk-core:4.8.0"
+  implementation "com.mapbox.mapboxsdk:mapbox-sdk-services:4.8.0"
 
-  implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+  implementation "com.algolia:instantsearch-android:2.1.0"
+
+  implementation "com.crashlytics.sdk.android:crashlytics:2.10.1"
 
   kapt "com.google.dagger:dagger-compiler:$daggerVersion"
   kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
@@ -190,4 +195,4 @@ dependencies {
   kapt "com.github.bumptech.glide:compiler:$glideVersion"
 }
 
-apply plugin: 'com.google.gms.google-services'
+apply plugin: "com.google.gms.google-services"
