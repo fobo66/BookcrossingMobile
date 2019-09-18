@@ -61,10 +61,6 @@ class MainFragment : BaseFragment(), MainView {
 
   private lateinit var permissions: RxPermissions
 
-  override fun title(): Int {
-    return R.string.mainTitle
-  }
-
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
