@@ -1,10 +1,13 @@
 package com.bookcrossing.mobile.presenters;
 
 import android.net.Uri;
+
 import androidx.annotation.NonNull;
-import com.arellomobile.mvp.InjectViewState;
+
 import com.bookcrossing.mobile.ui.scan.ScanView;
 import com.bookcrossing.mobile.util.Constants;
+
+import moxy.InjectViewState;
 
 /**
  * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>

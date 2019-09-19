@@ -15,13 +15,13 @@
 
 package com.bookcrossing.mobile.presenters
 
-import com.arellomobile.mvp.InjectViewState
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.BookCode
 import com.bookcrossing.mobile.ui.acquire.BookAcquireView
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Completable
 import io.reactivex.Maybe
+import moxy.InjectViewState
 
 @InjectViewState
 class BookAcquirePresenter : BasePresenter<BookAcquireView>() {

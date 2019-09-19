@@ -18,7 +18,6 @@ package com.bookcrossing.mobile.presenters
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import com.arellomobile.mvp.InjectViewState
 import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.ui.main.MainView
 import com.bookcrossing.mobile.util.Constants
@@ -26,6 +25,7 @@ import com.google.ads.consent.ConsentStatus
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.AdRequest
 import com.google.firebase.database.DatabaseReference
+import moxy.InjectViewState
 import javax.inject.Inject
 
 /**

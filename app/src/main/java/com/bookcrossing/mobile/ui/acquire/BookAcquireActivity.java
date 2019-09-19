@@ -18,12 +18,10 @@ package com.bookcrossing.mobile.ui.acquire;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import com.arellomobile.mvp.MvpAppCompatActivity;
-import com.arellomobile.mvp.presenter.InjectPresenter;
+
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.BookCode;
 import com.bookcrossing.mobile.presenters.BookAcquirePresenter;
@@ -34,11 +32,18 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.jakewharton.rxbinding3.view.RxView;
 import com.jakewharton.rxbinding3.widget.RxTextView;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.TimeUnit;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
-import java.util.concurrent.TimeUnit;
 import kotlin.Unit;
-import org.jetbrains.annotations.NotNull;
+import moxy.MvpAppCompatActivity;
+import moxy.presenter.InjectPresenter;
 
 public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcquireView {
 

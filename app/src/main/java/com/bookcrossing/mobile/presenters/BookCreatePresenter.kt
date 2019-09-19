@@ -7,7 +7,6 @@ import android.graphics.Color.WHITE
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import com.arellomobile.mvp.InjectViewState
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Date
 import com.bookcrossing.mobile.ui.create.BookCreateView
@@ -19,8 +18,8 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
-import java.util.Calendar
-import java.util.EnumMap
+import moxy.InjectViewState
+import java.util.*
 
 @InjectViewState
 class BookCreatePresenter : BasePresenter<BookCreateView>() {

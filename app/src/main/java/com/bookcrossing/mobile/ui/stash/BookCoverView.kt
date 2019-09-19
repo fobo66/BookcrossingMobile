@@ -16,7 +16,7 @@
 
 package com.bookcrossing.mobile.ui.stash
 
-import com.arellomobile.mvp.MvpView
+import moxy.MvpView
 
 /**
  * (c) 2019 Andrey Mukamolov <fobo66@protonmail.com>

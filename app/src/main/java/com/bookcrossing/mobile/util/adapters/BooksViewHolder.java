@@ -19,19 +19,22 @@ package com.bookcrossing.mobile.util.adapters;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import butterknife.BindView;
-import butterknife.OnClick;
-import butterknife.Optional;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenterTag;
+
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.modules.GlideApp;
 import com.bookcrossing.mobile.presenters.BookItemPresenter;
 import com.bookcrossing.mobile.ui.bookpreview.BookItemView;
 import com.bookcrossing.mobile.util.listeners.BookListener;
+
+import butterknife.BindView;
+import butterknife.OnClick;
+import butterknife.Optional;
+import moxy.presenter.InjectPresenter;
+import moxy.presenter.ProvidePresenterTag;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 

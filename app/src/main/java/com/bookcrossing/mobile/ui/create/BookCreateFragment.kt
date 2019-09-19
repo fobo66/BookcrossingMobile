@@ -18,7 +18,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.list.listItems
-import com.arellomobile.mvp.presenter.InjectPresenter
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.presenters.BookCreatePresenter
@@ -35,6 +34,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.schedulers.Schedulers
+import moxy.presenter.InjectPresenter
 import java.util.concurrent.TimeUnit
 
 class BookCreateFragment : BaseFragment(), BookCreateView {

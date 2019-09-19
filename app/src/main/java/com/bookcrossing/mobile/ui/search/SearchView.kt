@@ -1,7 +1,6 @@
 package com.bookcrossing.mobile.ui.search
 
-import com.arellomobile.mvp.MvpView
+import moxy.MvpView
 
-interface SearchView : MvpView {
 
-}
+interface SearchView : MvpView

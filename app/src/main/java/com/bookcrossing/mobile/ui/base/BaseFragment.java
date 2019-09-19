@@ -3,16 +3,20 @@ package com.bookcrossing.mobile.ui.base;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-import com.arellomobile.mvp.MvpAppCompatFragment;
+
 import com.bookcrossing.mobile.util.BookListenerDelegate;
 import com.bookcrossing.mobile.util.Constants;
 import com.firebase.ui.auth.AuthUI;
-import io.reactivex.disposables.CompositeDisposable;
+
 import java.util.Collections;
+
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import io.reactivex.disposables.CompositeDisposable;
+import moxy.MvpAppCompatFragment;
 
 /**
  * (c) 2016 Andrey Mukamolov aka fobo66 <fobo66@protonmail.com>

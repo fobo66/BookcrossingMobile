@@ -1,7 +1,8 @@
 package com.bookcrossing.mobile.util.adapters;
 
 import androidx.recyclerview.widget.RecyclerView;
-import com.arellomobile.mvp.MvpDelegate;
+
+import moxy.MvpDelegate;
 
 /**
  * Created by fobo66 on 14.1.17.

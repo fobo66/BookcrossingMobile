@@ -1,9 +1,11 @@
 package com.bookcrossing.mobile.presenters;
 
 import android.net.Uri;
-import com.arellomobile.mvp.InjectViewState;
+
 import com.bookcrossing.mobile.ui.profile.ProfileView;
 import com.google.firebase.database.DatabaseReference;
+
+import moxy.InjectViewState;
 
 /**
  * Created by fobo66 on 08.05.17.

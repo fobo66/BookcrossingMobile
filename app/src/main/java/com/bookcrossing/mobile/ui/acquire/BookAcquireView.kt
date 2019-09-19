@@ -15,7 +15,7 @@
 
 package com.bookcrossing.mobile.ui.acquire
 
-import com.arellomobile.mvp.MvpView
+import moxy.MvpView
 
 interface BookAcquireView : MvpView {
 

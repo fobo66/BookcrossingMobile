@@ -29,7 +29,6 @@ def keystoreProperties = loadProperties("keystore.properties")
 def apiProperties = loadProperties("api.properties")
 
 android {
-  dataBinding.enabled true
   compileSdkVersion 29
   signingConfigs {
     releaseConfig {
@@ -53,6 +52,16 @@ android {
     resValue "string", "google_maps_key", apiProperties["google_maps_key"]
     resValue "string", "mapbox_access_token", apiProperties["mapbox_access_token"]
     resValue "string", "admob_publisher_id", apiProperties["admob_publisher_id"]
+
+    javaCompileOptions {
+      annotationProcessorOptions {
+        arguments = [
+          disableEmptyStrategyCheck: 'true',
+          enableEmptyStrategyHelper: 'true',
+          defaultMoxyStrategy: 'moxy.viewstate.strategy.AddToEndSingleStrategy'
+        ]
+      }
+    }
   }
   buildTypes {
     release {
@@ -99,11 +108,11 @@ dependencies {
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-  def moxyVersion = "1.7.0"
+  def moxyVersion = "2.0-alpha06"
 
-  implementation "tech.schoolhelper:moxy-x:$moxyVersion"
-  implementation "tech.schoolhelper:moxy-x-android:$moxyVersion"
-  implementation "tech.schoolhelper:moxy-x-androidx:$moxyVersion"
+  implementation "com.github.moxy-community:moxy:$moxyVersion"
+  implementation "com.github.moxy-community:moxy-android:$moxyVersion"
+  implementation "com.github.moxy-community:moxy-androidx:$moxyVersion"
 
   implementation "com.google.firebase:firebase-auth:19.0.0"
   implementation "com.google.firebase:firebase-messaging:20.0.0"
@@ -191,7 +200,7 @@ dependencies {
 
   kapt "com.google.dagger:dagger-compiler:$daggerVersion"
   kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
-  kapt "tech.schoolhelper:moxy-x-compiler:$moxyVersion"
+  kapt "com.github.moxy-community:moxy-compiler:$moxyVersion"
   kapt "com.github.bumptech.glide:compiler:$glideVersion"
 }
 

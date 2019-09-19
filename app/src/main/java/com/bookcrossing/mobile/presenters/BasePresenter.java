@@ -17,9 +17,9 @@ package com.bookcrossing.mobile.presenters;
 
 import android.content.SharedPreferences;
 import android.net.Uri;
+
 import androidx.annotation.NonNull;
-import com.arellomobile.mvp.MvpPresenter;
-import com.arellomobile.mvp.MvpView;
+
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.modules.App;
 import com.bookcrossing.mobile.util.Constants;
@@ -27,10 +27,13 @@ import com.bookcrossing.mobile.util.FirebaseWrapper;
 import com.bookcrossing.mobile.util.SystemServicesWrapper;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
+
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import moxy.MvpPresenter;
+import moxy.MvpView;
 
 /**
  * (c) 2016 Andrey Mukamolov aka fobo66 <fobo66@protonmail.com>

@@ -1,7 +1,8 @@
 package com.bookcrossing.mobile.ui.scan;
 
 import android.net.Uri;
-import com.arellomobile.mvp.MvpView;
+
+import moxy.MvpView;
 
 /**
  * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>

@@ -1,6 +1,7 @@
 package com.bookcrossing.mobile.ui.main;
 
-import com.arellomobile.mvp.MvpView;
+
+import moxy.MvpView;
 
 /**
  * (c) 2016 Andrey Mukamolov aka fobo66 <fobo66@protonmail.com>

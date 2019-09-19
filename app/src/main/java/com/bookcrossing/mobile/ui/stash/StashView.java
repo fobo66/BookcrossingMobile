@@ -1,6 +1,6 @@
 package com.bookcrossing.mobile.ui.stash;
 
-import com.arellomobile.mvp.MvpView;
+import moxy.MvpView;
 
 /**
  * Created by macbookpro2016 on 18.05.17.

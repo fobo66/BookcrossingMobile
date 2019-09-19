@@ -28,10 +28,10 @@ import com.algolia.instantsearch.core.connection.ConnectionHandler
 import com.algolia.instantsearch.helper.android.list.autoScrollToStart
 import com.algolia.instantsearch.helper.android.searchbox.SearchBoxViewAppCompat
 import com.algolia.instantsearch.helper.android.searchbox.connectView
-import com.arellomobile.mvp.presenter.InjectPresenter
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.presenters.SearchPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
+import moxy.presenter.InjectPresenter
 
 class SearchFragment : BaseFragment(), SearchView {
 

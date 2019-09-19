@@ -17,8 +17,10 @@
 package com.bookcrossing.mobile.presenters;
 
 import androidx.annotation.NonNull;
-import com.arellomobile.mvp.InjectViewState;
+
 import com.bookcrossing.mobile.ui.stash.BookCoverView;
+
+import moxy.InjectViewState;
 
 /**
  * (c) 2019 Andrey Mukamolov <fobo66@protonmail.com>

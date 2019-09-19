@@ -20,18 +20,21 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import com.arellomobile.mvp.presenter.InjectPresenter;
+
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.presenters.StashPresenter;
 import com.bookcrossing.mobile.ui.base.BaseFragment;
 import com.bookcrossing.mobile.util.adapters.StashedBookViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+
+import butterknife.BindView;
+import moxy.presenter.InjectPresenter;
 
 public class StashFragment extends BaseFragment implements StashView {
 

@@ -17,7 +17,8 @@
 package com.bookcrossing.mobile.util.adapters;
 
 import android.view.View;
-import com.arellomobile.mvp.MvpDelegate;
+
+import moxy.MvpDelegate;
 
 /**
  * Created by fobo66 on 09.05.17.

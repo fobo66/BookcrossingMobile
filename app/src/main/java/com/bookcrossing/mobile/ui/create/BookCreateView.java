@@ -1,7 +1,8 @@
 package com.bookcrossing.mobile.ui.create;
 
 import android.net.Uri;
-import com.arellomobile.mvp.MvpView;
+
+import moxy.MvpView;
 
 public interface BookCreateView extends MvpView {
   void onCoverChosen(Uri coverUri);

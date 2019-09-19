@@ -17,8 +17,10 @@
 package com.bookcrossing.mobile.presenters;
 
 import androidx.annotation.NonNull;
-import com.arellomobile.mvp.InjectViewState;
+
 import com.bookcrossing.mobile.ui.bookpreview.BookItemView;
+
+import moxy.InjectViewState;
 
 @InjectViewState public class BookItemPresenter extends BasePresenter<BookItemView> {
 
