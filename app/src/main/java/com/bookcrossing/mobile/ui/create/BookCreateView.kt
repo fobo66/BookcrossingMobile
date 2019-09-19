@@ -14,22 +14,21 @@
  *     limitations under the License.
  */
 
-package com.bookcrossing.mobile.ui.bookpreview
+package com.bookcrossing.mobile.ui.create
 
-import com.bookcrossing.mobile.models.Book
+import android.net.Uri
+
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface BookView : MvpView {
-  fun onBookLoaded(book: Book)
+interface BookCreateView : MvpView {
+  fun onCoverChosen(coverUri: Uri?)
 
-  fun onErrorToLoadBook()
+  fun onNameChange()
 
-  fun onBookStashed()
+  fun onReleased(newKey: String)
 
-  fun onBookUnstashed()
-
-  fun onAbuseReported()
+  fun onFailedToRelease()
 }

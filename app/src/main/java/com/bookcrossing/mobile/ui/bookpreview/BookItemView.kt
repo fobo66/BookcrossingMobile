@@ -17,19 +17,15 @@
 package com.bookcrossing.mobile.ui.bookpreview
 
 import com.bookcrossing.mobile.models.Book
+
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
+/**
+ * Created by fobo66 on 22.1.17.
+ */
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface BookView : MvpView {
-  fun onBookLoaded(book: Book)
-
-  fun onErrorToLoadBook()
-
-  fun onBookStashed()
-
-  fun onBookUnstashed()
-
-  fun onAbuseReported()
+interface BookItemView : MvpView {
+  fun bind(book: Book)
 }

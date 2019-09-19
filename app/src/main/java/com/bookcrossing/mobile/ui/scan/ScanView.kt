@@ -14,22 +14,22 @@
  *     limitations under the License.
  */
 
-package com.bookcrossing.mobile.ui.bookpreview
+package com.bookcrossing.mobile.ui.scan
 
-import com.bookcrossing.mobile.models.Book
+import android.net.Uri
+
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
+/**
+ * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>
+ * Created 11.06.17.
+ */
+
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface BookView : MvpView {
-  fun onBookLoaded(book: Book)
+interface ScanView : MvpView {
+  fun onBookCodeScanned(uri: Uri)
 
-  fun onErrorToLoadBook()
-
-  fun onBookStashed()
-
-  fun onBookUnstashed()
-
-  fun onAbuseReported()
+  fun onIncorrectCodeScanned()
 }

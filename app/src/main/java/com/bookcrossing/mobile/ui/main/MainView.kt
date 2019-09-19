@@ -14,22 +14,16 @@
  *     limitations under the License.
  */
 
-package com.bookcrossing.mobile.ui.bookpreview
+package com.bookcrossing.mobile.ui.main
 
-import com.bookcrossing.mobile.models.Book
+
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
+/**
+ * (c) 2016 Andrey Mukamolov aka fobo66 <fobo66></fobo66>@protonmail.com>
+ * Created by fobo66 on 21.12.2016.
+ */
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface BookView : MvpView {
-  fun onBookLoaded(book: Book)
-
-  fun onErrorToLoadBook()
-
-  fun onBookStashed()
-
-  fun onBookUnstashed()
-
-  fun onAbuseReported()
-}
+interface MainView : MvpView

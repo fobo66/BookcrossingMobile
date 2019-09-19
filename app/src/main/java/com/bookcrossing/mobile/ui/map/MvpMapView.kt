@@ -14,22 +14,20 @@
  *     limitations under the License.
  */
 
-package com.bookcrossing.mobile.ui.bookpreview
+package com.bookcrossing.mobile.ui.map
 
-import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.models.Coordinates
+import com.google.android.gms.maps.model.LatLng
+
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface BookView : MvpView {
-  fun onBookLoaded(book: Book)
+interface MvpMapView : MvpView {
+  fun onBookMarkerLoaded(key: String, coordinates: Coordinates)
 
-  fun onErrorToLoadBook()
+  fun onErrorToLoadMarker()
 
-  fun onBookStashed()
-
-  fun onBookUnstashed()
-
-  fun onAbuseReported()
+  fun onUserLocationReceived(coordinates: LatLng)
 }
