@@ -1,17 +1,16 @@
 /*
- *     Copyright 2019 Andrey Mukamolov
+ *    Copyright  2019 Andrey Mukamolov
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- *     Licensed under the Apache License, Version 2.0 (the "License");
- *     you may not use this file except in compliance with the License.
- *     You may obtain a copy of the License at
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- *     Unless required by applicable law or agreed to in writing, software
- *     distributed under the License is distributed on an "AS IS" BASIS,
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     See the License for the specific language governing permissions and
- *     limitations under the License.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 
 package com.bookcrossing.mobile.presenters
@@ -35,7 +34,8 @@ import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
 import moxy.InjectViewState
-import java.util.*
+import java.util.Calendar
+import java.util.EnumMap
 
 @InjectViewState
 class BookCreatePresenter : BasePresenter<BookCreateView>() {
@@ -92,7 +92,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
 
     fun onNameChange(name: String) {
         book.name = name
-        viewState.onNameChange()
+      viewState.showCover()
     }
 
     fun onAuthorChange(author: String) {
@@ -112,9 +112,11 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
         setPublicationDate()
         val newBookReference = books().push()
         newBookReference.setValue(book).addOnSuccessListener {
-          val key: String = newBookReference.key!!
+          val key: String = newBookReference.key.orEmpty()
+          if (key.isNotEmpty()) {
             uploadCover(key)
             viewState.onReleased(key)
+          }
         }.addOnFailureListener { e ->
             Crashlytics.logException(e)
             viewState.onFailedToRelease()

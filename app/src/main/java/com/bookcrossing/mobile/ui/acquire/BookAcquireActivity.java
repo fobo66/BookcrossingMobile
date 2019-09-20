@@ -18,32 +18,27 @@ package com.bookcrossing.mobile.ui.acquire;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.BookCode;
 import com.bookcrossing.mobile.presenters.BookAcquirePresenter;
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 import com.bookcrossing.mobile.ui.scan.ScanActivity;
-import com.bookcrossing.mobile.util.Constants;
+import com.bookcrossing.mobile.util.ConstantsKt;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.jakewharton.rxbinding3.view.RxView;
 import com.jakewharton.rxbinding3.widget.RxTextView;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.concurrent.TimeUnit;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import java.util.concurrent.TimeUnit;
 import kotlin.Unit;
 import moxy.MvpAppCompatActivity;
 import moxy.presenter.InjectPresenter;
+import org.jetbrains.annotations.NotNull;
 
 public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcquireView {
 
@@ -72,7 +67,7 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
     setSupportActionBar(toolbar);
 
     if (getIntent() != null) {
-      keyToAcquire = getIntent().getData().getQueryParameter(Constants.EXTRA_KEY);
+      keyToAcquire = getIntent().getData().getQueryParameter(ConstantsKt.EXTRA_KEY);
       isInnerAppRequest =
           getIntent().getBooleanExtra(getString(R.string.extra_insideAppRequest), false);
       if (!isInnerAppRequest) {
@@ -111,7 +106,7 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
 
   @Override public void onAcquired() {
     Intent intent = new Intent(this, BookActivity.class);
-    intent.putExtra(Constants.EXTRA_KEY, keyToAcquire);
+    intent.putExtra(ConstantsKt.EXTRA_KEY, keyToAcquire);
     startActivity(intent);
   }
 

@@ -1,34 +1,30 @@
 /*
- *     Copyright 2019 Andrey Mukamolov
+ *    Copyright  2019 Andrey Mukamolov
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- *     Licensed under the Apache License, Version 2.0 (the "License");
- *     you may not use this file except in compliance with the License.
- *     You may obtain a copy of the License at
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- *     Unless required by applicable law or agreed to in writing, software
- *     distributed under the License is distributed on an "AS IS" BASIS,
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     See the License for the specific language governing permissions and
- *     limitations under the License.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 
 package com.bookcrossing.mobile.presenters;
 
 import android.content.SharedPreferences;
 import android.net.Uri;
-
 import androidx.annotation.NonNull;
-
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.modules.App;
-import com.bookcrossing.mobile.util.Constants;
+import com.bookcrossing.mobile.util.ConstantsKt;
 import com.bookcrossing.mobile.util.FirebaseWrapper;
 import com.bookcrossing.mobile.util.SystemServicesWrapper;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
-
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -87,7 +83,7 @@ public class BasePresenter<V extends MvpView> extends MvpPresenter<V> {
       return firebaseWrapper.getAuth().getCurrentUser().getUid();
     }
 
-    return Constants.DEFAULT_USER;
+    return ConstantsKt.DEFAULT_USER;
   }
 
   public StorageReference resolveCover(String key) {
@@ -96,19 +92,20 @@ public class BasePresenter<V extends MvpView> extends MvpPresenter<V> {
 
   public Uri buildBookUri(String key) {
     return new Uri.Builder().scheme("bookcrossing")
-            .authority(Constants.PACKAGE_NAME)
+      .authority(ConstantsKt.PACKAGE_NAME)
             .path("book")
-            .appendQueryParameter(Constants.EXTRA_KEY, key)
+      .appendQueryParameter(ConstantsKt.EXTRA_KEY, key)
             .build();
   }
 
   protected String getCity() {
-    return systemServicesWrapper.getPreferences().getString(Constants.EXTRA_CITY, getDefaultCity());
+    return systemServicesWrapper.getPreferences()
+      .getString(ConstantsKt.EXTRA_CITY, getDefaultCity());
   }
 
   public String getDefaultCity() {
     return systemServicesWrapper.getPreferences()
-            .getString(Constants.EXTRA_DEFAULT_CITY,
+      .getString(ConstantsKt.EXTRA_DEFAULT_CITY,
                     systemServicesWrapper.getApp().getString(R.string.default_city));
   }
 
@@ -120,8 +117,8 @@ public class BasePresenter<V extends MvpView> extends MvpPresenter<V> {
 
   public void saveCity(String city) {
     SharedPreferences.Editor editor = systemServicesWrapper.getPreferences().edit();
-    editor.putString(Constants.EXTRA_CITY, city);
-    editor.putString(Constants.EXTRA_DEFAULT_CITY, city);
+    editor.putString(ConstantsKt.EXTRA_CITY, city);
+    editor.putString(ConstantsKt.EXTRA_DEFAULT_CITY, city);
     editor.apply();
   }
 

@@ -1,6 +1,5 @@
 /*
- *    Copyright 2016 Andrey Mukamolov
- *
+ *    Copyright  2019 Andrey Mukamolov
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -34,7 +33,11 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.ui.base.BaseActivity
-import com.bookcrossing.mobile.util.Constants
+import com.bookcrossing.mobile.util.EXTRA_KEY
+import com.bookcrossing.mobile.util.EXTRA_TARGET_FRAGMENT
+import com.bookcrossing.mobile.util.KEY_CONSENT_STATUS
+import com.bookcrossing.mobile.util.PRIVACY_POLICY_URL
+import com.bookcrossing.mobile.util.RC_SIGN_IN
 import com.bookcrossing.mobile.util.listeners.BookListener
 import com.crashlytics.android.Crashlytics
 import com.firebase.ui.auth.AuthUI
@@ -84,7 +87,7 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
           .setAvailableProviders(
             listOf(AuthUI.IdpConfig.GoogleBuilder().build())
           )
-          .build(), Constants.RC_SIGN_IN
+          .build(), RC_SIGN_IN
       )
     }
   }
@@ -113,7 +116,7 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
           if (consentStatus == ConsentStatus.UNKNOWN) {
             val privacyUrl: URL
             try {
-              privacyUrl = URL(Constants.PRIVACY_POLICY_URL)
+              privacyUrl = URL(PRIVACY_POLICY_URL)
             } catch (e: MalformedURLException) {
               throw RuntimeException(e)
             }
@@ -162,14 +165,14 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
   private fun saveConsentStatus(consentStatus: ConsentStatus) {
     PreferenceManager.getDefaultSharedPreferences(applicationContext)
       .edit()
-      .putString(Constants.KEY_CONSENT_STATUS, consentStatus.toString())
+      .putString(KEY_CONSENT_STATUS, consentStatus.toString())
       .apply()
   }
 
   private fun resolveNavigationToFragment(savedInstanceState: Bundle?) {
     val navController = findNavController(R.id.nav_host_fragment)
     if (intent != null) {
-      val whereToGo = intent.getStringExtra(Constants.EXTRA_TARGET_FRAGMENT)
+      val whereToGo = intent.getStringExtra(EXTRA_TARGET_FRAGMENT)
       when {
         whereToGo != null -> when {
           "BookCreateFragment".equals(
@@ -207,7 +210,7 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
-    if (requestCode == Constants.RC_SIGN_IN) {
+    if (requestCode == RC_SIGN_IN) {
       val response = IdpResponse.fromResultIntent(data)
       if (resultCode == RESULT_OK) {
         findNavController(R.id.nav_host_fragment).navigate(R.id.mainFragment)
@@ -253,7 +256,7 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
   }
 
   override fun onBookSelected(bookKey: String) {
-    val bookActivityArgs = bundleOf(Constants.EXTRA_KEY to bookKey)
+    val bookActivityArgs = bundleOf(EXTRA_KEY to bookKey)
     findNavController(R.id.nav_host_fragment).navigate(R.id.bookActivity, bookActivityArgs)
   }
 

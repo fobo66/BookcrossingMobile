@@ -1,17 +1,16 @@
 /*
- *     Copyright 2019 Andrey Mukamolov
+ *    Copyright  2019 Andrey Mukamolov
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- *     Licensed under the Apache License, Version 2.0 (the "License");
- *     you may not use this file except in compliance with the License.
- *     You may obtain a copy of the License at
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- *     Unless required by applicable law or agreed to in writing, software
- *     distributed under the License is distributed on an "AS IS" BASIS,
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     See the License for the specific language governing permissions and
- *     limitations under the License.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 
 package com.bookcrossing.mobile.ui.create
@@ -38,7 +37,8 @@ import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.presenters.BookCreatePresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
-import com.bookcrossing.mobile.util.Constants
+import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
+import com.bookcrossing.mobile.util.PROHIBITED_SYMBOLS
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.afterTextChangeEvents
@@ -129,7 +129,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   private fun registerPublishButtonClickSubscription() {
     val publishSubscription = releaseButton.clicks()
-        .debounce(Constants.DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { publishBook() }
     subscriptions.add(publishSubscription)
@@ -154,35 +154,35 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   private fun registerDescriptionInputSubscription() {
     val descriptionSubscription = bookDescriptionInput.afterTextChangeEvents()
-        .debounce(Constants.DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-        .filter { event -> !event.view.text.toString().contains(Constants.PROHIBITED_SYMBOLS) }
+      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+      .filter { event -> !event.view.text.toString().contains(PROHIBITED_SYMBOLS) }
         .subscribe { event -> presenter.onDescriptionChange(event.view.text.toString()) }
     subscriptions.add(descriptionSubscription)
   }
 
   private fun registerPositionInputSubscription() {
     val positionSubscription = bookPositionInput.afterTextChangeEvents()
-        .debounce(Constants.DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-        .filter { event -> !event.view.text.toString().contains(Constants.PROHIBITED_SYMBOLS) }
+      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+      .filter { event -> !event.view.text.toString().contains(PROHIBITED_SYMBOLS) }
         .subscribe { event -> presenter.onPositionChange(event.view.text.toString()) }
     subscriptions.add(positionSubscription)
   }
 
   private fun registerAuthorInputSubscription() {
     val authorSubscription = bookAuthorInput.afterTextChangeEvents()
-        .debounce(Constants.DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-        .filter { event -> !event.view.text.toString().contains(Constants.PROHIBITED_SYMBOLS) }
+      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+      .filter { event -> !event.view.text.toString().contains(PROHIBITED_SYMBOLS) }
         .subscribe { event -> presenter.onAuthorChange(event.view.text.toString()) }
     subscriptions.add(authorSubscription)
   }
 
   private fun registerNameInputSubscription() {
     val nameSubscription = bookNameInput.afterTextChangeEvents()
-        .debounce(Constants.DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
         .filter { event ->
           val textFieldValue = event.view.text
               .toString()
-          !textFieldValue.contains(Constants.PROHIBITED_SYMBOLS) && textFieldValue.isNotEmpty()
+          !textFieldValue.contains(PROHIBITED_SYMBOLS) && textFieldValue.isNotEmpty()
         }
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { event -> presenter.onNameChange(event.view.text.toString()) }
@@ -191,7 +191,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   private fun registerCoverClickSubscription() {
     val coverSubscription = cover.clicks()
-        .debounce(Constants.DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
         .subscribe { coverChooserDialog!!.show() }
     subscriptions.add(coverSubscription)
   }
@@ -222,7 +222,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
         .into(cover)
   }
 
-  override fun onNameChange() {
+  override fun showCover() {
     if (cover.visibility == View.GONE) {
       cover.visibility = View.VISIBLE
     }
