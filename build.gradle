@@ -34,6 +34,10 @@ buildscript {
   }
 }
 
+plugins {
+  id "io.gitlab.arturbosch.detekt" version "1.0.1"
+}
+
 allprojects {
   repositories {
     jcenter()
