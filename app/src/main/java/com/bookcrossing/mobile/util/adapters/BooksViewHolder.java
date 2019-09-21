@@ -37,20 +37,19 @@ public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
   @InjectPresenter(tag = BookItemPresenter.TAG)
   public BookItemPresenter itemPresenter;
 
+  @BindView(R.id.cover) public ImageView cover;
+
+  @BindView(R.id.book_name) public TextView bookName;
+
+  @BindView(R.id.author) public TextView author;
+
+  @BindView(R.id.current_place) public TextView bookPlace;
+
   protected String key;
 
   public BooksViewHolder(View view) {
     super(view);
   }
-
-  @BindView(R.id.cover)
-  public ImageView cover;
-  @BindView(R.id.book_name)
-  public TextView bookName;
-  @BindView(R.id.author)
-  public TextView author;
-  @BindView(R.id.current_place)
-  public TextView bookPlace;
 
   @ProvidePresenterTag(presenterClass = BookItemPresenter.class)
   String provideBookItemPresenterTag() {
@@ -66,10 +65,10 @@ public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
 
   private void loadCover() {
     GlideApp.with(itemView.getContext())
-        .load(itemPresenter.resolveCover(key))
-        .placeholder(R.drawable.ic_book_cover_placeholder).transition(withCrossFade())
-        .thumbnail(0.6f)
-        .into(cover);
+      .load(itemPresenter.resolveCover(key))
+      .placeholder(R.drawable.ic_book_cover_placeholder).transition(withCrossFade())
+      .thumbnail(0.6f)
+      .into(cover);
   }
 
   @OnClick(R.id.card)
