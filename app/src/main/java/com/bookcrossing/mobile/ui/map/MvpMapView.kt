@@ -13,41 +13,33 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.ui.bookpreview
+package com.bookcrossing.mobile.ui.map
 
-import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.models.Coordinates
+import com.google.android.gms.maps.model.LatLng
+
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
 /**
- * View for book screen
+ * View for map screen
  */
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface BookView : MvpView {
+interface MvpMapView : MvpView {
 
   /**
-   * Book info is ready to be shown
+   * Book position was loaded, so we can show it on the map as a marker
    */
-  fun onBookLoaded(book: Book)
+  fun onBookMarkerLoaded(key: String, coordinates: Coordinates)
 
   /**
-   * Error happened during loading book
+   * Error happened during loading book position
    */
-  fun onErrorToLoadBook()
+  fun onErrorToLoadMarker()
 
   /**
-   * Book was added to stash successfully
+   * User location was acquired to show on the map
    */
-  fun onBookStashed()
-
-  /**
-   * Error happened during adding book to stash
-   */
-  fun onBookUnstashed()
-
-  /**
-   * User's report was sent
-   */
-  fun onAbuseReported()
+  fun onUserLocationReceived(coordinates: LatLng)
 }

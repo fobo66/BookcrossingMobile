@@ -1,6 +1,5 @@
 /*
- *    Copyright 2017 Andrey Mukamolov
- *
+ *    Copyright  2019 Andrey Mukamolov
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -14,29 +13,22 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.util.adapters;
+package com.bookcrossing.mobile.ui.bookpreview
 
-import android.view.View;
+import com.bookcrossing.mobile.models.Book
 
-import moxy.MvpDelegate;
+import moxy.MvpView
+import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.StateStrategyType
 
 /**
- * Created by fobo66 on 09.05.17.
+ * View for books list item
  */
+@StateStrategyType(AddToEndSingleStrategy::class)
+interface BookItemView : MvpView {
 
-public class MvpBaseViewHolder extends BaseViewHolder {
-  private MvpDelegate<? extends BaseViewHolder> mMvpDelegate;
-
-  public MvpBaseViewHolder(View view) {
-    super(view);
-    getMvpDelegate().onCreate();
-  }
-
-  private MvpDelegate getMvpDelegate() {
-    if (this.mMvpDelegate == null) {
-      this.mMvpDelegate = new MvpDelegate<>(this);
-    }
-
-    return this.mMvpDelegate;
-  }
+  /**
+   * Fill view with book info
+   */
+  fun bind(book: Book)
 }

@@ -1,3 +1,18 @@
+/*
+ *    Copyright  2019 Andrey Mukamolov
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package com.bookcrossing.mobile.ui.settings;
 
 import android.content.Context;
@@ -6,7 +21,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.util.BookListenerDelegate;
-import com.bookcrossing.mobile.util.Constants;
+import com.bookcrossing.mobile.util.ConstantsKt;
 import com.bookcrossing.mobile.util.PreferenceChangeListener;
 
 /**
@@ -24,9 +39,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    findPreference(Constants.EXTRA_DEFAULT_CITY).setOnPreferenceChangeListener(
+    findPreference(ConstantsKt.EXTRA_DEFAULT_CITY).setOnPreferenceChangeListener(
         preferenceChangeListener);
-    findPreference(Constants.KEY_CONSENT_STATUS).setOnPreferenceChangeListener(
+    findPreference(ConstantsKt.KEY_CONSENT_STATUS).setOnPreferenceChangeListener(
         preferenceChangeListener);
   }
 
@@ -39,8 +54,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
   @Override public void onDestroy() {
     super.onDestroy();
 
-    findPreference(Constants.EXTRA_DEFAULT_CITY).setOnPreferenceChangeListener(null);
-    findPreference(Constants.KEY_CONSENT_STATUS).setOnPreferenceChangeListener(null);
+    findPreference(ConstantsKt.EXTRA_DEFAULT_CITY).setOnPreferenceChangeListener(null);
+    findPreference(ConstantsKt.KEY_CONSENT_STATUS).setOnPreferenceChangeListener(null);
   }
 
   @Override public void onDetach() {

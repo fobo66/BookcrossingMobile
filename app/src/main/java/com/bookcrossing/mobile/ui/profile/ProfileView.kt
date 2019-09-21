@@ -14,17 +14,16 @@
  *     limitations under the License.
  */
 
-package com.bookcrossing.mobile.ui.stash
+package com.bookcrossing.mobile.ui.profile
+
 
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
 /**
- * (c) 2019 Andrey Mukamolov <fobo66@protonmail.com>
- * Created 2019-09-16.
+ * Created by fobo66 on 08.05.17.
  */
+
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface BookCoverView : MvpView {
-  fun loadCover()
-}
+interface ProfileView : MvpView

@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.presenters.ScanPresenter;
 import com.bookcrossing.mobile.ui.base.BaseActivity;
@@ -18,6 +17,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import moxy.presenter.InjectPresenter;
 
 /**
  * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>

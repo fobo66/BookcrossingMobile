@@ -13,25 +13,19 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.ui.acquire
+package com.bookcrossing.mobile.util
 
-import moxy.MvpView
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.StateStrategyType
+const val RC_SIGN_IN = 1236
 
-/**
- * View for acquiring book screen
- */
-@StateStrategyType(AddToEndSingleStrategy::class)
-interface BookAcquireView : MvpView {
+const val EXTRA_KEY = "key"
+const val EXTRA_CITY = "city"
+const val EXTRA_DEFAULT_CITY = "defaultCity"
+const val PACKAGE_NAME = "com.bookcrossing.mobile"
+const val DEFAULT_USER = "user"
+const val EXTRA_COORDINATES = "coordinates"
+const val EXTRA_TARGET_FRAGMENT = "targetFragment"
+const val KEY_CONSENT_STATUS = "consent_status"
+const val PRIVACY_POLICY_URL = "https://fobo66.github.io/BookcrossingMobile/privacy_policy.html"
+const val DEFAULT_DEBOUNCE_TIMEOUT = 300
+const val PROHIBITED_SYMBOLS = "*#[]?"
 
-  /**
-   * User has entered incorrect book key
-   */
-  fun onIncorrectKey()
-
-  /**
-   * Book was successfully acquired
-   */
-  fun onAcquired()
-}

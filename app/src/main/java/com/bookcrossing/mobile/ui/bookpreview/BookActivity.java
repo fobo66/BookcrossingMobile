@@ -1,3 +1,18 @@
+/*
+ *    Copyright  2019 Andrey Mukamolov
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package com.bookcrossing.mobile.ui.bookpreview;
 
 import android.content.Intent;
@@ -17,8 +32,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.arellomobile.mvp.MvpAppCompatActivity;
-import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Coordinates;
@@ -26,7 +39,7 @@ import com.bookcrossing.mobile.modules.GlideApp;
 import com.bookcrossing.mobile.presenters.BookPresenter;
 import com.bookcrossing.mobile.ui.main.MainActivity;
 import com.bookcrossing.mobile.ui.map.MapActivity;
-import com.bookcrossing.mobile.util.Constants;
+import com.bookcrossing.mobile.util.ConstantsKt;
 import com.bookcrossing.mobile.util.adapters.PlacesHistoryViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -34,6 +47,8 @@ import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jakewharton.rxbinding3.view.RxView;
 import io.reactivex.disposables.Disposable;
+import moxy.MvpAppCompatActivity;
+import moxy.presenter.InjectPresenter;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
@@ -75,7 +90,7 @@ public class BookActivity extends MvpAppCompatActivity
     setupToolbar();
 
     if (getIntent() != null) {
-      key = getIntent().getStringExtra(Constants.EXTRA_KEY);
+      key = getIntent().getStringExtra(ConstantsKt.EXTRA_KEY);
       presenter.subscribeToBookReference(key);
       presenter.checkStashingState(key);
     }
@@ -99,7 +114,7 @@ public class BookActivity extends MvpAppCompatActivity
 
   public void goToPosition(Coordinates coordinates) {
     Intent intent = new Intent(this, MapActivity.class);
-    intent.putExtra(Constants.EXTRA_COORDINATES, coordinates);
+    intent.putExtra(ConstantsKt.EXTRA_COORDINATES, coordinates);
     startActivity(intent);
   }
 

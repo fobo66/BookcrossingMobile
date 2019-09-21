@@ -7,18 +7,19 @@ apply plugin: "kotlinx-serialization"
 apply plugin: "io.fabric"
 
 /*
- *    Copyright  2019 Andrey Mukamolov
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *     Copyright 2019 Andrey Mukamolov
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *     Licensed under the Apache License, Version 2.0 (the "License");
+ *     you may not use this file except in compliance with the License.
+ *     You may obtain a copy of the License at
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     Unless required by applicable law or agreed to in writing, software
+ *     distributed under the License is distributed on an "AS IS" BASIS,
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *     See the License for the specific language governing permissions and
+ *     limitations under the License.
  */
 
 //loadProperties
@@ -29,7 +30,6 @@ def keystoreProperties = loadProperties("keystore.properties")
 def apiProperties = loadProperties("api.properties")
 
 android {
-  dataBinding.enabled true
   compileSdkVersion 29
   signingConfigs {
     releaseConfig {
@@ -53,6 +53,7 @@ android {
     resValue "string", "google_maps_key", apiProperties["google_maps_key"]
     resValue "string", "mapbox_access_token", apiProperties["mapbox_access_token"]
     resValue "string", "admob_publisher_id", apiProperties["admob_publisher_id"]
+
   }
   buildTypes {
     release {
@@ -99,11 +100,11 @@ dependencies {
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-  def moxyVersion = "1.7.0"
+  def moxyVersion = "2.0-alpha06"
 
-  implementation "tech.schoolhelper:moxy-x:$moxyVersion"
-  implementation "tech.schoolhelper:moxy-x-android:$moxyVersion"
-  implementation "tech.schoolhelper:moxy-x-androidx:$moxyVersion"
+  implementation "com.github.moxy-community:moxy:$moxyVersion"
+  implementation "com.github.moxy-community:moxy-android:$moxyVersion"
+  implementation "com.github.moxy-community:moxy-androidx:$moxyVersion"
 
   implementation "com.google.firebase:firebase-auth:19.0.0"
   implementation "com.google.firebase:firebase-messaging:20.0.0"
@@ -191,7 +192,7 @@ dependencies {
 
   kapt "com.google.dagger:dagger-compiler:$daggerVersion"
   kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
-  kapt "tech.schoolhelper:moxy-x-compiler:$moxyVersion"
+  kapt "com.github.moxy-community:moxy-compiler:$moxyVersion"
   kapt "com.github.bumptech.glide:compiler:$glideVersion"
 }
 

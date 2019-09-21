@@ -22,13 +22,13 @@ import butterknife.BindView
 import butterknife.OnClick
 import butterknife.OnLongClick
 import com.afollestad.materialdialogs.MaterialDialog
-import com.arellomobile.mvp.presenter.InjectPresenter
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.presenters.StashedBookItemPresenter
 import com.bookcrossing.mobile.ui.stash.BookCoverView
 import com.bookcrossing.mobile.util.listeners.BookListener
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import moxy.presenter.InjectPresenter
 
 class StashedBookViewHolder(view: View) : MvpBaseViewHolder(view), BookCoverView {
 

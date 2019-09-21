@@ -1,6 +1,5 @@
 /*
- *    Copyright 2017 Andrey Mukamolov
- *
+ *    Copyright  2019 Andrey Mukamolov
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -14,29 +13,19 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.util.adapters;
+package com.bookcrossing.mobile.presenters
 
-import android.view.View;
 
-import moxy.MvpDelegate;
+import com.bookcrossing.mobile.ui.bookpreview.BookItemView
+
+import moxy.InjectViewState
 
 /**
- * Created by fobo66 on 09.05.17.
+ * Presenter for books list item
  */
-
-public class MvpBaseViewHolder extends BaseViewHolder {
-  private MvpDelegate<? extends BaseViewHolder> mMvpDelegate;
-
-  public MvpBaseViewHolder(View view) {
-    super(view);
-    getMvpDelegate().onCreate();
-  }
-
-  private MvpDelegate getMvpDelegate() {
-    if (this.mMvpDelegate == null) {
-      this.mMvpDelegate = new MvpDelegate<>(this);
-    }
-
-    return this.mMvpDelegate;
+@InjectViewState
+class BookItemPresenter : BasePresenter<BookItemView>() {
+  companion object {
+    const val TAG = "BookItemPresenter"
   }
 }

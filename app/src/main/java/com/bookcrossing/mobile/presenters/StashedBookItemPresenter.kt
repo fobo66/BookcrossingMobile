@@ -1,6 +1,5 @@
 /*
- *    Copyright 2019 Andrey Mukamolov
- *
+ *    Copyright  2019 Andrey Mukamolov
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -14,21 +13,27 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.presenters;
+package com.bookcrossing.mobile.presenters
 
-import androidx.annotation.NonNull;
-import com.arellomobile.mvp.InjectViewState;
-import com.bookcrossing.mobile.ui.stash.BookCoverView;
+import com.bookcrossing.mobile.ui.stash.BookCoverView
+
+import moxy.InjectViewState
 
 /**
- * (c) 2019 Andrey Mukamolov <fobo66@protonmail.com>
- * Created 2019-09-16.
+ * Presenter for particular stashed book view
  */
-@InjectViewState public class StashedBookItemPresenter extends BasePresenter<BookCoverView> {
-  public static final String TAG = "StashedBookItemPresenter";
+@InjectViewState
+class StashedBookItemPresenter : BasePresenter<BookCoverView>() {
 
-  public void unstashCurrentBook(@NonNull String key) {
-    stash().child(key).removeValue();
-    firebaseWrapper.getFcm().unsubscribeFromTopic(key);
+  /**
+   * Remove book from user's watch list
+   */
+  fun unstashCurrentBook(key: String) {
+    stash().child(key).removeValue()
+    firebaseWrapper.fcm.unsubscribeFromTopic(key)
+  }
+
+  companion object {
+    const val TAG = "StashedBookItemPresenter"
   }
 }

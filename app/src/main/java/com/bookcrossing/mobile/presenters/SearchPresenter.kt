@@ -30,13 +30,13 @@ import com.algolia.search.model.APIKey
 import com.algolia.search.model.ApplicationID
 import com.algolia.search.model.IndexName
 import com.algolia.search.model.response.ResponseSearch
-import com.arellomobile.mvp.InjectViewState
 import com.bookcrossing.mobile.R.string
 import com.bookcrossing.mobile.models.SearchHitBook
 import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.ui.search.SearchHitBooksAdapter
 import com.bookcrossing.mobile.ui.search.SearchView
 import com.bookcrossing.mobile.util.ResourceProvider
+import moxy.InjectViewState
 import javax.inject.Inject
 
 /**

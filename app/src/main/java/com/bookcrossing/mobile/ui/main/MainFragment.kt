@@ -26,7 +26,6 @@ import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
-import com.arellomobile.mvp.presenter.InjectPresenter
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.presenters.MainPresenter
@@ -42,6 +41,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import moxy.presenter.InjectPresenter
 
 class MainFragment : BaseFragment(), MainView {
 

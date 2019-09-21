@@ -16,6 +16,8 @@
 package com.bookcrossing.mobile.util.adapters
 
 import android.view.View
+import android.widget.TextView
+import butterknife.BindView
 import butterknife.OnClick
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton.POSITIVE
@@ -24,30 +26,52 @@ import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.models.Book
-import com.bookcrossing.mobile.ui.bookpreview.BookItemView
+import com.bookcrossing.mobile.presenters.AcquiredBookItemPresenter
+import com.bookcrossing.mobile.ui.profile.AcquiredBookItemView
+import moxy.presenter.InjectPresenter
 
-class AcquiredBooksViewHolder(view: View) : BooksViewHolder(view), BookItemView {
+/**
+ * View holder for acquired books list item
+ */
+class AcquiredBooksViewHolder(view: View) : MvpBaseViewHolder(view), AcquiredBookItemView {
+
+  @InjectPresenter(tag = AcquiredBookItemPresenter.TAG)
+  lateinit var presenter: AcquiredBookItemPresenter
+
+  private lateinit var key: String
+  @BindView(R.id.book_name)
+  lateinit var bookName: TextView
+
+  @BindView(R.id.author)
+  lateinit var author: TextView
 
   override fun bind(book: Book) {
-    bookName!!.text = book.name
-    author!!.text = book.author
+    bookName.text = book.name
+    author.text = book.author
   }
 
   @OnClick(R.id.release_button) fun release() {
     MaterialDialog(itemView.context).show {
       title(R.string.release_book_dialog_title)
       positiveButton(R.string.release_book, click = { dialog ->
-        itemPresenter.releaseCurrentBook(
-            key,
-            dialog.getInputField().text.toString()
+        presenter.releaseCurrentBook(
+          key,
+          dialog.getInputField().text.toString()
         )
       })
       input(
-          hintRes = R.string.hint_position, prefillRes = R.string.filler_position,
-          callback = { dialog, input: CharSequence ->
-            dialog.getActionButton(POSITIVE)
-                .isEnabled = !(input.length < 5 || input.length > 50)
-          })
+        hintRes = R.string.hint_position, prefillRes = R.string.filler_position,
+        callback = { dialog, input: CharSequence ->
+          dialog.getActionButton(POSITIVE)
+            .isEnabled = !(input.length < 5 || input.length > 50)
+        })
     }
+  }
+
+  /**
+   * Associate this view holder with the given book key
+   */
+  fun setKey(key: String) {
+    this.key = key
   }
 }

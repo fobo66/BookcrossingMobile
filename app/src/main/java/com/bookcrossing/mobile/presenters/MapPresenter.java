@@ -1,18 +1,21 @@
 package com.bookcrossing.mobile.presenters;
 
 import android.location.Location;
-import com.arellomobile.mvp.InjectViewState;
+
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.ui.map.MvpMapView;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.model.LatLng;
-import durdinapps.rxfirebase2.DataSnapshotMapper;
-import durdinapps.rxfirebase2.RxFirebaseDatabase;
-import io.reactivex.Single;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import durdinapps.rxfirebase2.DataSnapshotMapper;
+import durdinapps.rxfirebase2.RxFirebaseDatabase;
+import io.reactivex.Single;
+import moxy.InjectViewState;
 
 @InjectViewState public class MapPresenter extends BasePresenter<MvpMapView> {
 
