@@ -183,7 +183,7 @@ dependencies {
   implementation "com.google.zxing:core:3.4.0"
   implementation "com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.3"
 
-  implementation "com.mapbox.mapboxsdk:mapbox-sdk-core:4.8.0"
+  implementation "com.mapbox.mapboxsdk:mapbox-sdk-core:4.9.0"
   implementation "com.mapbox.mapboxsdk:mapbox-sdk-services:4.9.0"
 
   implementation "com.algolia:instantsearch-android:2.1.0"
