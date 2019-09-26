@@ -2,6 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/fobo66/BookcrossingMobile.svg?style=shield)](https://circleci.com/gh/fobo66/BookcrossingMobile)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/21092b6171274378869e5cbbab93f57e)](https://www.codacy.com/manual/fobo66/BookcrossingMobile?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fobo66/BookcrossingMobile&amp;utm_campaign=Badge_Grade)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ffobo66%2FBookcrossingMobile.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Ffobo66%2FBookcrossingMobile?ref=badge_shield)
 
 This is an Android app for exchanging books. You can download it free on [Google Play](https://play.google.com/store/apps/details?id=com.bookcrossing.mobile).
 
@@ -18,3 +19,7 @@ Check our [contribution guide](CONTRIBUTING.md) for more information.
 
 Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
 By participating in this project you agree to abide by its terms.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ffobo66%2FBookcrossingMobile.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ffobo66%2FBookcrossingMobile?ref=badge_large)
