@@ -15,7 +15,6 @@
 
 package com.bookcrossing.mobile.presenters;
 
-import android.content.SharedPreferences;
 import android.net.Uri;
 import androidx.annotation.NonNull;
 import com.bookcrossing.mobile.R;
@@ -25,8 +24,6 @@ import com.bookcrossing.mobile.util.FirebaseWrapper;
 import com.bookcrossing.mobile.util.SystemServicesWrapper;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
-import io.reactivex.Maybe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import moxy.MvpPresenter;
@@ -107,19 +104,6 @@ public class BasePresenter<V extends MvpView> extends MvpPresenter<V> {
     return systemServicesWrapper.getPreferences()
       .getString(ConstantsKt.EXTRA_DEFAULT_CITY,
                     systemServicesWrapper.getApp().getString(R.string.default_city));
-  }
-
-  public Maybe<String> resolveUserCity() {
-    return systemServicesWrapper.getLocationRepository().getLastKnownUserLocation()
-            .flatMapMaybe(location -> systemServicesWrapper.getLocationRepository().resolveUserCity(location))
-            .observeOn(AndroidSchedulers.mainThread());
-  }
-
-  public void saveCity(String city) {
-    SharedPreferences.Editor editor = systemServicesWrapper.getPreferences().edit();
-    editor.putString(ConstantsKt.EXTRA_CITY, city);
-    editor.putString(ConstantsKt.EXTRA_DEFAULT_CITY, city);
-    editor.apply();
   }
 
   public boolean isAuthenticated() {

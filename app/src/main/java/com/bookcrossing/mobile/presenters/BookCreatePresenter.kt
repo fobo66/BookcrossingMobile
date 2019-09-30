@@ -22,9 +22,12 @@ import android.graphics.Color.WHITE
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.core.content.edit
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Date
 import com.bookcrossing.mobile.ui.create.BookCreateView
+import com.bookcrossing.mobile.util.EXTRA_CITY
+import com.bookcrossing.mobile.util.EXTRA_DEFAULT_CITY
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.storage.StorageMetadata
 import com.google.zxing.BarcodeFormat
@@ -33,6 +36,8 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
+import io.reactivex.Maybe
+import io.reactivex.android.schedulers.AndroidSchedulers
 import moxy.InjectViewState
 import java.util.Calendar
 import java.util.EnumMap
@@ -166,4 +171,21 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
         values.put(MediaStore.Images.Media.IS_PENDING, 0)
         resolver.update(item, values, null, null)
     }
+
+  fun resolveUserCity(): Maybe<String> {
+    return systemServicesWrapper.locationRepository.getLastKnownUserLocation()
+      .flatMapMaybe<String> { location ->
+        systemServicesWrapper.locationRepository.resolveUserCity(
+          location
+        )
+      }
+      .observeOn(AndroidSchedulers.mainThread())
+  }
+
+  fun saveCity(city: String) {
+    systemServicesWrapper.preferences.edit {
+      putString(EXTRA_CITY, city)
+      putString(EXTRA_DEFAULT_CITY, city)
+    }
+  }
 }

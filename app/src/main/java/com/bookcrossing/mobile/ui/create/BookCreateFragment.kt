@@ -15,6 +15,7 @@
 
 package com.bookcrossing.mobile.ui.create
 
+import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -32,6 +33,7 @@ import butterknife.BindView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
+import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.list.listItems
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.modules.GlideApp
@@ -46,6 +48,7 @@ import com.jakewharton.rxbinding3.widget.textChanges
 import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
 import com.miguelbcr.ui.rx_paparazzo2.entities.Response
+import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
@@ -76,6 +79,8 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   private var coverChooserDialog: MaterialDialog? = null
 
+  private lateinit var permissions: RxPermissions
+
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
@@ -89,6 +94,8 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
+
+    permissions = RxPermissions(this)
 
     buildCoverChooserDialog()
     registerSubscriptions()
@@ -154,7 +161,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   private fun registerDescriptionInputSubscription() {
     val descriptionSubscription = bookDescriptionInput.afterTextChangeEvents()
-      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+      .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .filter { event -> !event.view.text.toString().contains(PROHIBITED_SYMBOLS) }
         .subscribe { event -> presenter.onDescriptionChange(event.view.text.toString()) }
     subscriptions.add(descriptionSubscription)
@@ -268,5 +275,30 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     val canvas = Canvas(stickerBitmap)
     sticker.draw(canvas)
       presenter.saveSticker(stickerBitmap, stickerName, stickerDescription)
+  }
+
+  private fun resolveCity() {
+    subscriptions.add(
+      permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
+        .filter { granted -> granted }
+        .flatMapMaybe { presenter.resolveUserCity() }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { city ->
+          if (city.isNotEmpty()) {
+            presenter.saveCity(city)
+          } else {
+            askUserToProvideDefaultCity()
+          }
+        })
+  }
+
+  private fun askUserToProvideDefaultCity() {
+    MaterialDialog(requireContext())
+      .title(R.string.enter_city_title)
+      .message(R.string.error_enter_city_content)
+      .input(hintRes = R.string.city_hint, callback =
+      { _, input -> presenter.saveCity(input.toString()) })
+      .show()
   }
 }

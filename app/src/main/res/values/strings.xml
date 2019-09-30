@@ -1,6 +1,5 @@
 <!--
-  ~    Copyright 2019 Andrey Mukamolov
-  ~
+  ~    Copyright  2019 Andrey Mukamolov
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
   ~    You may obtain a copy of the License at
@@ -106,7 +105,7 @@
   <string name="title_activity_oss_licenses">Open source licenses</string>
   <string name="city_hint">Enter your city</string>
   <string name="enter_city_title">Enter your city</string>
-  <string name="enter_city_content">There was an error with receiving your city. Please enter it manually, so we can automatically detect book\'s coordinates where you freed it</string>
+  <string name="error_enter_city_content">There was an error with receiving your city. Please enter it manually, so we can automatically detect book\'s coordinates where you freed it</string>
 
   <string name="consent_preference_not_set">Not set</string>
 

@@ -15,7 +15,6 @@
 
 package com.bookcrossing.mobile.ui.main
 
-import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,8 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.input.input
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.presenters.MainPresenter
@@ -37,10 +34,6 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.jakewharton.rxbinding3.view.clicks
-import com.tbruyelle.rxpermissions2.RxPermissions
-import io.reactivex.Maybe
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import moxy.presenter.InjectPresenter
 
 class MainFragment : BaseFragment(), MainView {
@@ -58,8 +51,6 @@ class MainFragment : BaseFragment(), MainView {
   lateinit var presenter: MainPresenter
 
   private lateinit var adapter: FirebaseRecyclerAdapter<Book, BooksViewHolder>
-
-  private lateinit var permissions: RxPermissions
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -79,8 +70,6 @@ class MainFragment : BaseFragment(), MainView {
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-
-    permissions = RxPermissions(requireActivity())
 
     setupBookList()
 
@@ -125,34 +114,5 @@ class MainFragment : BaseFragment(), MainView {
     rv.adapter = adapter
     LinearSnapHelper().attachToRecyclerView(rv)
     adapter.startListening()
-  }
-
-  private fun resolveCity() {
-    subscriptions.add(
-      permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
-        .flatMapMaybe { granted ->
-          if (granted) {
-            return@flatMapMaybe presenter.resolveUserCity()
-          }
-          Maybe.empty<String>()
-        }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { city ->
-          if (city.isNotEmpty()) {
-            presenter.saveCity(city)
-          } else {
-            askUserToProvideDefaultCity()
-          }
-        })
-  }
-
-  private fun askUserToProvideDefaultCity() {
-    MaterialDialog(requireContext())
-      .title(R.string.enter_city_title)
-      .message(R.string.enter_city_content)
-      .input(hintRes = R.string.city_hint, callback =
-      { _, input -> presenter.saveCity(input.toString()) })
-      .show()
   }
 }
