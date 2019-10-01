@@ -103,21 +103,21 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   private fun buildCoverChooserDialog() {
     coverChooserDialog = MaterialDialog(requireContext())
-        .title(R.string.cover_chooser_title, null)
-        .listItems(R.array.cover_chooser_dialog_items, selection = { _, index, _ ->
-          val chooserObservable: Observable<Response<BookCreateFragment, FileData>> =
-            if (index == 0) {
-              requestCoverImageFromGallery()
-            } else {
-              requestCoverImageFromCamera()
-            }
-          subscriptions.add(chooserObservable.subscribe { result ->
-            if (result.resultCode() == RESULT_OK) {
-              result.targetUI()
-                  .presenter.saveCoverTemporarily(result.data())
-            }
-          })
+      .title(R.string.cover_chooser_title, null)
+      .listItems(R.array.cover_chooser_dialog_items, selection = { _, index, _ ->
+        val chooserObservable: Observable<Response<BookCreateFragment, FileData>> =
+          if (index == 0) {
+            requestCoverImageFromGallery()
+          } else {
+            requestCoverImageFromCamera()
+          }
+        subscriptions.add(chooserObservable.subscribe { result ->
+          if (result.resultCode() == RESULT_OK) {
+            result.targetUI()
+              .presenter.saveCoverTemporarily(result.data())
+          }
         })
+      })
   }
 
   private fun registerSubscriptions() {
@@ -137,25 +137,25 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   private fun registerPublishButtonClickSubscription() {
     val publishSubscription = releaseButton.clicks()
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { publishBook() }
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe { publishBook() }
     subscriptions.add(publishSubscription)
   }
 
   private fun registerPublishButtonEnableSubscription() {
     val publishSubscription =
       Observables.zip(
-          bookNameInput.textChanges(),
-          bookAuthorInput.textChanges(),
-          bookPositionInput.textChanges(),
-          bookDescriptionInput.textChanges()
+        bookNameInput.textChanges(),
+        bookAuthorInput.textChanges(),
+        bookPositionInput.textChanges(),
+        bookDescriptionInput.textChanges()
       ) { name: CharSequence, author: CharSequence, position: CharSequence, description: CharSequence ->
         name.isNotBlank() &&
-            author.isNotBlank() &&
-            position.isNotBlank() &&
-            description.isNotBlank()
+          author.isNotBlank() &&
+          position.isNotBlank() &&
+          description.isNotBlank()
       }
-          .subscribe { enabled: Boolean -> releaseButton.isEnabled = enabled }
+        .subscribe { enabled: Boolean -> releaseButton.isEnabled = enabled }
     subscriptions.add(publishSubscription)
   }
 
@@ -163,7 +163,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     val descriptionSubscription = bookDescriptionInput.afterTextChangeEvents()
       .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .filter { event -> !event.view.text.toString().contains(PROHIBITED_SYMBOLS) }
-        .subscribe { event -> presenter.onDescriptionChange(event.view.text.toString()) }
+      .subscribe { event -> presenter.onDescriptionChange(event.view.text.toString()) }
     subscriptions.add(descriptionSubscription)
   }
 
@@ -171,7 +171,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     val positionSubscription = bookPositionInput.afterTextChangeEvents()
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .filter { event -> !event.view.text.toString().contains(PROHIBITED_SYMBOLS) }
-        .subscribe { event -> presenter.onPositionChange(event.view.text.toString()) }
+      .subscribe { event -> presenter.onPositionChange(event.view.text.toString()) }
     subscriptions.add(positionSubscription)
   }
 
@@ -179,42 +179,42 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     val authorSubscription = bookAuthorInput.afterTextChangeEvents()
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .filter { event -> !event.view.text.toString().contains(PROHIBITED_SYMBOLS) }
-        .subscribe { event -> presenter.onAuthorChange(event.view.text.toString()) }
+      .subscribe { event -> presenter.onAuthorChange(event.view.text.toString()) }
     subscriptions.add(authorSubscription)
   }
 
   private fun registerNameInputSubscription() {
     val nameSubscription = bookNameInput.afterTextChangeEvents()
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-        .filter { event ->
-          val textFieldValue = event.view.text
-              .toString()
-          !textFieldValue.contains(PROHIBITED_SYMBOLS) && textFieldValue.isNotEmpty()
-        }
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { event -> presenter.onNameChange(event.view.text.toString()) }
+      .filter { event ->
+        val textFieldValue = event.view.text
+          .toString()
+        !textFieldValue.contains(PROHIBITED_SYMBOLS) && textFieldValue.isNotEmpty()
+      }
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe { event -> presenter.onNameChange(event.view.text.toString()) }
     subscriptions.add(nameSubscription)
   }
 
   private fun registerCoverClickSubscription() {
     val coverSubscription = cover.clicks()
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-        .subscribe { coverChooserDialog!!.show() }
+      .subscribe { coverChooserDialog!!.show() }
     subscriptions.add(coverSubscription)
   }
 
   private fun requestCoverImageFromGallery(): Observable<Response<BookCreateFragment, FileData>> {
     return RxPaparazzo.single(this)
-        .usingGallery()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
+      .usingGallery()
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
   }
 
   private fun requestCoverImageFromCamera(): Observable<Response<BookCreateFragment, FileData>> {
     return RxPaparazzo.single(this)
-        .usingCamera()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
+      .usingCamera()
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
   }
 
   private fun publishBook() {
@@ -224,9 +224,9 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   override fun onCoverChosen(coverUri: Uri?) {
     GlideApp.with(this)
-        .load(coverUri)
-        .transition(withCrossFade())
-        .into(cover)
+      .load(coverUri)
+      .transition(withCrossFade())
+      .into(cover)
   }
 
   override fun showCover() {
@@ -237,13 +237,13 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   override fun onReleased(newKey: String) {
     val dialog = MaterialDialog(requireContext())
-        .title(R.string.book_saved_dialog_title, null)
-        .customView(R.layout.book_sticker_layout)
-        .positiveButton(R.string.ok) { dialog ->
-          renderSticker(dialog.getCustomView().findViewById(R.id.sticker))
-            requireActivity().supportFragmentManager.popBackStack()
-          listener.onBookReleased(newKey)
-        }
+      .title(R.string.book_saved_dialog_title)
+      .customView(R.layout.book_sticker_layout)
+      .positiveButton(R.string.ok) { dialog ->
+        renderSticker(dialog.getCustomView().findViewById(R.id.sticker))
+        requireActivity().supportFragmentManager.popBackStack()
+        listener.onBookReleased(newKey)
+      }
 
     prepareDialog(dialog.getCustomView().findViewById(R.id.sticker), newKey)
     dialog.show()
@@ -251,12 +251,12 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   override fun onFailedToRelease() {
     MaterialDialog(requireContext())
-        .message(R.string.failed_to_release_book_message, null, null)
-        .title(R.string.error_dialog_title, null)
-        .positiveButton(R.string.ok, null) { dialog ->
-          dialog.dismiss()
-        }
-        .show()
+      .message(R.string.failed_to_release_book_message, null, null)
+      .title(R.string.error_dialog_title, null)
+      .positiveButton(R.string.ok, null) { dialog ->
+        dialog.dismiss()
+      }
+      .show()
   }
 
   private fun prepareDialog(
@@ -274,7 +274,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     val stickerBitmap = Bitmap.createBitmap(sticker.width, sticker.height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(stickerBitmap)
     sticker.draw(canvas)
-      presenter.saveSticker(stickerBitmap, stickerName, stickerDescription)
+    presenter.saveSticker(stickerBitmap, stickerName, stickerDescription)
   }
 
   private fun resolveCity() {
