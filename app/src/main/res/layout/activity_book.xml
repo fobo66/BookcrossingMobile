@@ -1,6 +1,5 @@
 <!--
-  ~    Copyright 2019 Andrey Mukamolov
-  ~
+  ~    Copyright  2019 Andrey Mukamolov
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
   ~    You may obtain a copy of the License at
@@ -42,31 +41,28 @@
         android:layout_marginStart="@dimen/default_padding"
         android:text="@string/book_acquire"
         android:visibility="gone"
-        app:elevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/timestamp"
+        app:elevation="4dp"
         tools:visibility="visible"
         />
       <TextView
         android:id="@+id/positionName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/default_padding"
-        android:layout_marginStart="@dimen/default_padding"
-        android:layout_marginTop="@dimen/default_padding"
         android:drawableStart="@drawable/ic_place"
         android:padding="@dimen/default_padding"
         android:textAlignment="viewStart"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/author"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/author"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/author"
         tools:text="On the bench in the park"
         />
       <TextView
         android:id="@+id/book_desc"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/default_padding"
         android:layout_marginStart="@dimen/default_padding"
@@ -93,16 +89,15 @@
         android:id="@+id/author"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/default_padding"
-        android:layout_marginStart="@dimen/default_padding"
-        android:layout_marginTop="@dimen/default_padding"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="24dp"
         android:paddingBottom="8dp"
         android:paddingEnd="@dimen/default_padding"
         android:paddingStart="@dimen/default_padding"
         android:paddingTop="@dimen/default_padding"
         android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
-        app:layout_constraintEnd_toStartOf="@+id/positionName"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/positionName"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="L. Tolstoy"
         />
@@ -128,6 +123,7 @@
         app:layout_constraintStart_toStartOf="@id/placesHistory"
         app:layout_constraintTop_toBottomOf="@id/placesHistory"
         app:relative_time_prefix="@string/timestamp_prefix"
+        tools:text="Went free yesterday"
         />
     </androidx.constraintlayout.widget.ConstraintLayout>
   </androidx.core.widget.NestedScrollView>
