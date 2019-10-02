@@ -6,6 +6,7 @@ apply plugin: "kotlin-kapt"
 apply plugin: "kotlinx-serialization"
 apply plugin: "io.fabric"
 apply plugin: "io.gitlab.arturbosch.detekt"
+apply plugin: "io.github.fobo66.propertiesloader"
 
 /*
  *    Copyright  2019 Andrey Mukamolov
