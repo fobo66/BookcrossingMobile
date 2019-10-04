@@ -99,6 +99,8 @@
   <string name="stash_notification_channel_description">Уведомления о книгах, которые вы отложили</string>
   <string name="report_abuse_success">Жалоба отправлена. Спасибо!</string>
   <string name="unstash_book_confirmation_title">Убрать эту книгу из отложенных?</string>
+  <string name="author_icon_description">Author</string>
+  <string name="place_icon_description">Current position</string>
   <string-array name="cover_chooser_dialog_items">
     <item>Из галереи</item>
     <item>Сделать фото</item>

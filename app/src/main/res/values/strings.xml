@@ -122,6 +122,8 @@
   <string name="stash_notification_body_free">One of the books you\'ve stashed was released! Go find it</string>
   <string name="report_abuse_success">Your report was sent. Thanks!</string>
   <string name="unstash_book_confirmation_title">Unstash this book?</string>
+  <string name="author_icon_description">Author</string>
+  <string name="place_icon_description">Current position</string>
   <string-array name="cover_chooser_dialog_items">
     <item>From gallery</item>
     <item>From camera</item>

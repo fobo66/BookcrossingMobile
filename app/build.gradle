@@ -6,6 +6,7 @@ apply plugin: "kotlin-kapt"
 apply plugin: "kotlinx-serialization"
 apply plugin: "io.fabric"
 apply plugin: "io.gitlab.arturbosch.detekt"
+apply plugin: "io.github.fobo66.propertiesloader"
 
 /*
  *    Copyright  2019 Andrey Mukamolov
@@ -54,6 +55,8 @@ android {
     resValue "string", "mapbox_access_token", apiProperties["mapbox_access_token"]
     resValue "string", "admob_publisher_id", apiProperties["admob_publisher_id"]
 
+    vectorDrawables.useSupportLibrary = true
+
   }
   buildTypes {
     release {
@@ -92,7 +95,7 @@ android {
 dependencies {
   implementation fileTree(include: ["*.jar"], dir: "libs")
   testImplementation "junit:junit:4.12"
-  testImplementation "org.mockito:mockito-core:3.0.0"
+  testImplementation "org.mockito:mockito-core:3.1.0"
   testImplementation "org.robolectric:robolectric:4.3"
   testImplementation "androidx.test:core:1.2.0"
   androidTestImplementation "androidx.test.ext:junit:1.1.1"
@@ -100,13 +103,13 @@ dependencies {
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-  def moxyVersion = "2.0-alpha06"
+  def moxyVersion = "2.0.2"
 
   implementation "com.github.moxy-community:moxy:$moxyVersion"
   implementation "com.github.moxy-community:moxy-android:$moxyVersion"
   implementation "com.github.moxy-community:moxy-androidx:$moxyVersion"
 
-  implementation "com.google.firebase:firebase-auth:19.0.0"
+  implementation "com.google.firebase:firebase-auth:19.1.0"
   implementation "com.google.firebase:firebase-messaging:20.0.0"
   implementation "com.google.firebase:firebase-ads:18.2.0"
   implementation "com.google.android.ads.consent:consent-library:1.0.7"
@@ -151,7 +154,7 @@ dependencies {
   def glideVersion = "4.10.0"
   implementation "com.github.bumptech.glide:glide:$glideVersion"
 
-  implementation "io.reactivex.rxjava2:rxjava:2.2.12"
+  implementation "io.reactivex.rxjava2:rxjava:2.2.13"
   implementation "io.reactivex.rxjava2:rxkotlin:2.4.0"
   implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
 
@@ -183,8 +186,9 @@ dependencies {
   implementation "com.google.zxing:core:3.4.0"
   implementation "com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.3"
 
-  implementation "com.mapbox.mapboxsdk:mapbox-sdk-core:4.8.0"
-  implementation "com.mapbox.mapboxsdk:mapbox-sdk-services:4.8.0"
+  def mapboxSdkVersion = "4.9.0"
+  implementation "com.mapbox.mapboxsdk:mapbox-sdk-core:$mapboxSdkVersion"
+  implementation "com.mapbox.mapboxsdk:mapbox-sdk-services:$mapboxSdkVersion"
 
   implementation "com.algolia:instantsearch-android:2.1.0"
 

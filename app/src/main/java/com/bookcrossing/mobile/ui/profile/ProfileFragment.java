@@ -1,3 +1,19 @@
+/*
+ *     Copyright 2019 Andrey Mukamolov
+ *
+ *     Licensed under the Apache License, Version 2.0 (the "License");
+ *     you may not use this file except in compliance with the License.
+ *     You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     Unless required by applicable law or agreed to in writing, software
+ *     distributed under the License is distributed on an "AS IS" BASIS,
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *     See the License for the specific language governing permissions and
+ *     limitations under the License.
+ */
+
 package com.bookcrossing.mobile.ui.profile;
 
 import android.os.Bundle;
@@ -33,10 +49,6 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
 
   @BindView(R.id.acquiredBooksList) public RecyclerView acquiredBooksList;
 
-  public ProfileFragment() {
-    // Required empty public constructor
-  }
-
   private FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder> adapter;
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,6 +64,7 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
       adapter.startListening();
       GlideApp.with(this)
         .load(presenter.getPhotoUrl())
+        .placeholder(R.drawable.ic_account_circle_black_24dp)
         .transition(withCrossFade())
         .into(profileImage);
     } else {
