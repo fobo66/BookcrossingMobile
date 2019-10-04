@@ -15,13 +15,12 @@
 
 package com.bookcrossing.mobile.presenters
 
-import android.content.ContentValues
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
+import android.util.Log
 import androidx.core.content.edit
 import com.bookcrossing.mobile.code.BookStickerEncoder
+import com.bookcrossing.mobile.code.BookStickerSaver
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Date
 import com.bookcrossing.mobile.ui.create.BookCreateView
@@ -29,6 +28,7 @@ import com.bookcrossing.mobile.util.EXTRA_CITY
 import com.bookcrossing.mobile.util.EXTRA_DEFAULT_CITY
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.storage.StorageMetadata
+import com.google.zxing.WriterException
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -106,12 +106,15 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
   fun generateQrCode(key: String): Bitmap? {
     return try {
       BookStickerEncoder().encodeBookAsQrCode(buildBookUri(key).toString())
-    } catch (e: Exception) {
-      e.printStackTrace()
+    } catch (e: WriterException) {
+      Log.e(TAG, "Failed to encode book key to QR code")
+      Crashlytics.logException(e)
+      null
+    } catch (e: IllegalArgumentException) {
+      Log.e(TAG, "Failed to save QR code in bitmap")
       Crashlytics.logException(e)
       null
     }
-
   }
 
   fun saveSticker(
@@ -119,29 +122,9 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     stickerName: String,
     stickerDescription: String
   ) {
-    val values = ContentValues().apply {
-      put(MediaStore.Images.Media.DISPLAY_NAME, stickerName)
-      put(MediaStore.Images.Media.DESCRIPTION, stickerDescription)
-      put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-      put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-      put(MediaStore.Images.Media.WIDTH, sticker.width)
-      put(MediaStore.Images.Media.HEIGHT, sticker.height)
-      put(MediaStore.Images.Media.IS_PENDING, 1)
-    }
-
-    val resolver = systemServicesWrapper.app.contentResolver
-    val collection = MediaStore.Images.Media
-      .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-    val item = resolver.insert(collection, values)
-
-    resolver.openOutputStream(item!!)
-      .use { stream ->
-        sticker.compress(Bitmap.CompressFormat.JPEG, 95, stream)
-      }
-
-    values.clear()
-    values.put(MediaStore.Images.Media.IS_PENDING, 0)
-    resolver.update(item, values, null, null)
+    BookStickerSaver(systemServicesWrapper.app.contentResolver).saveSticker(
+      stickerName, stickerDescription, sticker
+    )
   }
 
   fun resolveUserCity(): Maybe<String> {
@@ -159,5 +142,9 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       putString(EXTRA_CITY, city)
       putString(EXTRA_DEFAULT_CITY, city)
     }
+  }
+
+  companion object {
+    const val TAG = "BookCreatePresenter"
   }
 }
