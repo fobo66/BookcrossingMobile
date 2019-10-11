@@ -35,7 +35,7 @@ buildscript {
 }
 
 plugins {
-  id "io.gitlab.arturbosch.detekt" version "1.1.0"
+  id "io.gitlab.arturbosch.detekt" version "1.1.1"
   id "io.github.fobo66.propertiesloader" version "1.0"
 }
 
