@@ -21,7 +21,7 @@ import android.util.Log
 import androidx.core.content.edit
 import com.bookcrossing.mobile.code.BookStickerEncoder
 import com.bookcrossing.mobile.code.BookStickerSaver
-import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.models.BookBuilder
 import com.bookcrossing.mobile.models.Date
 import com.bookcrossing.mobile.ui.create.BookCreateView
 import com.bookcrossing.mobile.util.EXTRA_CITY
@@ -30,6 +30,10 @@ import com.crashlytics.android.Crashlytics
 import com.google.firebase.storage.StorageMetadata
 import com.google.zxing.WriterException
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
+import durdinapps.rxfirebase2.RxFirebaseAuth
+import durdinapps.rxfirebase2.RxFirebaseDatabase
+import durdinapps.rxfirebase2.RxFirebaseStorage
+import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import moxy.InjectViewState
@@ -38,19 +42,19 @@ import java.util.Calendar
 @InjectViewState
 class BookCreatePresenter : BasePresenter<BookCreateView>() {
 
-  private val book: Book = Book()
+  private val book: BookBuilder = BookBuilder()
   private var tempCoverUri: Uri? = null
 
-  init {
-    book.isFree = true
-  }
-
-  private fun uploadCover(key: String?) {
+  private fun uploadCover(key: String) {
     if (tempCoverUri != null && firebaseWrapper.auth.currentUser != null) {
       val metadata = StorageMetadata.Builder()
         .setContentType("image/jpeg")
         .build()
       resolveCover(key).putFile(tempCoverUri!!, metadata)
+      RxFirebaseAuth.observeAuthState(firebaseWrapper.auth)
+        .filter { auth -> auth.currentUser != null }
+        .switchMapSingle { RxFirebaseStorage.putFile(resolveCover(key), tempCoverUri!!, metadata) }
+        .subscribe()
     }
   }
 
@@ -60,36 +64,38 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
   }
 
   fun onNameChange(name: String) {
-    book.name = name
+    book.setName(name)
     viewState.showCover()
   }
 
   fun onAuthorChange(author: String) {
-    book.author = author
+    book.setAuthor(author)
   }
 
   fun onPositionChange(position: String) {
-    book.positionName = position
+    book.setPositionName(position)
   }
 
   fun onDescriptionChange(description: String) {
-    book.description = description
+    book.setDescription(description)
   }
 
-  fun publishBook() {
-    book.city = getCity()
+  fun publishBook(): Completable {
+    val newBook = book.createBook()
+    newBook.city = city
     setPublicationDate()
     val newBookReference = books().push()
-    newBookReference.setValue(book)
-      .addOnSuccessListener {
+
+    return RxFirebaseDatabase.setValue(newBookReference, newBook)
+      .doOnComplete {
         val key: String = newBookReference.key.orEmpty()
         if (key.isNotEmpty()) {
           uploadCover(key)
           viewState.onReleased(key)
         }
       }
-      .addOnFailureListener { e ->
-        Crashlytics.logException(e)
+      .doOnError {
+        Crashlytics.logException(it)
         viewState.onFailedToRelease()
       }
   }
@@ -100,7 +106,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
       calendar.get(Calendar.DAY_OF_MONTH), calendar.timeInMillis
     )
-    book.wentFreeAt = date
+    book.setWentFreeAt(date)
   }
 
   fun generateQrCode(key: String): Bitmap? {

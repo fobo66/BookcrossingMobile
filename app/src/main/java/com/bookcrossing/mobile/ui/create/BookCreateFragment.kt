@@ -138,7 +138,9 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     val publishSubscription = releaseButton.clicks()
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .observeOn(AndroidSchedulers.mainThread())
-      .subscribe { publishBook() }
+      .doOnNext { releaseButton.isEnabled = false }
+      .switchMapCompletable { presenter.publishBook() }
+      .subscribe()
     subscriptions.add(publishSubscription)
   }
 

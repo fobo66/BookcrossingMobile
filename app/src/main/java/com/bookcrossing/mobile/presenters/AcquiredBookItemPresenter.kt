@@ -30,7 +30,9 @@ class AcquiredBookItemPresenter : BasePresenter<AcquiredBookItemView>() {
    */
   fun releaseCurrentBook(key: String, position: String) {
     acquiredBooks().child(key).removeValue()
-    books().child(key).child("city").setValue(getCity())
+    books().child(key)
+      .child("city")
+      .setValue(city)
     books().child(key).child("positionName").setValue(position)
     books().child(key).child("free").setValue(true)
   }
