@@ -1,16 +1,17 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *     Copyright 2019 Andrey Mukamolov
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *     Licensed under the Apache License, Version 2.0 (the "License");
+ *     you may not use this file except in compliance with the License.
+ *     You may obtain a copy of the License at
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     Unless required by applicable law or agreed to in writing, software
+ *     distributed under the License is distributed on an "AS IS" BASIS,
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *     See the License for the specific language governing permissions and
+ *     limitations under the License.
  */
 
 package com.bookcrossing.mobile.presenters
@@ -28,34 +29,31 @@ import com.bookcrossing.mobile.util.EXTRA_CITY
 import com.bookcrossing.mobile.util.EXTRA_DEFAULT_CITY
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.storage.StorageMetadata
+import com.google.firebase.storage.UploadTask
 import com.google.zxing.WriterException
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
 import durdinapps.rxfirebase2.RxFirebaseAuth
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import durdinapps.rxfirebase2.RxFirebaseStorage
-import io.reactivex.Completable
 import io.reactivex.Maybe
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import moxy.InjectViewState
-import java.util.Calendar
+import java.util.*
 
 @InjectViewState
 class BookCreatePresenter : BasePresenter<BookCreateView>() {
 
   private val book: BookBuilder = BookBuilder()
-  private var tempCoverUri: Uri? = null
+  private lateinit var tempCoverUri: Uri
 
-  private fun uploadCover(key: String) {
-    if (tempCoverUri != null && firebaseWrapper.auth.currentUser != null) {
-      val metadata = StorageMetadata.Builder()
-        .setContentType("image/jpeg")
-        .build()
-      resolveCover(key).putFile(tempCoverUri!!, metadata)
-      RxFirebaseAuth.observeAuthState(firebaseWrapper.auth)
-        .filter { auth -> auth.currentUser != null }
-        .switchMapSingle { RxFirebaseStorage.putFile(resolveCover(key), tempCoverUri!!, metadata) }
-        .subscribe()
-    }
+  private fun uploadCover(key: String): Observable<UploadTask.TaskSnapshot> {
+    val metadata = StorageMetadata.Builder()
+      .setContentType("image/jpeg")
+      .build()
+    return RxFirebaseAuth.observeAuthState(firebaseWrapper.auth)
+      .filter { auth -> auth.currentUser != null }
+      .switchMapSingle { RxFirebaseStorage.putFile(resolveCover(key), tempCoverUri, metadata) }
   }
 
   fun saveCoverTemporarily(result: FileData) {
@@ -80,19 +78,17 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     book.setDescription(description)
   }
 
-  fun publishBook(): Completable {
+  fun publishBook(): Observable<UploadTask.TaskSnapshot>? {
     val newBook = book.createBook()
     newBook.city = city
     setPublicationDate()
     val newBookReference = books().push()
+    val key = newBookReference.key.orEmpty()
 
     return RxFirebaseDatabase.setValue(newBookReference, newBook)
+      .andThen(uploadCover(key))
       .doOnComplete {
-        val key: String = newBookReference.key.orEmpty()
-        if (key.isNotEmpty()) {
-          uploadCover(key)
-          viewState.onReleased(key)
-        }
+        viewState.onReleased(key)
       }
       .doOnError {
         Crashlytics.logException(it)
