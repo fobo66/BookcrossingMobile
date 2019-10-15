@@ -37,7 +37,6 @@ import durdinapps.rxfirebase2.RxFirebaseDatabase
 import durdinapps.rxfirebase2.RxFirebaseStorage
 import io.reactivex.Maybe
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import moxy.InjectViewState
 import java.util.*
 
@@ -136,7 +135,10 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
           location
         )
       }
-      .observeOn(AndroidSchedulers.mainThread())
+      .doOnError {
+        Log.e("resolveCity", "Failed to resolve city", it)
+        viewState.askUserToProvideDefaultCity()
+      }
   }
 
   fun saveCity(city: String) {

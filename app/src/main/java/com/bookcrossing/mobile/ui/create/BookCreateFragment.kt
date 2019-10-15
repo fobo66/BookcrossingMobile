@@ -138,9 +138,13 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   private fun registerPublishButtonClickSubscription() {
     val publishSubscription = releaseButton.clicks()
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .observeOn(AndroidSchedulers.mainThread())
       .doOnNext { releaseButton.isEnabled = false }
+      .switchMap { resolveUserCity() }
+      .doOnNext { city -> presenter.saveCity(city) }
       .switchMap { presenter.publishBook() }
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .retry()
       .subscribe()
     subscriptions.add(publishSubscription)
   }
@@ -233,6 +237,15 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     }
   }
 
+  override fun askUserToProvideDefaultCity() {
+    MaterialDialog(requireContext())
+      .title(R.string.enter_city_title)
+      .message(R.string.error_enter_city_content)
+      .input(hintRes = R.string.city_hint, callback =
+      { _, input -> presenter.saveCity(input.toString()) })
+      .show()
+  }
+
   override fun onReleased(newKey: String) {
     val dialog = MaterialDialog(requireContext())
       .title(R.string.book_saved_dialog_title)
@@ -275,28 +288,9 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     presenter.saveSticker(stickerBitmap, stickerName, stickerDescription)
   }
 
-  private fun resolveCity() {
-    subscriptions.add(
-      permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
+  private fun resolveUserCity(): Observable<String> {
+    return permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
         .filter { granted -> granted }
         .flatMapMaybe { presenter.resolveUserCity() }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { city ->
-          if (city.isNotEmpty()) {
-            presenter.saveCity(city)
-          } else {
-            askUserToProvideDefaultCity()
-          }
-        })
-  }
-
-  private fun askUserToProvideDefaultCity() {
-    MaterialDialog(requireContext())
-      .title(R.string.enter_city_title)
-      .message(R.string.error_enter_city_content)
-      .input(hintRes = R.string.city_hint, callback =
-      { _, input -> presenter.saveCity(input.toString()) })
-      .show()
   }
 }
