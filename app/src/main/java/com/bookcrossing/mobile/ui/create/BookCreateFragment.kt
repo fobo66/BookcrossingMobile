@@ -1,17 +1,16 @@
 /*
- *     Copyright 2019 Andrey Mukamolov
+ *    Copyright  2019 Andrey Mukamolov
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- *     Licensed under the Apache License, Version 2.0 (the "License");
- *     you may not use this file except in compliance with the License.
- *     You may obtain a copy of the License at
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- *     Unless required by applicable law or agreed to in writing, software
- *     distributed under the License is distributed on an "AS IS" BASIS,
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     See the License for the specific language governing permissions and
- *     limitations under the License.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 
 package com.bookcrossing.mobile.ui.create
@@ -71,8 +70,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   @BindView(R.id.input_description) lateinit var bookDescriptionInput: TextView
 
-  @BindView(R.id.publish_book)
-  lateinit var releaseButton: Button
+  @BindView(R.id.publish_book) lateinit var releaseButton: Button
 
   @BindString(R.string.rendered_sticker_name) lateinit var stickerName: String
 
@@ -137,13 +135,8 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   private fun registerPublishButtonClickSubscription() {
     val publishSubscription = releaseButton.clicks()
-      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .doOnNext { releaseButton.isEnabled = false }
-      .switchMap { resolveUserCity() }
-      .doOnNext { city -> presenter.saveCity(city) }
-      .switchMap { presenter.publishBook() }
-      .subscribeOn(Schedulers.io())
-      .observeOn(AndroidSchedulers.mainThread())
+      .flatMap { resolveUserCity() }
+      .flatMap { presenter.publishBook(it) }
       .retry()
       .subscribe()
     subscriptions.add(publishSubscription)
@@ -151,7 +144,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   private fun registerPublishButtonEnableSubscription() {
     val publishSubscription =
-      Observables.zip(
+      Observables.combineLatest(
         bookNameInput.textChanges(),
         bookAuthorInput.textChanges(),
         bookPositionInput.textChanges(),
@@ -162,6 +155,8 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
           position.isNotBlank() &&
           description.isNotBlank()
       }
+        .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe { enabled: Boolean -> releaseButton.isEnabled = enabled }
     subscriptions.add(publishSubscription)
   }
@@ -206,7 +201,8 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   private fun registerCoverClickSubscription() {
     val coverSubscription = cover.clicks()
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .subscribe { coverChooserDialog!!.show() }
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe { coverChooserDialog?.show() }
     subscriptions.add(coverSubscription)
   }
 
@@ -289,8 +285,10 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   }
 
   private fun resolveUserCity(): Observable<String> {
-    return permissions.request(Manifest.permission.ACCESS_COARSE_LOCATION)
-        .filter { granted -> granted }
-        .flatMapMaybe { presenter.resolveUserCity() }
+    return permissions.request(
+      Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
+    )
+      .filter { granted -> granted }
+      .flatMapMaybe { presenter.resolveUserCity() }
   }
 }
