@@ -67,6 +67,10 @@ android {
 
       resValue "string", "admob_app_id", apiProperties["admob_app_id"]
     }
+    debug {
+      ext.enableCrashlytics = false
+      ext.alwaysUpdateBuildId = false
+    }
   }
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8

@@ -23,10 +23,13 @@ import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.components.AppComponent;
 import com.bookcrossing.mobile.components.DaggerAppComponent;
 import com.bookcrossing.mobile.util.CrashlyticsTree;
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.FirebaseDatabase;
 import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo;
 
+import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
 /**
@@ -53,6 +56,12 @@ public class App extends MultiDexApplication {
     } else {
       Timber.plant(new CrashlyticsTree());
     }
+
+    Crashlytics crashlyticsKit = new Crashlytics.Builder()
+      .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+      .build();
+
+    Fabric.with(this, crashlyticsKit);
 
     component = DaggerAppComponent.builder()
         .application(this)
