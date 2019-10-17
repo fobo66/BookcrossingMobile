@@ -35,7 +35,6 @@ import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.bookcrossing.mobile.util.*
 import com.bookcrossing.mobile.util.listeners.BookListener
-import com.crashlytics.android.Crashlytics
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
@@ -134,7 +133,6 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
 
                 override fun onConsentFormError(errorDescription: String?) {
                   Timber.d("User's consent status failed to update: $errorDescription")
-                  Crashlytics.log(errorDescription)
                 }
               }).withPersonalizedAdsOption().withNonPersonalizedAdsOption().build()
 

@@ -22,6 +22,7 @@ import com.bookcrossing.mobile.BuildConfig;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.components.AppComponent;
 import com.bookcrossing.mobile.components.DaggerAppComponent;
+import com.bookcrossing.mobile.util.CrashlyticsTree;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.FirebaseDatabase;
 import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo;
@@ -49,6 +50,8 @@ public class App extends MultiDexApplication {
 
     if (BuildConfig.DEBUG) {
       Timber.plant(new Timber.DebugTree());
+    } else {
+      Timber.plant(new CrashlyticsTree());
     }
 
     component = DaggerAppComponent.builder()
