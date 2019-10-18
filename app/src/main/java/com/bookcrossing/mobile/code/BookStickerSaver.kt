@@ -40,8 +40,7 @@ class BookStickerSaver(
       put(MediaStore.Images.Media.IS_PENDING, 1)
     }
 
-    val collection = MediaStore.Images.Media
-      .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+    val collection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
     val itemUri = resolver.insert(collection, values)
 
     if (itemUri != null) {
