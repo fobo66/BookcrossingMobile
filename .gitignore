@@ -3,6 +3,7 @@
 # Built application files
 *.apk
 *.ap_
+*.aab
 
 # Files for the ART/Dalvik VM
 *.dex
@@ -14,6 +15,7 @@
 bin/
 gen/
 out/
+release/
 
 # Gradle files
 .gradle
