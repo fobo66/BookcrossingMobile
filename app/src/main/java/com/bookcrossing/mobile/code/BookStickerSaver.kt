@@ -19,6 +19,7 @@ import android.content.ContentResolver
 import android.content.ContentValues
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 
@@ -33,11 +34,18 @@ class BookStickerSaver(
     val values = ContentValues().apply {
       put(MediaStore.Images.Media.DISPLAY_NAME, stickerName)
       put(MediaStore.Images.Media.DESCRIPTION, stickerDescription)
-      put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+      }
+
       put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
       put(MediaStore.Images.Media.WIDTH, sticker.width)
       put(MediaStore.Images.Media.HEIGHT, sticker.height)
-      put(MediaStore.Images.Media.IS_PENDING, 1)
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        put(MediaStore.Images.Media.IS_PENDING, 1)
+      }
     }
 
     val collection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -47,7 +55,10 @@ class BookStickerSaver(
       compressSticker(sticker, itemUri)
 
       values.clear()
-      values.put(MediaStore.Images.Media.IS_PENDING, 0)
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        values.put(MediaStore.Images.Media.IS_PENDING, 0)
+      }
       resolver.update(itemUri, values, null, null)
     }
   }
