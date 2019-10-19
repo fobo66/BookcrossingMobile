@@ -25,7 +25,10 @@ import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
 import java.util.EnumMap
 
-class BookStickerEncoder(
+/**
+ * Encode some string, such as book ID, into the QR code image
+ */
+class QrCodeEncoder(
   private val format: BarcodeFormat = QR_CODE
 ) {
   private val hints: EnumMap<EncodeHintType, Any> =
@@ -35,8 +38,17 @@ class BookStickerEncoder(
     hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
   }
 
+  /**
+   * Encode info into the QR code image
+   *
+   * @param contents Info to encode, such as book key
+   * @param imgWidth Width of the output image
+   * @param imgHeight Height of the output image
+   *
+   * @return QR code as an image
+   */
   @Throws(WriterException::class, IllegalArgumentException::class)
-  fun encodeBookAsQrCode(
+  fun encode(
     contents: String?,
     imgWidth: Int = 450,
     imgHeight: Int = 450

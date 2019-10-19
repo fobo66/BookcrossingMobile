@@ -19,8 +19,8 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import androidx.core.content.edit
-import com.bookcrossing.mobile.code.BookStickerEncoder
 import com.bookcrossing.mobile.code.BookStickerSaver
+import com.bookcrossing.mobile.code.QrCodeEncoder
 import com.bookcrossing.mobile.models.BookBuilder
 import com.bookcrossing.mobile.models.Date
 import com.bookcrossing.mobile.ui.create.BookCreateView
@@ -113,7 +113,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
 
   fun generateQrCode(key: String): Bitmap? {
     return try {
-      BookStickerEncoder().encodeBookAsQrCode(buildBookUri(key).toString())
+      QrCodeEncoder().encode(buildBookUri(key).toString())
     } catch (e: WriterException) {
       Log.e(TAG, "Failed to encode book key to QR code")
       Crashlytics.logException(e)

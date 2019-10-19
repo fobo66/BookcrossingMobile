@@ -53,13 +53,13 @@ class BookStickerSaver(
 
     if (itemUri != null) {
       compressSticker(sticker, itemUri)
-
-      values.clear()
+      resolver.update(itemUri, values, null, null)
 
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        values.clear()
         values.put(MediaStore.Images.Media.IS_PENDING, 0)
+        resolver.update(itemUri, values, null, null)
       }
-      resolver.update(itemUri, values, null, null)
     }
   }
 
