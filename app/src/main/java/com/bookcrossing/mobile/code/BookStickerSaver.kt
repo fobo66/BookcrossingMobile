@@ -23,17 +23,28 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 
+/**
+ * Utility class for saving generated images, such as stickers, to the Pictures directory, with compression
+ */
 class BookStickerSaver(
   private val resolver: ContentResolver
 ) {
+
+  /**
+   * Save image to the Pictures directory, with compression
+   *
+   * @param name Image name
+   * @param description Image description saved to metadata
+   * @param sticker Generated image of the sticker
+   */
   fun saveSticker(
-    stickerName: String,
-    stickerDescription: String,
+    name: String,
+    description: String,
     sticker: Bitmap
   ) {
     val values = ContentValues().apply {
-      put(MediaStore.Images.Media.DISPLAY_NAME, stickerName)
-      put(MediaStore.Images.Media.DESCRIPTION, stickerDescription)
+      put(MediaStore.Images.Media.DISPLAY_NAME, name)
+      put(MediaStore.Images.Media.DESCRIPTION, description)
 
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
