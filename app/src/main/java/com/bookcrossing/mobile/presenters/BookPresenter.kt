@@ -1,17 +1,17 @@
 /*
- *     Copyright 2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
  *
- *     Licensed under the Apache License, Version 2.0 (the "License");
- *     you may not use this file except in compliance with the License.
- *     You may obtain a copy of the License at
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- *     Unless required by applicable law or agreed to in writing, software
- *     distributed under the License is distributed on an "AS IS" BASIS,
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     See the License for the specific language governing permissions and
- *     limitations under the License.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 
 package com.bookcrossing.mobile.presenters
@@ -22,6 +22,7 @@ import com.crashlytics.android.Crashlytics
 import com.google.firebase.database.DatabaseReference
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import moxy.InjectViewState
+import timber.log.Timber
 
 @InjectViewState
 class BookPresenter : BasePresenter<BookView>() {
@@ -31,7 +32,7 @@ class BookPresenter : BasePresenter<BookView>() {
   fun subscribeToBookReference(key: String) {
     unsubscribeOnDestroy(RxFirebaseDatabase.observeSingleValueEvent(books().child(key), Book::class.java)
       .subscribe({ book -> viewState.onBookLoaded(book) }, { throwable ->
-        Crashlytics.logException(throwable)
+        Timber.e(throwable, "Failed to load book")
         viewState.onErrorToLoadBook()
       }))
   }

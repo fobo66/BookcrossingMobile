@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -19,7 +20,6 @@ import android.location.Location;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.ui.map.MvpMapView;
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.model.LatLng;
 import durdinapps.rxfirebase2.DataSnapshotMapper;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import moxy.InjectViewState;
+import timber.log.Timber;
 
 @InjectViewState public class MapPresenter extends BasePresenter<MvpMapView> {
 
@@ -57,7 +58,7 @@ import moxy.InjectViewState;
             getViewState().onBookMarkerLoaded(key, places.get(key));
           }
         }, throwable -> {
-          Crashlytics.logException(throwable);
+          Timber.e(throwable, "Failed to load marker");
           getViewState().onErrorToLoadMarker();
         }));
   }

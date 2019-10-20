@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -18,7 +19,6 @@ package com.bookcrossing.mobile.ui.main
 import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
@@ -33,24 +33,16 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.ui.base.BaseActivity
-import com.bookcrossing.mobile.util.EXTRA_KEY
-import com.bookcrossing.mobile.util.EXTRA_TARGET_FRAGMENT
-import com.bookcrossing.mobile.util.KEY_CONSENT_STATUS
-import com.bookcrossing.mobile.util.PRIVACY_POLICY_URL
-import com.bookcrossing.mobile.util.RC_SIGN_IN
+import com.bookcrossing.mobile.util.*
 import com.bookcrossing.mobile.util.listeners.BookListener
-import com.crashlytics.android.Crashlytics
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
-import com.google.ads.consent.ConsentForm
-import com.google.ads.consent.ConsentFormListener
-import com.google.ads.consent.ConsentInfoUpdateListener
-import com.google.ads.consent.ConsentInformation
-import com.google.ads.consent.ConsentStatus
+import com.google.ads.consent.*
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import timber.log.Timber
 import java.net.MalformedURLException
 import java.net.URL
 
@@ -124,27 +116,23 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
             val form = ConsentForm.Builder(this@MainActivity, privacyUrl).withListener(
               object : ConsentFormListener() {
                 override fun onConsentFormLoaded() {
-                  Log.d(TAG, "onConsentFormLoaded: Consent form loaded successfully.")
+                  Timber.d("onConsentFormLoaded: Consent form loaded successfully.")
                 }
 
                 override fun onConsentFormOpened() {
-                  Log.d(TAG, "onConsentFormOpened: Consent form was displayed.")
+                  Timber.d("onConsentFormOpened: Consent form was displayed.")
                 }
 
                 override fun onConsentFormClosed(
                   consentStatus: ConsentStatus?,
                   userPrefersAdFree: Boolean?
                 ) {
-                  Log.d(TAG, "onConsentFormClosed: " + consentStatus!!)
+                  Timber.d("onConsentFormClosed: " + consentStatus!!)
                   saveConsentStatus(consentStatus)
                 }
 
                 override fun onConsentFormError(errorDescription: String?) {
-                  Log.d(
-                    TAG,
-                    "User's consent status failed to update: $errorDescription"
-                  )
-                  Crashlytics.log(errorDescription)
+                  Timber.d("User's consent status failed to update: $errorDescription")
                 }
               }).withPersonalizedAdsOption().withNonPersonalizedAdsOption().build()
 
@@ -157,7 +145,7 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
       }
 
       override fun onFailedToUpdateConsentInfo(errorDescription: String) {
-        Log.d(TAG, "User's consent status failed to update: $errorDescription")
+        Timber.d("User's consent status failed to update: $errorDescription")
       }
     })
   }
@@ -267,10 +255,5 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
 
   override fun onBookAdd() {
     findNavController(R.id.nav_host_fragment).navigate(R.id.bookCreateFragment)
-  }
-
-  companion object {
-
-    private const val TAG = "MainActivity"
   }
 }
