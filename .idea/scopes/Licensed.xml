@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Licensed" pattern="file[app]:src/main/java//*||file[app]:src/main/*||file[app]:src/main/res//*||file[app]:src/test/java//*||file[app]:src/debug/res//*||file[app]:src/androidTest/java//*" />
+</component>
