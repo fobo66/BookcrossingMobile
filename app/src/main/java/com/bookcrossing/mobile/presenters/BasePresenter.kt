@@ -42,9 +42,7 @@ open class BasePresenter<V : MvpView> : MvpPresenter<V>() {
   protected var systemServicesWrapper: SystemServicesWrapper
 
   private val userId: String
-    get() = if (isAuthenticated) {
-      firebaseWrapper.auth.currentUser!!.uid
-    } else DEFAULT_USER
+    get() = firebaseWrapper.auth.currentUser?.uid ?: DEFAULT_USER
 
   protected val city: String?
     get() = systemServicesWrapper.preferences
