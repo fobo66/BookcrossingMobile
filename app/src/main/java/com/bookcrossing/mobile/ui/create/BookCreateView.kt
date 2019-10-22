@@ -47,5 +47,8 @@ interface BookCreateView : MvpView {
    */
   fun onFailedToRelease()
 
+  /**
+   * Show prompt to user about the need to provide default city
+   */
   fun askUserToProvideDefaultCity()
 }

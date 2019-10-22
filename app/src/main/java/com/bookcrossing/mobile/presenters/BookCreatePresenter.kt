@@ -40,6 +40,9 @@ import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
 import java.util.Calendar
 
+/**
+ * Presenter for book create view
+ */
 @InjectViewState
 class BookCreatePresenter : BasePresenter<BookCreateView>() {
 
@@ -125,6 +128,13 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     }
   }
 
+  /**
+   * Save generated sticker to device's default location for pictures
+   *
+   * @param stickerName Image name
+   * @param stickerDescription Image description saved to metadata
+   * @param sticker Generated image of the sticker
+   */
   fun saveSticker(
     sticker: Bitmap,
     stickerName: String,
@@ -135,6 +145,9 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     )
   }
 
+  /**
+   * Determine the city in which the user currently resides to set location of the released book
+   */
   fun resolveUserCity(): Maybe<String> {
     return systemServicesWrapper.locationRepository.getLastKnownUserLocation()
       .flatMapMaybe<String> { location ->
@@ -149,6 +162,9 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       }
   }
 
+  /**
+   * Save city to preferences
+   */
   fun saveCity(city: String) {
     systemServicesWrapper.preferences.edit {
       putString(EXTRA_CITY, city)

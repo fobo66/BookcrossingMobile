@@ -99,10 +99,20 @@ open class BasePresenter<V : MvpView> : MvpPresenter<V>() {
       .child(key)
   }
 
+  /**
+   * Get Firebase Storage reference to the image for the given key
+   *
+   * @param key Book key
+   */
   fun resolveCover(key: String): StorageReference {
     return firebaseWrapper.storage.getReference("$key.jpg")
   }
 
+  /**
+   * Construct URI for book
+   *
+   * @param key Book key
+   */
   fun buildBookUri(key: String): Uri {
     return Uri.Builder()
       .scheme("bookcrossing")
