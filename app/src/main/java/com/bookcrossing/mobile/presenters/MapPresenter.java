@@ -17,19 +17,16 @@
 package com.bookcrossing.mobile.presenters;
 
 import android.location.Location;
-
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.ui.map.MvpMapView;
 import com.google.android.gms.maps.model.LatLng;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import durdinapps.rxfirebase2.DataSnapshotMapper;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import io.reactivex.Single;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import moxy.InjectViewState;
 import timber.log.Timber;
 
@@ -79,6 +76,6 @@ import timber.log.Timber;
   }
 
   public Single<Location> requestUserLocation() {
-    return systemServicesWrapper.getLocationRepository().getLastKnownUserLocation();
+    return getSystemServicesWrapper().getLocationRepository().getLastKnownUserLocation();
   }
 }

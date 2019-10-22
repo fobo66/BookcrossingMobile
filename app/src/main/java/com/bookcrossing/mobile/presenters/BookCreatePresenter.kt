@@ -15,155 +15,164 @@
 
 package com.bookcrossing.mobile.presenters
 
-import android.content.ContentValues
 import android.graphics.Bitmap
-import android.graphics.Color.BLACK
-import android.graphics.Color.WHITE
 import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
-import com.bookcrossing.mobile.models.Book
+import android.util.Log
+import androidx.core.content.edit
+import com.bookcrossing.mobile.code.BookStickerSaver
+import com.bookcrossing.mobile.code.QrCodeEncoder
+import com.bookcrossing.mobile.models.BookBuilder
 import com.bookcrossing.mobile.models.Date
 import com.bookcrossing.mobile.ui.create.BookCreateView
+import com.bookcrossing.mobile.util.EXTRA_CITY
+import com.bookcrossing.mobile.util.EXTRA_DEFAULT_CITY
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.storage.StorageMetadata
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.EncodeHintType
-import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
-import com.google.zxing.common.BitMatrix
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
+import durdinapps.rxfirebase2.RxFirebaseAuth
+import durdinapps.rxfirebase2.RxFirebaseDatabase
+import durdinapps.rxfirebase2.RxFirebaseStorage
+import io.reactivex.Maybe
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
 import java.util.Calendar
-import java.util.EnumMap
 
+/**
+ * Presenter for book create view
+ */
 @InjectViewState
 class BookCreatePresenter : BasePresenter<BookCreateView>() {
 
-    private val book: Book = Book()
-    private var tempCoverUri: Uri? = null
+  private val book: BookBuilder = BookBuilder()
+  private lateinit var tempCoverUri: Uri
 
-    init {
-        book.isFree = true
+  private fun uploadCover(key: String): Observable<String>? {
+    val metadata = StorageMetadata.Builder()
+      .setContentType("image/jpeg")
+      .build()
+    return RxFirebaseAuth.observeAuthState(firebaseWrapper.auth)
+      .filter { auth -> auth.currentUser != null }
+      .switchMapSingle {
+        RxFirebaseStorage.putFile(resolveCover(key), tempCoverUri, metadata)
+          .map { key }
+      }
+      .onErrorReturn { key }
+  }
+
+  fun saveCoverTemporarily(result: FileData) {
+    tempCoverUri = Uri.fromFile(result.file)
+    viewState.onCoverChosen(tempCoverUri)
+  }
+
+  fun onNameChange(name: String) {
+    book.setName(name)
+    viewState.showCover()
+  }
+
+  fun onAuthorChange(author: String) {
+    book.setAuthor(author)
+  }
+
+  fun onPositionChange(position: String) {
+    book.setPositionName(position)
+  }
+
+  fun onDescriptionChange(description: String) {
+    book.setDescription(description)
+  }
+
+  fun publishBook(city: String): Observable<String> {
+    setPublicationDate()
+    val newBook = book.createBook()
+    newBook.city = city
+    val newBookReference = books().push()
+    val key = newBookReference.key.orEmpty()
+
+    return RxFirebaseDatabase.setValue(newBookReference, newBook)
+      .andThen(uploadCover(key))
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .doOnNext {
+        viewState.onReleased(it)
+      }
+      .doOnError {
+        Crashlytics.logException(it)
+        Log.e("releaseBook", "Failed to release book", it)
+        viewState.onFailedToRelease()
+      }
+  }
+
+  private fun setPublicationDate() {
+    val calendar = Calendar.getInstance()
+    val date = Date(
+      calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+      calendar.get(Calendar.DAY_OF_MONTH), calendar.timeInMillis
+    )
+    book.setWentFreeAt(date)
+  }
+
+  fun generateQrCode(key: String): Bitmap? {
+    return try {
+      QrCodeEncoder().encode(buildBookUri(key).toString())
+    } catch (e: WriterException) {
+      Log.e(TAG, "Failed to encode book key to QR code")
+      Crashlytics.logException(e)
+      null
+    } catch (e: IllegalArgumentException) {
+      Log.e(TAG, "Failed to save QR code in bitmap")
+      Crashlytics.logException(e)
+      null
     }
+  }
 
-    private fun uploadCover(key: String?) {
-        if (tempCoverUri != null && firebaseWrapper.auth.currentUser != null) {
-            val metadata = StorageMetadata.Builder().setContentType("image/jpeg").build()
-            resolveCover(key).putFile(tempCoverUri!!, metadata)
-        }
-    }
+  /**
+   * Save generated sticker to device's default location for pictures
+   *
+   * @param stickerName Image name
+   * @param stickerDescription Image description saved to metadata
+   * @param sticker Generated image of the sticker
+   */
+  fun saveSticker(
+    sticker: Bitmap,
+    stickerName: String,
+    stickerDescription: String
+  ) {
+    BookStickerSaver(systemServicesWrapper.app.contentResolver).saveSticker(
+      stickerName, stickerDescription, sticker
+    )
+  }
 
-    fun saveCoverTemporarily(result: FileData) {
-        tempCoverUri = Uri.fromFile(result.file)
-        viewState.onCoverChosen(tempCoverUri)
-    }
-
-    @Throws(WriterException::class)
-    private fun encodeBookAsQrCode(contents: String?, format: BarcodeFormat, imgWidth: Int,
-                                   imgHeight: Int): Bitmap? {
-        if (contents == null) {
-            return null
-        }
-        val hints = EnumMap<EncodeHintType, Any>(EncodeHintType::class.java)
-        hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
-        val writer = MultiFormatWriter()
-        val bitMatrix: BitMatrix
-        try {
-            bitMatrix = writer.encode(contents, format, imgWidth, imgHeight, hints)
-        } catch (e: IllegalArgumentException) {
-            return null
-        }
-
-        val width = bitMatrix.width
-        val height = bitMatrix.height
-        val pixels = IntArray(width * height)
-        for (y in 0 until height) {
-            val offset = y * width
-            for (x in 0 until width) {
-                pixels[offset + x] = if (bitMatrix.get(x, y)) BLACK else WHITE
-            }
-        }
-
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
-        return bitmap
-    }
-
-    fun onNameChange(name: String) {
-        book.name = name
-      viewState.showCover()
-    }
-
-    fun onAuthorChange(author: String) {
-        book.author = author
-    }
-
-    fun onPositionChange(position: String) {
-        book.positionName = position
-    }
-
-    fun onDescriptionChange(description: String) {
-        book.description = description
-    }
-
-    fun publishBook() {
-        book.city = getCity()
-        setPublicationDate()
-        val newBookReference = books().push()
-        newBookReference.setValue(book).addOnSuccessListener {
-          val key: String = newBookReference.key.orEmpty()
-          if (key.isNotEmpty()) {
-            uploadCover(key)
-            viewState.onReleased(key)
-          }
-        }.addOnFailureListener { e ->
-            Crashlytics.logException(e)
-            viewState.onFailedToRelease()
-        }
-    }
-
-    private fun setPublicationDate() {
-        val calendar = Calendar.getInstance()
-        val date = Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-          calendar.get(Calendar.DAY_OF_MONTH), calendar.timeInMillis
+  /**
+   * Determine the city in which the user currently resides to set location of the released book
+   */
+  fun resolveUserCity(): Maybe<String> {
+    return systemServicesWrapper.locationRepository.getLastKnownUserLocation()
+      .flatMapMaybe<String> { location ->
+        systemServicesWrapper.locationRepository.resolveUserCity(
+          location
         )
-        book.wentFreeAt = date
+      }
+      .doOnSuccess { city -> saveCity(city) }
+      .doOnError {
+        Log.e("resolveCity", "Failed to resolve city", it)
+        viewState.askUserToProvideDefaultCity()
+      }
+  }
+
+  /**
+   * Save city to preferences
+   */
+  fun saveCity(city: String) {
+    systemServicesWrapper.preferences.edit {
+      putString(EXTRA_CITY, city)
+      putString(EXTRA_DEFAULT_CITY, city)
     }
+  }
 
-    fun generateQrCode(key: String): Bitmap? {
-        return try {
-            encodeBookAsQrCode(buildBookUri(key).toString(), BarcodeFormat.QR_CODE, 450, 450)
-        } catch (e: WriterException) {
-            e.printStackTrace()
-            Crashlytics.logException(e)
-            null
-        }
-
-    }
-
-    fun saveSticker(sticker: Bitmap, stickerName: String, stickerDescription: String) {
-        val values = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, stickerName)
-            put(MediaStore.Images.Media.DESCRIPTION, stickerDescription)
-            put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            put(MediaStore.Images.Media.WIDTH, sticker.width)
-            put(MediaStore.Images.Media.HEIGHT, sticker.height)
-            put(MediaStore.Images.Media.IS_PENDING, 1)
-        }
-
-        val resolver = systemServicesWrapper.app.contentResolver
-        val collection = MediaStore.Images.Media
-                .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-        val item = resolver.insert(collection, values)
-
-        resolver.openOutputStream(item!!).use { stream ->
-            sticker.compress(Bitmap.CompressFormat.JPEG, 95, stream)
-        }
-
-        values.clear()
-        values.put(MediaStore.Images.Media.IS_PENDING, 0)
-        resolver.update(item, values, null, null)
-    }
+  companion object {
+    const val TAG = "BookCreatePresenter"
+  }
 }

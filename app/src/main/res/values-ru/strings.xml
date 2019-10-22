@@ -82,7 +82,7 @@
     </string>
   <string name="default_city">Неизвестен</string>
   <string name="title_activity_oss_licenses">Лицензии открытого ПО</string>
-  <string name="enter_city_content">Ошибка получения твоего города. Попробуйте ввести его вручную в настройках, чтобы мы могли автоматически распознавать позицию оставленной книги.</string>
+  <string name="error_enter_city_content">Ошибка получения твоего города. Попробуйте ввести его вручную в настройках, чтобы мы могли автоматически распознавать позицию оставленной книги.</string>
   <string name="enter_city_title">Введите свой город</string>
   <string name="city_hint">Город</string>
   <string name="consent_preference_not_set">Не установлен</string>

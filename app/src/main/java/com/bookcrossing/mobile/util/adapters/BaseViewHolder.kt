@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -13,10 +14,19 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.util
+package com.bookcrossing.mobile.util.adapters
 
-import java.util.Locale
+import android.view.View
+import androidx.recyclerview.widget.RecyclerView
+import butterknife.ButterKnife
 
-interface LocaleProvider {
-    val currentLocale: Locale
+/**
+ * Base class for view holders
+ * Created by fobo66 on 05.12.2016.
+ */
+abstract class BaseViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+  init {
+    ButterKnife.bind(this, view)
+  }
 }
