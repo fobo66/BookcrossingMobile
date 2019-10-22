@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -44,13 +45,13 @@ import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
 import com.bookcrossing.mobile.util.PROHIBITED_SYMBOLS
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.afterTextChangeEvents
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
 import com.miguelbcr.ui.rx_paparazzo2.entities.Response
-import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
@@ -293,7 +294,6 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     return permissions.request(
       Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
     )
-      .filter { granted -> granted }
       .flatMapMaybe { presenter.resolveUserCity() }
   }
 }

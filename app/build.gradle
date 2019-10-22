@@ -168,6 +168,10 @@ dependencies {
   implementation "com.github.VictorAlbertos:RxActivityResult:0.5.0-2.x"
   implementation "com.github.tbruyelle:rxpermissions:0.10.2"
 
+  def permissionsVersion = "1.1.1"
+  implementation "com.github.florent37:runtime-permission:$permissionsVersion"
+  implementation "com.github.florent37:runtime-permission-rx:$permissionsVersion"
+
   def firebaseUiVersion = "6.0.2"
   implementation "com.firebaseui:firebase-ui:$firebaseUiVersion"
   implementation "com.firebaseui:firebase-ui-storage:$firebaseUiVersion"
