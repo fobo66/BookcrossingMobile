@@ -28,9 +28,11 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.navigation.fragment.findNavController
 import butterknife.BindString
 import butterknife.BindView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.input.input
@@ -248,8 +250,11 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
       .customView(R.layout.book_sticker_layout)
       .positiveButton(R.string.ok) { dialog ->
         renderSticker(dialog.getCustomView().findViewById(R.id.sticker))
-        requireActivity().supportFragmentManager.popBackStack()
         listener.onBookReleased(newKey)
+      }
+      .onDismiss { dialog ->
+        renderSticker(dialog.getCustomView().findViewById(R.id.sticker))
+        findNavController().navigateUp()
       }
 
     prepareDialog(dialog.getCustomView().findViewById(R.id.sticker), newKey)
