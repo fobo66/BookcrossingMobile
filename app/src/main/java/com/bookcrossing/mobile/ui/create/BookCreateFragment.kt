@@ -29,11 +29,10 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.navigation.fragment.findNavController
 import butterknife.BindString
 import butterknife.BindView
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onDismiss
+import com.afollestad.materialdialogs.callbacks.onCancel
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.input.input
@@ -253,13 +252,22 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
         renderSticker(dialog.getCustomView().findViewById(R.id.sticker))
         listener.onBookReleased(newKey)
       }
-      .onDismiss { dialog ->
+      .onCancel { dialog ->
         renderSticker(dialog.getCustomView().findViewById(R.id.sticker))
-        findNavController().navigateUp()
+        clearView()
       }
 
     prepareDialog(dialog.getCustomView().findViewById(R.id.sticker), newKey)
     dialog.show()
+  }
+
+  private fun clearView() {
+    bookNameInput.text = ""
+    bookAuthorInput.text = ""
+    bookPositionInput.text = ""
+    bookDescriptionInput.text = ""
+    cover.setImageResource(R.drawable.ic_add_a_photo)
+    cover.visibility = View.GONE
   }
 
   override fun onFailedToRelease() {
@@ -283,7 +291,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   }
 
   private fun renderSticker(sticker: View) {
-    sticker.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
+    sticker.setBackgroundColor(ContextCompat.getColor(sticker.context, R.color.white))
     val stickerBitmap = Bitmap.createBitmap(sticker.width, sticker.height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(stickerBitmap)
     sticker.draw(canvas)
