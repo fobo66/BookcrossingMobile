@@ -17,7 +17,6 @@
 package com.bookcrossing.mobile.modules;
 
 import androidx.multidex.MultiDexApplication;
-
 import com.bookcrossing.mobile.BuildConfig;
 import com.bookcrossing.mobile.R;
 import com.bookcrossing.mobile.components.AppComponent;
@@ -28,7 +27,6 @@ import com.crashlytics.android.core.CrashlyticsCore;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.FirebaseDatabase;
 import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo;
-
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 

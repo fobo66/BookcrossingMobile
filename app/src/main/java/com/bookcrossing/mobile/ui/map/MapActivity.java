@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -26,6 +27,8 @@ import com.bookcrossing.mobile.presenters.MapPresenter;
 import com.bookcrossing.mobile.ui.base.BaseActivity;
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity;
 import com.bookcrossing.mobile.util.ConstantsKt;
+import com.github.florent37.runtimepermission.PermissionResult;
+import com.github.florent37.runtimepermission.rx.RxPermissions;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,13 +36,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.tbruyelle.rxpermissions2.RxPermissions;
-import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import moxy.presenter.InjectPresenter;
+import org.jetbrains.annotations.NotNull;
 
 public class MapActivity extends BaseActivity
-    implements MvpMapView, OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
+  implements MvpMapView, OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
   public static final float DEFAULT_ZOOM_LEVEL = 16.0f;
 
@@ -54,18 +56,17 @@ public class MapActivity extends BaseActivity
 
     permissions = new RxPermissions(this);
     SupportMapFragment mapFragment =
-        (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-    mapFragment.getMapAsync(this);
+      (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+    if (mapFragment != null) {
+      mapFragment.getMapAsync(this);
+    }
   }
 
   // permission is actually checked, but inside RxPermission
   @SuppressLint("MissingPermission") @Override public void onMapReady(GoogleMap googleMap) {
     map = googleMap;
-    subscriptions.add(requestLocationPermission().subscribe(granted -> {
-      if (granted) {
-        map.setMyLocationEnabled(true);
-      }
-    }));
+    subscriptions.add(
+      requestLocationPermission().subscribe(result -> map.setMyLocationEnabled(true)));
     map.setOnInfoWindowClickListener(this);
     presenter.getBooksPositions();
 
@@ -74,7 +75,7 @@ public class MapActivity extends BaseActivity
         getIntent().getParcelableExtra(ConstantsKt.EXTRA_COORDINATES);
       if (requestedZoomPosition != null) {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-            new LatLng(requestedZoomPosition.lat, requestedZoomPosition.lng), DEFAULT_ZOOM_LEVEL));
+          new LatLng(requestedZoomPosition.lat, requestedZoomPosition.lng), DEFAULT_ZOOM_LEVEL));
       } else {
         requestUserLocation();
       }
@@ -84,40 +85,36 @@ public class MapActivity extends BaseActivity
   }
 
   private void requestUserLocation() {
-    subscriptions.add(requestLocationPermission().flatMapMaybe(granted -> {
-      if (granted) {
-        return presenter.requestUserLocation().toMaybe();
-      } else {
-        return Maybe.empty();
-      }
-    })
+    subscriptions.add(
+      requestLocationPermission().flatMapMaybe(result -> presenter.requestUserLocation().toMaybe())
         .subscribe(location -> onUserLocationReceived(
-            new LatLng(location.getLatitude(), location.getLongitude()))));
+          new LatLng(location.getLatitude(), location.getLongitude()))));
   }
 
-  public Observable<Boolean> requestLocationPermission() {
+  public Observable<PermissionResult> requestLocationPermission() {
     return permissions.request(Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION);
+      Manifest.permission.ACCESS_COARSE_LOCATION);
   }
 
-  @Override public void onBookMarkerLoaded(String title, Coordinates coordinates) {
+  @Override
+  public void onBookMarkerLoaded(@NotNull String title, @NotNull Coordinates coordinates) {
     map.addMarker(new MarkerOptions().position(new LatLng(coordinates.lat, coordinates.lng))
-        .title(title)
-        .snippet(presenter.getSnippet(coordinates)));
+      .title(title)
+      .snippet(presenter.getSnippet(coordinates)));
   }
 
   @Override public void onErrorToLoadMarker() {
     new AlertDialog.Builder(this).setMessage(R.string.failed_to_load_books_message)
-        .setTitle(R.string.error_dialog_title)
-        .setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss())
-        .show();
+      .setTitle(R.string.error_dialog_title)
+      .setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss())
+      .show();
   }
 
-  @Override public void onUserLocationReceived(LatLng coordinates) {
+  @Override public void onUserLocationReceived(@NotNull LatLng coordinates) {
     map.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinates, DEFAULT_ZOOM_LEVEL));
   }
 
-  @Override public void onInfoWindowClick(Marker marker) {
+  @Override public void onInfoWindowClick(@NotNull Marker marker) {
     Intent intent = new Intent(this, BookActivity.class);
     intent.putExtra(ConstantsKt.EXTRA_KEY, presenter.getKey(marker.getPosition()));
     startActivity(intent);

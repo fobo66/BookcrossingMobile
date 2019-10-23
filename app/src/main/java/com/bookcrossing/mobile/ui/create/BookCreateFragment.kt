@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -28,11 +29,10 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.navigation.fragment.findNavController
 import butterknife.BindString
 import butterknife.BindView
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onDismiss
+import com.afollestad.materialdialogs.callbacks.onCancel
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.input.input
@@ -44,13 +44,13 @@ import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
 import com.bookcrossing.mobile.util.PROHIBITED_SYMBOLS
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.afterTextChangeEvents
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo
 import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
 import com.miguelbcr.ui.rx_paparazzo2.entities.Response
-import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
@@ -230,7 +230,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   }
 
   override fun showCover() {
-    if (cover.visibility == View.GONE) {
+    if (cover.visibility == View.INVISIBLE) {
       cover.visibility = View.VISIBLE
     }
   }
@@ -252,13 +252,22 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
         renderSticker(dialog.getCustomView().findViewById(R.id.sticker))
         listener.onBookReleased(newKey)
       }
-      .onDismiss { dialog ->
+      .onCancel { dialog ->
         renderSticker(dialog.getCustomView().findViewById(R.id.sticker))
-        findNavController().navigateUp()
+        clearView()
       }
 
     prepareDialog(dialog.getCustomView().findViewById(R.id.sticker), newKey)
     dialog.show()
+  }
+
+  private fun clearView() {
+    bookNameInput.text = ""
+    bookAuthorInput.text = ""
+    bookPositionInput.text = ""
+    bookDescriptionInput.text = ""
+    cover.setImageResource(R.drawable.ic_add_a_photo)
+    cover.visibility = View.INVISIBLE
   }
 
   override fun onFailedToRelease() {
@@ -282,7 +291,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   }
 
   private fun renderSticker(sticker: View) {
-    sticker.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
+    sticker.setBackgroundColor(ContextCompat.getColor(sticker.context, R.color.white))
     val stickerBitmap = Bitmap.createBitmap(sticker.width, sticker.height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(stickerBitmap)
     sticker.draw(canvas)
@@ -293,7 +302,6 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     return permissions.request(
       Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
     )
-      .filter { granted -> granted }
       .flatMapMaybe { presenter.resolveUserCity() }
   }
 }
