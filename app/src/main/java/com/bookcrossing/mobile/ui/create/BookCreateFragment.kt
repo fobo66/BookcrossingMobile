@@ -230,7 +230,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   }
 
   override fun showCover() {
-    if (cover.visibility == View.GONE) {
+    if (cover.visibility == View.INVISIBLE) {
       cover.visibility = View.VISIBLE
     }
   }
@@ -267,7 +267,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     bookPositionInput.text = ""
     bookDescriptionInput.text = ""
     cover.setImageResource(R.drawable.ic_add_a_photo)
-    cover.visibility = View.GONE
+    cover.visibility = View.INVISIBLE
   }
 
   override fun onFailedToRelease() {

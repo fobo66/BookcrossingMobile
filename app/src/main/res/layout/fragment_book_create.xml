@@ -1,5 +1,6 @@
 <!--
-  ~    Copyright  2019 Andrey Mukamolov
+  ~    Copyright 2019 Andrey Mukamolov
+  ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
   ~    You may obtain a copy of the License at
@@ -31,10 +32,12 @@
     android:contentDescription="@string/cover_description"
     android:focusable="true"
     android:src="@drawable/ic_add_a_photo"
-    android:visibility="gone"
+    android:visibility="invisible"
+    tools:visibility="visible"
     />
 
   <com.google.android.material.textfield.TextInputLayout
+    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
     android:id="@+id/input_name_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -50,6 +53,7 @@
       />
   </com.google.android.material.textfield.TextInputLayout>
   <com.google.android.material.textfield.TextInputLayout
+    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
     android:id="@+id/input_author_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -65,6 +69,7 @@
       />
   </com.google.android.material.textfield.TextInputLayout>
   <com.google.android.material.textfield.TextInputLayout
+    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
     android:id="@+id/input_position_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -81,6 +86,7 @@
   </com.google.android.material.textfield.TextInputLayout>
 
   <com.google.android.material.textfield.TextInputLayout
+    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
     android:id="@+id/input_description_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -97,9 +103,11 @@
       />
   </com.google.android.material.textfield.TextInputLayout>
   <Button
+    style="@style/Widget.MaterialComponents.Button"
     android:id="@+id/publish_book"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:textSize="16sp"
     android:text="@string/release_book"
     />
 </LinearLayout>
