@@ -57,7 +57,9 @@ public class MapActivity extends BaseActivity
     permissions = new RxPermissions(this);
     SupportMapFragment mapFragment =
       (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-    mapFragment.getMapAsync(this);
+    if (mapFragment != null) {
+      mapFragment.getMapAsync(this);
+    }
   }
 
   // permission is actually checked, but inside RxPermission
@@ -94,7 +96,8 @@ public class MapActivity extends BaseActivity
       Manifest.permission.ACCESS_COARSE_LOCATION);
   }
 
-  @Override public void onBookMarkerLoaded(@NotNull String title, Coordinates coordinates) {
+  @Override
+  public void onBookMarkerLoaded(@NotNull String title, @NotNull Coordinates coordinates) {
     map.addMarker(new MarkerOptions().position(new LatLng(coordinates.lat, coordinates.lng))
       .title(title)
       .snippet(presenter.getSnippet(coordinates)));
@@ -111,7 +114,7 @@ public class MapActivity extends BaseActivity
     map.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinates, DEFAULT_ZOOM_LEVEL));
   }
 
-  @Override public void onInfoWindowClick(Marker marker) {
+  @Override public void onInfoWindowClick(@NotNull Marker marker) {
     Intent intent = new Intent(this, BookActivity.class);
     intent.putExtra(ConstantsKt.EXTRA_KEY, presenter.getKey(marker.getPosition()));
     startActivity(intent);
