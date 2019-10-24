@@ -152,7 +152,7 @@ dependencies {
   implementation "com.jakewharton.rxbinding3:rxbinding-recyclerview:$rxBindingsVersion"
   implementation "com.jakewharton.rxbinding3:rxbinding-appcompat:$rxBindingsVersion"
 
-  def daggerVersion = "2.24"
+  def daggerVersion = "2.25.2"
   implementation "com.google.code.findbugs:jsr305:3.0.2"
   implementation "com.google.dagger:dagger:$daggerVersion"
 
