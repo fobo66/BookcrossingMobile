@@ -17,7 +17,6 @@
 package com.bookcrossing.mobile.ui.map;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
@@ -39,6 +38,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import io.reactivex.Observable;
 import moxy.presenter.InjectPresenter;
 import org.jetbrains.annotations.NotNull;
+import timber.log.Timber;
 
 public class MapActivity extends BaseActivity
   implements MvpMapView, OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
@@ -62,11 +62,10 @@ public class MapActivity extends BaseActivity
     }
   }
 
-  // permission is actually checked, but inside RxPermission
-  @SuppressLint("MissingPermission") @Override public void onMapReady(GoogleMap googleMap) {
+  @Override public void onMapReady(GoogleMap googleMap) {
     map = googleMap;
     subscriptions.add(
-      requestLocationPermission().subscribe(result -> map.setMyLocationEnabled(true)));
+      requestLocationPermission().subscribe(result -> map.setMyLocationEnabled(true), Timber::e));
     map.setOnInfoWindowClickListener(this);
     presenter.getBooksPositions();
 
@@ -86,9 +85,9 @@ public class MapActivity extends BaseActivity
 
   private void requestUserLocation() {
     subscriptions.add(
-      requestLocationPermission().flatMapMaybe(result -> presenter.requestUserLocation().toMaybe())
+      requestLocationPermission().flatMapSingle(result -> presenter.requestUserLocation())
         .subscribe(location -> onUserLocationReceived(
-          new LatLng(location.getLatitude(), location.getLongitude()))));
+          new LatLng(location.getLatitude(), location.getLongitude())), Timber::e));
   }
 
   public Observable<PermissionResult> requestLocationPermission() {

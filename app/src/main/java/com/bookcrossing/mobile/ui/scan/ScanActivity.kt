@@ -53,14 +53,14 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
     setContentView(R.layout.activity_scan)
     ButterKnife.bind(this)
     subscriptions.add(
-      RxPermissions(this).request(Manifest.permission.CAMERA).subscribe { granted -> setupScannerView() })
+      RxPermissions(this).request(Manifest.permission.CAMERA).subscribe { setupScannerView() })
   }
 
   private fun setupScannerView() {
     val scannerView = layoutInflater.inflate(R.layout.content_scan, container)
     readerView = scannerView.findViewById(R.id.qrCodeView)
     pointsOverlayView = scannerView.findViewById(R.id.points)
-    readerView.setOnQRCodeReadListener(this@ScanActivity)
+    readerView.setOnQRCodeReadListener(this)
     readerView.startCamera()
   }
 
