@@ -30,6 +30,8 @@ import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.material.snackbar.Snackbar
+import io.reactivex.rxkotlin.zipWith
+import io.reactivex.subjects.PublishSubject
 import moxy.presenter.InjectPresenter
 
 /**
@@ -48,20 +50,22 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
   private var readerView: QRCodeReaderView? = null
   private var pointsOverlayView: PointsOverlayView? = null
 
+  private val retryPermissionAction: PublishSubject<Boolean> = PublishSubject.create()
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_scan)
     ButterKnife.bind(this)
   }
 
-  override fun onResume() {
-    super.onResume()
+  override fun onStart() {
+    super.onStart()
 
     subscriptions.add(
-      RxPermissions(this).request(Manifest.permission.CAMERA).subscribe(
-        { setupScannerView() },
-        ::handleError
-      )
+      RxPermissions(this).request(Manifest.permission.CAMERA)
+        .doOnError { handleError(it) }
+        .retryWhen { it.zipWith(retryPermissionAction) }
+        .subscribe { setupScannerView() }
     )
   }
 
@@ -101,7 +105,7 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
 
     if (result.hasDenied()) {
       snackbar
-        .setAction(R.string.retry_permission_request_action) { result.askAgain() }
+        .setAction(R.string.retry_permission_request_action) { retryPermissionAction.onNext(true) }
     }
 
     if (result.hasForeverDenied()) {
