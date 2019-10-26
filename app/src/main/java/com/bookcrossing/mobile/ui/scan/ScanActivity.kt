@@ -21,8 +21,7 @@ import android.content.Intent
 import android.graphics.PointF
 import android.net.Uri
 import android.os.Bundle
-import android.view.ViewGroup
-import android.widget.Toast
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bookcrossing.mobile.R
@@ -30,6 +29,7 @@ import com.bookcrossing.mobile.presenters.ScanPresenter
 import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView
 import com.github.florent37.runtimepermission.rx.RxPermissions
+import com.google.android.material.snackbar.Snackbar
 import moxy.presenter.InjectPresenter
 
 /**
@@ -43,35 +43,31 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
   lateinit var presenter: ScanPresenter
 
   @BindView(R.id.qrContainer)
-  lateinit var container: ViewGroup
+  lateinit var container: CoordinatorLayout
 
-  private lateinit var readerView: QRCodeReaderView
-  private lateinit var pointsOverlayView: PointsOverlayView
+  private var readerView: QRCodeReaderView? = null
+  private var pointsOverlayView: PointsOverlayView? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_scan)
     ButterKnife.bind(this)
-    subscriptions.add(
-      RxPermissions(this).request(Manifest.permission.CAMERA).subscribe { setupScannerView() })
-  }
-
-  private fun setupScannerView() {
-    val scannerView = layoutInflater.inflate(R.layout.content_scan, container)
-    readerView = scannerView.findViewById(R.id.qrCodeView)
-    pointsOverlayView = scannerView.findViewById(R.id.points)
-    readerView.setOnQRCodeReadListener(this)
-    readerView.startCamera()
   }
 
   override fun onResume() {
     super.onResume()
-    Toast.makeText(this, R.string.scan_activity_initial_message, Toast.LENGTH_SHORT).show()
+
+    subscriptions.add(
+      RxPermissions(this).request(Manifest.permission.CAMERA).subscribe(
+        { setupScannerView() },
+        ::handleError
+      )
+    )
   }
 
   override fun onPause() {
     super.onPause()
-    readerView.stopCamera()
+    readerView?.stopCamera()
   }
 
   override fun onBookCodeScanned(uri: Uri) {
@@ -80,11 +76,39 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
   }
 
   override fun onIncorrectCodeScanned() {
-    Toast.makeText(this, R.string.incorrect_code_scanned_message, Toast.LENGTH_SHORT).show()
+    Snackbar.make(container, R.string.incorrect_code_scanned_message, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun onQRCodeRead(text: String, points: Array<PointF>) {
-    pointsOverlayView.setPoints(points)
+    pointsOverlayView?.setPoints(points)
     presenter.checkBookcrossingUri(text)
+  }
+
+  private fun setupScannerView() {
+    val scannerView = layoutInflater.inflate(R.layout.content_scan, container)
+    readerView = scannerView.findViewById(R.id.qrCodeView)
+    pointsOverlayView = scannerView.findViewById(R.id.points)
+    readerView?.setOnQRCodeReadListener(this)
+    readerView?.startCamera()
+    Snackbar.make(container, R.string.scan_activity_initial_message, Snackbar.LENGTH_SHORT).show()
+  }
+
+  private fun handleError(throwable: Throwable) {
+    val result = (throwable as RxPermissions.Error).result
+
+    val snackbar =
+      Snackbar.make(container, R.string.camera_permission_denied_prompt, Snackbar.LENGTH_SHORT)
+
+    if (result.hasDenied()) {
+      snackbar
+        .setAction(R.string.retry_permission_request_action) { result.askAgain() }
+    }
+
+    if (result.hasForeverDenied()) {
+      snackbar
+        .setAction(R.string.go_to_settings_permission_request_action) { result.goToSettings() }
+    }
+
+    snackbar.show()
   }
 }
