@@ -79,3 +79,7 @@
   **[] $VALUES;
   public *;
 }
+
+# Algolia
+
+-keep class com.algolia.search.model.** { *; }
