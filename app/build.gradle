@@ -62,7 +62,7 @@ android {
   buildTypes {
     release {
       minifyEnabled true
-      proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+      proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
       signingConfig signingConfigs.releaseConfig
 
       resValue "string", "admob_app_id", apiProperties["admob_app_id"]
