@@ -20,9 +20,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -33,12 +35,20 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.ui.base.BaseActivity
-import com.bookcrossing.mobile.util.*
+import com.bookcrossing.mobile.util.EXTRA_KEY
+import com.bookcrossing.mobile.util.EXTRA_TARGET_FRAGMENT
+import com.bookcrossing.mobile.util.KEY_CONSENT_STATUS
+import com.bookcrossing.mobile.util.PRIVACY_POLICY_URL
+import com.bookcrossing.mobile.util.RC_SIGN_IN
 import com.bookcrossing.mobile.util.listeners.BookListener
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
-import com.google.ads.consent.*
+import com.google.ads.consent.ConsentForm
+import com.google.ads.consent.ConsentFormListener
+import com.google.ads.consent.ConsentInfoUpdateListener
+import com.google.ads.consent.ConsentInformation
+import com.google.ads.consent.ConsentStatus
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -64,6 +74,9 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
     ButterKnife.bind(this)
+
+    coordinatorLayout.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+      or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
 
     setupToolbar()
 
@@ -127,7 +140,7 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
                   consentStatus: ConsentStatus?,
                   userPrefersAdFree: Boolean?
                 ) {
-                  Timber.d("onConsentFormClosed: " + consentStatus!!)
+                  Timber.d("onConsentFormClosed: $consentStatus")
                   saveConsentStatus(consentStatus)
                 }
 
@@ -150,11 +163,11 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
     })
   }
 
-  private fun saveConsentStatus(consentStatus: ConsentStatus) {
+  private fun saveConsentStatus(consentStatus: ConsentStatus?) {
     PreferenceManager.getDefaultSharedPreferences(applicationContext)
-      .edit()
-      .putString(KEY_CONSENT_STATUS, consentStatus.toString())
-      .apply()
+      .edit {
+        putString(KEY_CONSENT_STATUS, consentStatus?.toString())
+      }
   }
 
   private fun resolveNavigationToFragment(savedInstanceState: Bundle?) {

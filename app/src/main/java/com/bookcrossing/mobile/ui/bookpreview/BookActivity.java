@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -16,6 +17,7 @@
 package com.bookcrossing.mobile.ui.bookpreview;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -28,6 +30,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -40,13 +44,17 @@ import com.bookcrossing.mobile.presenters.BookPresenter;
 import com.bookcrossing.mobile.ui.main.MainActivity;
 import com.bookcrossing.mobile.ui.map.MapActivity;
 import com.bookcrossing.mobile.util.ConstantsKt;
+import com.bookcrossing.mobile.util.ViewExtensionsKt;
 import com.bookcrossing.mobile.util.adapters.PlacesHistoryViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jakewharton.rxbinding3.view.RxView;
 import io.reactivex.disposables.Disposable;
+import kotlin.Unit;
 import moxy.MvpAppCompatActivity;
 import moxy.presenter.InjectPresenter;
 
@@ -57,9 +65,18 @@ public class BookActivity extends MvpAppCompatActivity
 
   @InjectPresenter public BookPresenter presenter;
 
+  @BindView(R.id.book_activity_root) CoordinatorLayout root;
+
   @BindView(R.id.toolbar) public Toolbar toolbar;
 
+  @BindView(R.id.toolbar_container) public AppBarLayout toolbarContainer;
+
+  @BindView(R.id.collapsing_toolbar_container) public CollapsingToolbarLayout
+    collapsingToolbarContainer;
+
   @BindView(R.id.cover) public ImageView cover;
+
+  @BindView(R.id.nestedScrollView) public NestedScrollView nestedScrollView;
 
   @BindView(R.id.author) public TextView author;
 
@@ -87,6 +104,9 @@ public class BookActivity extends MvpAppCompatActivity
     setContentView(R.layout.activity_book);
     ButterKnife.bind(this);
 
+    root.setSystemUiVisibility(
+      View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+
     setupToolbar();
 
     if (getIntent() != null) {
@@ -110,6 +130,41 @@ public class BookActivity extends MvpAppCompatActivity
     toolbar.setOnMenuItemClickListener(this);
     toolbar.setNavigationIcon(R.drawable.ic_back);
     toolbar.setNavigationOnClickListener(view -> onBackPressed());
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+      ViewExtensionsKt.doOnApplyWindowInsets(toolbarContainer,
+        (view, windowInsets, initialPadding) -> {
+          view.setPadding(initialPadding.getLeft(),
+            windowInsets.getSystemWindowInsetTop() + initialPadding.getTop(),
+            initialPadding.getRight(), initialPadding.getBottom());
+
+          return Unit.INSTANCE;
+        });
+
+      ViewExtensionsKt.doOnApplyWindowInsets(cover, (view, windowInsets, initialPadding) -> {
+        view.setPadding(initialPadding.getLeft(),
+          windowInsets.getSystemWindowInsetTop() + initialPadding.getTop(),
+          initialPadding.getRight(), initialPadding.getBottom());
+
+        return Unit.INSTANCE;
+      });
+
+      ViewExtensionsKt.doOnApplyWindowInsets(nestedScrollView,
+        (view, windowInsets, initialPadding) -> {
+          view.setPadding(initialPadding.getLeft(), initialPadding.getTop(),
+            initialPadding.getRight(),
+            windowInsets.getSystemWindowInsetBottom() + initialPadding.getBottom());
+
+          return Unit.INSTANCE;
+        });
+
+      ViewExtensionsKt.doOnApplyWindowInsets(favorite, (view, windowInsets, initialPadding) -> {
+        view.setPadding(initialPadding.getLeft(), initialPadding.getTop(),
+          windowInsets.getSystemWindowInsetRight() + initialPadding.getRight(),
+          initialPadding.getBottom());
+
+        return Unit.INSTANCE;
+      });
+    }
   }
 
   public void goToPosition(Coordinates coordinates) {
