@@ -44,7 +44,6 @@ import com.bookcrossing.mobile.presenters.BookPresenter;
 import com.bookcrossing.mobile.ui.main.MainActivity;
 import com.bookcrossing.mobile.ui.map.MapActivity;
 import com.bookcrossing.mobile.util.ConstantsKt;
-import com.bookcrossing.mobile.util.ViewExtensionsKt;
 import com.bookcrossing.mobile.util.adapters.PlacesHistoryViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -53,8 +52,8 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jakewharton.rxbinding3.view.RxView;
+import dev.chrisbanes.insetter.Insetter;
 import io.reactivex.disposables.Disposable;
-import kotlin.Unit;
 import moxy.MvpAppCompatActivity;
 import moxy.presenter.InjectPresenter;
 
@@ -65,7 +64,7 @@ public class BookActivity extends MvpAppCompatActivity
 
   @InjectPresenter public BookPresenter presenter;
 
-  @BindView(R.id.book_activity_root) CoordinatorLayout root;
+  @BindView(R.id.book_activity_root) public CoordinatorLayout root;
 
   @BindView(R.id.toolbar) public Toolbar toolbar;
 
@@ -131,38 +130,29 @@ public class BookActivity extends MvpAppCompatActivity
     toolbar.setNavigationIcon(R.drawable.ic_back);
     toolbar.setNavigationOnClickListener(view -> onBackPressed());
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-      ViewExtensionsKt.doOnApplyWindowInsets(toolbarContainer,
-        (view, windowInsets, initialPadding) -> {
-          view.setPadding(initialPadding.getLeft(),
-            windowInsets.getSystemWindowInsetTop() + initialPadding.getTop(),
-            initialPadding.getRight(), initialPadding.getBottom());
-
-          return Unit.INSTANCE;
-        });
-
-      ViewExtensionsKt.doOnApplyWindowInsets(cover, (view, windowInsets, initialPadding) -> {
-        view.setPadding(initialPadding.getLeft(),
-          windowInsets.getSystemWindowInsetTop() + initialPadding.getTop(),
-          initialPadding.getRight(), initialPadding.getBottom());
-
-        return Unit.INSTANCE;
+      Insetter.setOnApplyInsetsListener(toolbarContainer, (view, windowInsets, initialPadding) -> {
+        view.setPadding(initialPadding.getPaddings().getLeft(),
+          windowInsets.getSystemWindowInsetTop() + initialPadding.getPaddings().getTop(),
+          initialPadding.getPaddings().getRight(), initialPadding.getPaddings().getBottom());
       });
 
-      ViewExtensionsKt.doOnApplyWindowInsets(nestedScrollView,
-        (view, windowInsets, initialPadding) -> {
-          view.setPadding(initialPadding.getLeft(), initialPadding.getTop(),
-            initialPadding.getRight(),
-            windowInsets.getSystemWindowInsetBottom() + initialPadding.getBottom());
+      Insetter.setOnApplyInsetsListener(cover, (view, windowInsets, initialPadding) -> {
+        view.setPadding(initialPadding.getPaddings().getLeft(),
+          windowInsets.getSystemWindowInsetTop() + initialPadding.getPaddings().getTop(),
+          initialPadding.getPaddings().getRight(), initialPadding.getPaddings().getBottom());
+      });
 
-          return Unit.INSTANCE;
-        });
+      Insetter.setOnApplyInsetsListener(nestedScrollView, (view, windowInsets, initialPadding) -> {
+        view.setPadding(initialPadding.getPaddings().getLeft(),
+          initialPadding.getPaddings().getTop(), initialPadding.getPaddings().getRight(),
+          windowInsets.getSystemWindowInsetBottom() + initialPadding.getPaddings().getBottom());
+      });
 
-      ViewExtensionsKt.doOnApplyWindowInsets(favorite, (view, windowInsets, initialPadding) -> {
-        view.setPadding(initialPadding.getLeft(), initialPadding.getTop(),
-          windowInsets.getSystemWindowInsetRight() + initialPadding.getRight(),
-          initialPadding.getBottom());
-
-        return Unit.INSTANCE;
+      Insetter.setOnApplyInsetsListener(favorite, (view, windowInsets, initialPadding) -> {
+        view.setPadding(initialPadding.getPaddings().getLeft(),
+          initialPadding.getPaddings().getTop(),
+          windowInsets.getSystemWindowInsetRight() + initialPadding.getPaddings().getRight(),
+          initialPadding.getPaddings().getBottom());
       });
     }
   }
