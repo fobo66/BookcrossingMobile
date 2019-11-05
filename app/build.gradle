@@ -66,8 +66,11 @@ android {
       signingConfig signingConfigs.releaseConfig
 
       resValue "string", "admob_app_id", apiProperties["admob_app_id"]
+      resValue "string", "admob_ad_unit_id", apiProperties["admob_ad_unit_id"]
     }
     debug {
+      resValue "string", "admob_app_id", "ca-app-pub-3940256099942544~3347511713" // test values
+      resValue "string", "admob_ad_unit_id", "ca-app-pub-3940256099942544/6300978111"
       ext.alwaysUpdateBuildId = false
     }
   }
