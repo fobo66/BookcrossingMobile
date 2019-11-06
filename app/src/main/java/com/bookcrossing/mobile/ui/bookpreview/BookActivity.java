@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -28,6 +29,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -44,8 +47,11 @@ import com.bookcrossing.mobile.util.adapters.PlacesHistoryViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jakewharton.rxbinding3.view.RxView;
+import dev.chrisbanes.insetter.Insetter;
 import io.reactivex.disposables.Disposable;
 import moxy.MvpAppCompatActivity;
 import moxy.presenter.InjectPresenter;
@@ -57,9 +63,18 @@ public class BookActivity extends MvpAppCompatActivity
 
   @InjectPresenter public BookPresenter presenter;
 
+  @BindView(R.id.book_activity_root) public CoordinatorLayout root;
+
   @BindView(R.id.toolbar) public Toolbar toolbar;
 
+  @BindView(R.id.toolbar_container) public AppBarLayout toolbarContainer;
+
+  @BindView(R.id.collapsing_toolbar_container) public CollapsingToolbarLayout
+    collapsingToolbarContainer;
+
   @BindView(R.id.cover) public ImageView cover;
+
+  @BindView(R.id.nestedScrollView) public NestedScrollView nestedScrollView;
 
   @BindView(R.id.author) public TextView author;
 
@@ -87,7 +102,12 @@ public class BookActivity extends MvpAppCompatActivity
     setContentView(R.layout.activity_book);
     ButterKnife.bind(this);
 
+    root.setSystemUiVisibility(
+      View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+
     setupToolbar();
+
+    setupInsets();
 
     if (getIntent() != null) {
       key = getIntent().getStringExtra(ConstantsKt.EXTRA_KEY);
@@ -110,6 +130,32 @@ public class BookActivity extends MvpAppCompatActivity
     toolbar.setOnMenuItemClickListener(this);
     toolbar.setNavigationIcon(R.drawable.ic_back);
     toolbar.setNavigationOnClickListener(view -> onBackPressed());
+  }
+
+  private void setupInsets() {
+    Insetter.setOnApplyInsetsListener(toolbarContainer, (view, windowInsets, initial) -> {
+      view.setPadding(initial.getPaddings().getLeft(),
+        windowInsets.getSystemWindowInsetTop() + initial.getPaddings().getTop(),
+        initial.getPaddings().getRight(), initial.getPaddings().getBottom());
+    });
+
+    Insetter.setOnApplyInsetsListener(cover, (view, windowInsets, initial) -> {
+      ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+      params.topMargin = windowInsets.getSystemWindowInsetTop() + initial.getMargins().getTop();
+      view.setLayoutParams(params);
+    });
+
+    Insetter.setOnApplyInsetsListener(nestedScrollView, (view, windowInsets, initial) -> {
+      view.setPadding(initial.getPaddings().getLeft(), initial.getPaddings().getTop(),
+        initial.getPaddings().getRight(),
+        windowInsets.getSystemWindowInsetBottom() + initial.getPaddings().getBottom());
+    });
+
+    Insetter.setOnApplyInsetsListener(favorite, (view, windowInsets, initialPadding) -> {
+      view.setPadding(initialPadding.getPaddings().getLeft(), initialPadding.getPaddings().getTop(),
+        windowInsets.getSystemWindowInsetRight() + initialPadding.getPaddings().getRight(),
+        initialPadding.getPaddings().getBottom());
+    });
   }
 
   public void goToPosition(Coordinates coordinates) {
@@ -146,7 +192,9 @@ public class BookActivity extends MvpAppCompatActivity
     fabSubscription.dispose();
     acquireSubscription.dispose();
     positionNameSubscription.dispose();
-    adapter.stopListening();
+    if (adapter != null) {
+      adapter.stopListening();
+    }
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {
@@ -164,7 +212,7 @@ public class BookActivity extends MvpAppCompatActivity
   }
 
   @Override public void onBookLoaded(Book book) {
-    toolbar.setTitle(book.getName());
+    collapsingToolbarContainer.setTitle(book.getName());
     GlideApp.with(this)
       .load(presenter.resolveCover(key))
       .transition(withCrossFade())
