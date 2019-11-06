@@ -17,7 +17,6 @@
 package com.bookcrossing.mobile.ui.bookpreview;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -108,6 +107,8 @@ public class BookActivity extends MvpAppCompatActivity
 
     setupToolbar();
 
+    setupInsets();
+
     if (getIntent() != null) {
       key = getIntent().getStringExtra(ConstantsKt.EXTRA_KEY);
       presenter.subscribeToBookReference(key);
@@ -129,32 +130,32 @@ public class BookActivity extends MvpAppCompatActivity
     toolbar.setOnMenuItemClickListener(this);
     toolbar.setNavigationIcon(R.drawable.ic_back);
     toolbar.setNavigationOnClickListener(view -> onBackPressed());
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-      Insetter.setOnApplyInsetsListener(toolbarContainer, (view, windowInsets, initialPadding) -> {
-        view.setPadding(initialPadding.getPaddings().getLeft(),
-          windowInsets.getSystemWindowInsetTop() + initialPadding.getPaddings().getTop(),
-          initialPadding.getPaddings().getRight(), initialPadding.getPaddings().getBottom());
-      });
+  }
 
-      Insetter.setOnApplyInsetsListener(cover, (view, windowInsets, initialPadding) -> {
-        view.setPadding(initialPadding.getPaddings().getLeft(),
-          windowInsets.getSystemWindowInsetTop() + initialPadding.getPaddings().getTop(),
-          initialPadding.getPaddings().getRight(), initialPadding.getPaddings().getBottom());
-      });
+  private void setupInsets() {
+    Insetter.setOnApplyInsetsListener(toolbarContainer, (view, windowInsets, initial) -> {
+      view.setPadding(initial.getPaddings().getLeft(),
+        windowInsets.getSystemWindowInsetTop() + initial.getPaddings().getTop(),
+        initial.getPaddings().getRight(), initial.getPaddings().getBottom());
+    });
 
-      Insetter.setOnApplyInsetsListener(nestedScrollView, (view, windowInsets, initialPadding) -> {
-        view.setPadding(initialPadding.getPaddings().getLeft(),
-          initialPadding.getPaddings().getTop(), initialPadding.getPaddings().getRight(),
-          windowInsets.getSystemWindowInsetBottom() + initialPadding.getPaddings().getBottom());
-      });
+    Insetter.setOnApplyInsetsListener(cover, (view, windowInsets, initial) -> {
+      ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+      params.topMargin = windowInsets.getSystemWindowInsetTop() + initial.getMargins().getTop();
+      view.setLayoutParams(params);
+    });
 
-      Insetter.setOnApplyInsetsListener(favorite, (view, windowInsets, initialPadding) -> {
-        view.setPadding(initialPadding.getPaddings().getLeft(),
-          initialPadding.getPaddings().getTop(),
-          windowInsets.getSystemWindowInsetRight() + initialPadding.getPaddings().getRight(),
-          initialPadding.getPaddings().getBottom());
-      });
-    }
+    Insetter.setOnApplyInsetsListener(nestedScrollView, (view, windowInsets, initial) -> {
+      view.setPadding(initial.getPaddings().getLeft(), initial.getPaddings().getTop(),
+        initial.getPaddings().getRight(),
+        windowInsets.getSystemWindowInsetBottom() + initial.getPaddings().getBottom());
+    });
+
+    Insetter.setOnApplyInsetsListener(favorite, (view, windowInsets, initialPadding) -> {
+      view.setPadding(initialPadding.getPaddings().getLeft(), initialPadding.getPaddings().getTop(),
+        windowInsets.getSystemWindowInsetRight() + initialPadding.getPaddings().getRight(),
+        initialPadding.getPaddings().getBottom());
+    });
   }
 
   public void goToPosition(Coordinates coordinates) {
@@ -191,7 +192,9 @@ public class BookActivity extends MvpAppCompatActivity
     fabSubscription.dispose();
     acquireSubscription.dispose();
     positionNameSubscription.dispose();
-    adapter.stopListening();
+    if (adapter != null) {
+      adapter.stopListening();
+    }
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {
@@ -209,7 +212,7 @@ public class BookActivity extends MvpAppCompatActivity
   }
 
   @Override public void onBookLoaded(Book book) {
-    toolbar.setTitle(book.getName());
+    collapsingToolbarContainer.setTitle(book.getName());
     GlideApp.with(this)
       .load(presenter.resolveCover(key))
       .transition(withCrossFade())
