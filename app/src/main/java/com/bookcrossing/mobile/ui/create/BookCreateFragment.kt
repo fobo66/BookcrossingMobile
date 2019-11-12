@@ -60,23 +60,32 @@ import java.util.concurrent.TimeUnit
 
 class BookCreateFragment : BaseFragment(), BookCreateView {
 
-  @InjectPresenter lateinit var presenter: BookCreatePresenter
+  @InjectPresenter
+  lateinit var presenter: BookCreatePresenter
 
-  @BindView(R.id.cover) lateinit var cover: ImageView
+  @BindView(R.id.cover)
+  lateinit var cover: ImageView
 
-  @BindView(R.id.input_name) lateinit var bookNameInput: TextView
+  @BindView(R.id.input_name)
+  lateinit var bookNameInput: TextView
 
-  @BindView(R.id.input_author) lateinit var bookAuthorInput: TextView
+  @BindView(R.id.input_author)
+  lateinit var bookAuthorInput: TextView
 
-  @BindView(R.id.input_position) lateinit var bookPositionInput: TextView
+  @BindView(R.id.input_position)
+  lateinit var bookPositionInput: TextView
 
-  @BindView(R.id.input_description) lateinit var bookDescriptionInput: TextView
+  @BindView(R.id.input_description)
+  lateinit var bookDescriptionInput: TextView
 
-  @BindView(R.id.publish_book) lateinit var releaseButton: Button
+  @BindView(R.id.publish_book)
+  lateinit var releaseButton: Button
 
-  @BindString(R.string.rendered_sticker_name) lateinit var stickerName: String
+  @BindString(R.string.rendered_sticker_name)
+  lateinit var stickerName: String
 
-  @BindString(R.string.rendered_sticker_description) lateinit var stickerDescription: String
+  @BindString(R.string.rendered_sticker_description)
+  lateinit var stickerDescription: String
 
   private var coverChooserDialog: MaterialDialog? = null
 
