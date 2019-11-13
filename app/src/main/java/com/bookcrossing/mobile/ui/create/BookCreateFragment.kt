@@ -23,6 +23,8 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.provider.MediaStore.Images.Media
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -221,21 +223,24 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
     val pickIntent = Intent(Intent.ACTION_PICK)
     pickIntent.setDataAndType(
-      android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+      Media.EXTERNAL_CONTENT_URI,
       "image/*"
     )
 
     val chooserIntent = Intent.createChooser(getIntent, getString(R.string.cover_chooser_title))
     chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(pickIntent))
 
-    startActivityForResult(chooserIntent, PICK_IMAGE)
+    chooserIntent.resolveActivity(requireActivity().packageManager)?.also {
+      startActivityForResult(chooserIntent, PICK_IMAGE)
+    }
   }
 
   private fun requestCoverImageFromCamera() {
-//    return RxPaparazzo.single(this)
-//      .usingCamera()
-//      .subscribeOn(Schedulers.io())
-//      .observeOn(AndroidSchedulers.mainThread())
+    Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+      takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
+        startActivityForResult(takePictureIntent, TAKE_PHOTO)
+      }
+    }
   }
 
   override fun onCoverChosen(coverUri: Uri?) {
@@ -323,5 +328,6 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   companion object {
     private const val PICK_IMAGE: Int = 11
+    private const val TAKE_PHOTO: Int = 22
   }
 }
