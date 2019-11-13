@@ -120,7 +120,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   private fun buildCoverChooserDialog() {
     coverChooserDialog = MaterialDialog(requireContext())
-      .title(R.string.cover_chooser_title, null)
+      .title(R.string.cover_chooser_title)
       .listItems(R.array.cover_chooser_dialog_items, selection = { _, index, _ ->
         if (index == 0) {
           requestCoverImageFromGallery()
