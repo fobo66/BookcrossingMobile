@@ -26,7 +26,6 @@ import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.FirebaseDatabase;
-import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
@@ -46,7 +45,6 @@ public class App extends MultiDexApplication {
   @Override public void onCreate() {
     super.onCreate();
     FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-    RxPaparazzo.register(this);
     MobileAds.initialize(this, getResources().getString(R.string.admob_app_id));
 
     if (BuildConfig.DEBUG) {

@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -29,7 +30,6 @@ import com.bookcrossing.mobile.util.EXTRA_DEFAULT_CITY
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.storage.StorageMetadata
 import com.google.zxing.WriterException
-import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
 import durdinapps.rxfirebase2.RxFirebaseAuth
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import durdinapps.rxfirebase2.RxFirebaseStorage
@@ -62,9 +62,11 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       .onErrorReturn { key }
   }
 
-  fun saveCoverTemporarily(result: FileData) {
-    tempCoverUri = Uri.fromFile(result.file)
-    viewState.onCoverChosen(tempCoverUri)
+  fun saveCoverTemporarily(coverUri: Uri?) {
+    if (coverUri != null) {
+      tempCoverUri = coverUri
+      viewState.onCoverChosen(tempCoverUri)
+    }
   }
 
   fun onNameChange(name: String) {

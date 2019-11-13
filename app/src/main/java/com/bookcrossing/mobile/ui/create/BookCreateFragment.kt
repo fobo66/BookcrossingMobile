@@ -18,6 +18,7 @@ package com.bookcrossing.mobile.ui.create
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
@@ -48,13 +49,9 @@ import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.afterTextChangeEvents
 import com.jakewharton.rxbinding3.widget.textChanges
-import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo
-import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
-import com.miguelbcr.ui.rx_paparazzo2.entities.Response
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
-import io.reactivex.schedulers.Schedulers
 import moxy.presenter.InjectPresenter
 import java.util.concurrent.TimeUnit
 
@@ -111,22 +108,23 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     registerSubscriptions()
   }
 
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+
+    if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
+      presenter.saveCoverTemporarily(data?.data)
+    }
+  }
+
   private fun buildCoverChooserDialog() {
     coverChooserDialog = MaterialDialog(requireContext())
       .title(R.string.cover_chooser_title, null)
       .listItems(R.array.cover_chooser_dialog_items, selection = { _, index, _ ->
-        val chooserObservable: Observable<Response<BookCreateFragment, FileData>> =
-          if (index == 0) {
-            requestCoverImageFromGallery()
-          } else {
-            requestCoverImageFromCamera()
-          }
-        subscriptions.add(chooserObservable.subscribe { result ->
-          if (result.resultCode() == RESULT_OK) {
-            result.targetUI()
-              .presenter.saveCoverTemporarily(result.data())
-          }
-        })
+        if (index == 0) {
+          requestCoverImageFromGallery()
+        } else {
+          requestCoverImageFromCamera()
+        }
       })
   }
 
@@ -217,18 +215,27 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     subscriptions.add(coverSubscription)
   }
 
-  private fun requestCoverImageFromGallery(): Observable<Response<BookCreateFragment, FileData>> {
-    return RxPaparazzo.single(this)
-      .usingGallery()
-      .subscribeOn(Schedulers.io())
-      .observeOn(AndroidSchedulers.mainThread())
+  private fun requestCoverImageFromGallery() {
+    val getIntent = Intent(Intent.ACTION_GET_CONTENT)
+    getIntent.type = "image/*"
+
+    val pickIntent = Intent(Intent.ACTION_PICK)
+    pickIntent.setDataAndType(
+      android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+      "image/*"
+    )
+
+    val chooserIntent = Intent.createChooser(getIntent, getString(R.string.cover_chooser_title))
+    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(pickIntent))
+
+    startActivityForResult(chooserIntent, PICK_IMAGE)
   }
 
-  private fun requestCoverImageFromCamera(): Observable<Response<BookCreateFragment, FileData>> {
-    return RxPaparazzo.single(this)
-      .usingCamera()
-      .subscribeOn(Schedulers.io())
-      .observeOn(AndroidSchedulers.mainThread())
+  private fun requestCoverImageFromCamera() {
+//    return RxPaparazzo.single(this)
+//      .usingCamera()
+//      .subscribeOn(Schedulers.io())
+//      .observeOn(AndroidSchedulers.mainThread())
   }
 
   override fun onCoverChosen(coverUri: Uri?) {
@@ -312,5 +319,9 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
       Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
     )
       .flatMapMaybe { presenter.resolveUserCity() }
+  }
+
+  companion object {
+    private const val PICK_IMAGE: Int = 11
   }
 }
