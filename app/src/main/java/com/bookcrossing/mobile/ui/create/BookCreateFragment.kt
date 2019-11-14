@@ -23,6 +23,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.provider.MediaStore.Images.Media
 import android.view.LayoutInflater
@@ -32,6 +33,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import butterknife.BindString
 import butterknife.BindView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -40,6 +42,7 @@ import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.list.listItems
+import com.bookcrossing.mobile.BuildConfig
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.presenters.BookCreatePresenter
@@ -55,6 +58,8 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
 import moxy.presenter.InjectPresenter
+import java.io.File
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 class BookCreateFragment : BaseFragment(), BookCreateView {
@@ -115,6 +120,10 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
     if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
       presenter.saveCoverTemporarily(data?.data)
+    }
+
+    if (resultCode == RESULT_OK && requestCode == TAKE_PHOTO) {
+      presenter.saveCoverTemporarily()
     }
   }
 
@@ -237,8 +246,24 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   private fun requestCoverImageFromCamera() {
     Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+      // Ensure that there's a camera activity to handle the intent
       takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
-        startActivityForResult(takePictureIntent, TAKE_PHOTO)
+        // Create the File where the photo should go
+        val photoFile: File? = try {
+          presenter.createImageFile(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES))
+        } catch (ex: IOException) {
+          null
+        }
+        // Continue only if the File was successfully created
+        photoFile?.also {
+          val photoURI: Uri = FileProvider.getUriForFile(
+            requireContext(),
+            "${BuildConfig.APPLICATION_ID}.fileprovider",
+            it
+          )
+          takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+          startActivityForResult(takePictureIntent, TAKE_PHOTO)
+        }
       }
     }
   }

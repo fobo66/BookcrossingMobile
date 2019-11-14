@@ -18,7 +18,6 @@ package com.bookcrossing.mobile.presenters
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import androidx.core.content.edit
 import com.bookcrossing.mobile.code.BookStickerSaver
 import com.bookcrossing.mobile.code.QrCodeEncoder
@@ -38,7 +37,11 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
+import timber.log.Timber
+import java.io.File
+import java.io.IOException
 import java.util.Calendar
+import java.util.UUID
 
 /**
  * Presenter for book create view
@@ -62,10 +65,21 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       .onErrorReturn { key }
   }
 
-  fun saveCoverTemporarily(coverUri: Uri?) {
+  fun saveCoverTemporarily(coverUri: Uri? = null) {
     if (coverUri != null) {
       tempCoverUri = coverUri
-      viewState.onCoverChosen(tempCoverUri)
+    }
+    viewState.onCoverChosen(tempCoverUri)
+  }
+
+  @Throws(IOException::class)
+  fun createImageFile(storageDir: File?): File {
+    return File.createTempFile(
+      "cover_${UUID.randomUUID()}_",
+      ".jpg",
+      storageDir
+    ).apply {
+      tempCoverUri = Uri.fromFile(this)
     }
   }
 
@@ -102,7 +116,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       }
       .doOnError {
         Crashlytics.logException(it)
-        Log.e("releaseBook", "Failed to release book", it)
+        Timber.e(it, "Failed to release book")
         viewState.onFailedToRelease()
       }
   }
@@ -120,11 +134,11 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     return try {
       QrCodeEncoder().encode(buildBookUri(key).toString())
     } catch (e: WriterException) {
-      Log.e(TAG, "Failed to encode book key to QR code")
+      Timber.e("Failed to encode book key to QR code")
       Crashlytics.logException(e)
       null
     } catch (e: IllegalArgumentException) {
-      Log.e(TAG, "Failed to save QR code in bitmap")
+      Timber.e("Failed to save QR code in bitmap")
       Crashlytics.logException(e)
       null
     }
@@ -159,7 +173,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       }
       .doOnSuccess { city -> saveCity(city) }
       .doOnError {
-        Log.e("resolveCity", "Failed to resolve city", it)
+        Timber.e(it, "Failed to resolve city")
         viewState.askUserToProvideDefaultCity()
       }
   }
@@ -172,9 +186,5 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       putString(EXTRA_CITY, city)
       putString(EXTRA_DEFAULT_CITY, city)
     }
-  }
-
-  companion object {
-    const val TAG = "BookCreatePresenter"
   }
 }
