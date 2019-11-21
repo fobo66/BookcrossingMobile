@@ -48,7 +48,6 @@ import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.presenters.BookCreatePresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
-import com.bookcrossing.mobile.util.PROHIBITED_SYMBOLS
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.jakewharton.rxbinding3.view.clicks
@@ -90,6 +89,8 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   @BindString(R.string.rendered_sticker_description)
   lateinit var stickerDescription: String
+
+  private val prohibitedSymbols = "[\\*\\#\\[\\]\\?]".toRegex()
 
   private var coverChooserDialog: MaterialDialog? = null
 
@@ -184,7 +185,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   private fun registerDescriptionInputSubscription() {
     val descriptionSubscription = bookDescriptionInput.afterTextChangeEvents()
       .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .filter { event -> !event.view.text.toString().contains(PROHIBITED_SYMBOLS) }
+      .filter { event -> !event.view.text.toString().contains(prohibitedSymbols) }
       .subscribe { event -> presenter.onDescriptionChange(event.view.text.toString()) }
     subscriptions.add(descriptionSubscription)
   }
@@ -192,7 +193,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   private fun registerPositionInputSubscription() {
     val positionSubscription = bookPositionInput.afterTextChangeEvents()
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .filter { event -> !event.view.text.toString().contains(PROHIBITED_SYMBOLS) }
+      .filter { event -> !event.view.text.toString().contains(prohibitedSymbols) }
       .subscribe { event -> presenter.onPositionChange(event.view.text.toString()) }
     subscriptions.add(positionSubscription)
   }
@@ -200,7 +201,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   private fun registerAuthorInputSubscription() {
     val authorSubscription = bookAuthorInput.afterTextChangeEvents()
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .filter { event -> !event.view.text.toString().contains(PROHIBITED_SYMBOLS) }
+      .filter { event -> !event.view.text.toString().contains(prohibitedSymbols) }
       .subscribe { event -> presenter.onAuthorChange(event.view.text.toString()) }
     subscriptions.add(authorSubscription)
   }
@@ -211,7 +212,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
       .filter { event ->
         val textFieldValue = event.view.text
           .toString()
-        !textFieldValue.contains(PROHIBITED_SYMBOLS) && textFieldValue.isNotEmpty()
+        !textFieldValue.contains(prohibitedSymbols) && textFieldValue.isNotEmpty()
       }
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe { event -> presenter.onNameChange(event.view.text.toString()) }
