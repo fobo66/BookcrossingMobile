@@ -116,7 +116,7 @@ dependencies {
   implementation "com.github.moxy-community:moxy-android:$moxyVersion"
   implementation "com.github.moxy-community:moxy-androidx:$moxyVersion"
 
-  implementation "com.google.firebase:firebase-auth:19.1.0"
+  implementation "com.google.firebase:firebase-auth:19.2.0"
   implementation "com.google.firebase:firebase-messaging:20.0.1"
   implementation "com.google.firebase:firebase-ads:18.3.0"
   implementation "com.google.android.ads.consent:consent-library:1.0.7"
