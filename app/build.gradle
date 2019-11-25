@@ -151,7 +151,7 @@ dependencies {
   implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
   implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
 
-  def rxBindingsVersion = "3.0.0"
+  def rxBindingsVersion = "3.1.0"
   implementation "com.jakewharton.rxbinding3:rxbinding:$rxBindingsVersion"
   implementation "com.jakewharton.rxbinding3:rxbinding-material:$rxBindingsVersion"
   implementation "com.jakewharton.rxbinding3:rxbinding-recyclerview:$rxBindingsVersion"
