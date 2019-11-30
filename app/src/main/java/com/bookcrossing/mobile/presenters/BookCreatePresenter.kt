@@ -53,8 +53,9 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
 
   private val book: BookBuilder = BookBuilder()
   private lateinit var tempCoverUri: Uri
+  private val prohibitedSymbols = "[*#\\[\\]?]".toRegex()
 
-  private fun uploadCover(key: String): Observable<String>? {
+  private fun uploadCover(key: String): Observable<String> {
     val metadata = StorageMetadata.Builder()
       .setContentType("image/jpeg")
       .build()
@@ -99,20 +100,38 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
   }
 
   fun onNameChange(name: String) {
-    book.setName(name)
-    viewState.showCover()
+    if (!name.contains(prohibitedSymbols)) {
+      book.setName(name)
+      if (name.isNotBlank()) {
+        viewState.showCover()
+      }
+    } else {
+      viewState.onNameError()
+    }
   }
 
   fun onAuthorChange(author: String) {
-    book.setAuthor(author)
+    if (!author.contains(prohibitedSymbols)) {
+      book.setAuthor(author)
+    } else {
+      viewState.onAuthorError()
+    }
   }
 
   fun onPositionChange(position: String) {
-    book.setPositionName(position)
+    if (!position.contains(prohibitedSymbols)) {
+      book.setPositionName(position)
+    } else {
+      viewState.onPositionError()
+    }
   }
 
   fun onDescriptionChange(description: String) {
-    book.setDescription(description)
+    if (!description.contains(prohibitedSymbols)) {
+      book.setDescription(description)
+    } else {
+      viewState.onDescriptionError()
+    }
   }
 
   fun publishBook(city: String): Observable<String> {

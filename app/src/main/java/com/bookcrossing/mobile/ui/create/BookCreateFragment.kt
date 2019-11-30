@@ -90,8 +90,6 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   @BindString(R.string.rendered_sticker_description)
   lateinit var stickerDescription: String
 
-  private val prohibitedSymbols = "[*#\\[\\]?]".toRegex()
-
   private var coverChooserDialog: MaterialDialog? = null
 
   private lateinit var permissions: RxPermissions
@@ -184,44 +182,70 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   private fun registerDescriptionInputSubscription() {
     val descriptionSubscription = bookDescriptionInput.afterTextChangeEvents()
-      .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .filter { event -> !event.view.text.toString().contains(prohibitedSymbols) }
+      .doOnNext {
+        clearTextViewError(bookDescriptionInput)
+      }
+      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .subscribe { event -> presenter.onDescriptionChange(event.view.text.toString()) }
     subscriptions.add(descriptionSubscription)
   }
 
+  override fun onDescriptionError() {
+    bookDescriptionInput.error = getString(R.string.error_book_description_malformed)
+  }
+
   private fun registerPositionInputSubscription() {
     val positionSubscription = bookPositionInput.afterTextChangeEvents()
+      .doOnNext {
+        clearTextViewError(bookPositionInput)
+      }
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .filter { event -> !event.view.text.toString().contains(prohibitedSymbols) }
       .subscribe { event -> presenter.onPositionChange(event.view.text.toString()) }
     subscriptions.add(positionSubscription)
   }
 
+  override fun onPositionError() {
+    bookPositionInput.error = getString(R.string.error_book_position_malformed)
+  }
+
   private fun registerAuthorInputSubscription() {
     val authorSubscription = bookAuthorInput.afterTextChangeEvents()
+      .doOnNext {
+        clearTextViewError(bookAuthorInput)
+      }
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .filter { event -> !event.view.text.toString().contains(prohibitedSymbols) }
       .subscribe { event -> presenter.onAuthorChange(event.view.text.toString()) }
     subscriptions.add(authorSubscription)
   }
 
+  override fun onAuthorError() {
+    bookAuthorInput.error = getString(R.string.error_book_author_malformed)
+  }
+
   private fun registerNameInputSubscription() {
     val nameSubscription = bookNameInput.afterTextChangeEvents()
-      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .filter { event ->
-        val textFieldValue = event.view.text
-          .toString()
-        !textFieldValue.contains(prohibitedSymbols) && textFieldValue.isNotEmpty()
+      .doOnNext {
+        clearTextViewError(bookNameInput)
       }
+      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe { event -> presenter.onNameChange(event.view.text.toString()) }
     subscriptions.add(nameSubscription)
   }
 
+  private fun clearTextViewError(input: TextView) {
+    if (input.error != null) {
+      input.error = null
+    }
+  }
+
+  override fun onNameError() {
+    bookNameInput.error = getString(R.string.error_book_name_malformed)
+  }
+
   private fun registerCoverClickSubscription() {
     val coverSubscription = cover.clicks()
-      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+      .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe { coverChooserDialog?.show() }
     subscriptions.add(coverSubscription)
