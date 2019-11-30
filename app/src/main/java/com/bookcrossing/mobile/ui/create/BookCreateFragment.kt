@@ -90,7 +90,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   @BindString(R.string.rendered_sticker_description)
   lateinit var stickerDescription: String
 
-  private val prohibitedSymbols = "[\\*\\#\\[\\]\\?]".toRegex()
+  private val prohibitedSymbols = "[*#\\[\\]?]".toRegex()
 
   private var coverChooserDialog: MaterialDialog? = null
 
@@ -124,7 +124,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     }
 
     if (resultCode == RESULT_OK && requestCode == TAKE_PHOTO) {
-      presenter.saveCoverTemporarily()
+      presenter.compressCoverPhoto(requireContext().contentResolver)
     }
   }
 

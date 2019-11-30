@@ -16,7 +16,9 @@
 
 package com.bookcrossing.mobile.presenters
 
+import android.content.ContentResolver
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.core.content.edit
 import com.bookcrossing.mobile.code.BookStickerSaver
@@ -65,10 +67,23 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       .onErrorReturn { key }
   }
 
-  fun saveCoverTemporarily(coverUri: Uri? = null) {
+  fun saveCoverTemporarily(coverUri: Uri?) {
     if (coverUri != null) {
       tempCoverUri = coverUri
     }
+    viewState.onCoverChosen(tempCoverUri)
+  }
+
+  fun compressCoverPhoto(contentResolver: ContentResolver) {
+    var coverPhoto: Bitmap? = null
+    contentResolver.openInputStream(tempCoverUri)
+      .use {
+        coverPhoto = BitmapFactory.decodeStream(it)
+      }
+    contentResolver.openOutputStream(tempCoverUri)
+      .use {
+        coverPhoto?.compress(Bitmap.CompressFormat.JPEG, 60, it)
+      }
     viewState.onCoverChosen(tempCoverUri)
   }
 
@@ -78,8 +93,8 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       "cover_${UUID.randomUUID()}_",
       ".jpg",
       storageDir
-    ).apply {
-      tempCoverUri = Uri.fromFile(this)
+    ).also {
+      tempCoverUri = Uri.fromFile(it)
     }
   }
 
