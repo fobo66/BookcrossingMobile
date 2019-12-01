@@ -155,7 +155,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   private fun registerPublishButtonClickSubscription() {
     val publishSubscription = releaseButton.clicks()
       .flatMap { resolveUserCity() }
-      .flatMap { presenter.publishBook(it) }
+      .flatMap { presenter.releaseBook(it) }
       .retry()
       .subscribe()
     subscriptions.add(publishSubscription)

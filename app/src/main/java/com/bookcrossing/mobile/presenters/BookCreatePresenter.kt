@@ -68,6 +68,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       .onErrorReturn { key }
   }
 
+  /** Save chosen cover image URI and display it on UI */
   fun saveCoverTemporarily(coverUri: Uri?) {
     if (coverUri != null) {
       tempCoverUri = coverUri
@@ -75,6 +76,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     viewState.onCoverChosen(tempCoverUri)
   }
 
+  /** Compress cover image to save space on Cloud Storage */
   fun compressCoverPhoto(contentResolver: ContentResolver) {
     var coverPhoto: Bitmap? = null
     contentResolver.openInputStream(tempCoverUri)
@@ -88,6 +90,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     viewState.onCoverChosen(tempCoverUri)
   }
 
+  /** Create temp file to store cover photo taken by user */
   @Throws(IOException::class)
   fun createImageFile(storageDir: File?): File {
     return File.createTempFile(
@@ -99,6 +102,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     }
   }
 
+  /** Validate book name */
   fun onNameChange(name: String) {
     if (!name.contains(prohibitedSymbols)) {
       book.setName(name)
@@ -110,6 +114,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     }
   }
 
+  /** Validate book author */
   fun onAuthorChange(author: String) {
     if (!author.contains(prohibitedSymbols)) {
       book.setAuthor(author)
@@ -118,6 +123,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     }
   }
 
+  /** Validate book position */
   fun onPositionChange(position: String) {
     if (!position.contains(prohibitedSymbols)) {
       book.setPositionName(position)
@@ -126,6 +132,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     }
   }
 
+  /** Validate book description */
   fun onDescriptionChange(description: String) {
     if (!description.contains(prohibitedSymbols)) {
       book.setDescription(description)
@@ -134,7 +141,8 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     }
   }
 
-  fun publishBook(city: String): Observable<String> {
+  /** Release book */
+  fun releaseBook(city: String): Observable<String> {
     setPublicationDate()
     val newBook = book.createBook()
     newBook.city = city
@@ -164,6 +172,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     book.setWentFreeAt(date)
   }
 
+  /** Generate QR code for the newly released book*/
   fun generateQrCode(key: String): Bitmap? {
     return try {
       QrCodeEncoder().encode(buildBookUri(key).toString())
