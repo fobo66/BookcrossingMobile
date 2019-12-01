@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -27,5 +28,4 @@ const val EXTRA_TARGET_FRAGMENT = "targetFragment"
 const val KEY_CONSENT_STATUS = "consent_status"
 const val PRIVACY_POLICY_URL = "https://fobo66.github.io/BookcrossingMobile/privacy_policy.html"
 const val DEFAULT_DEBOUNCE_TIMEOUT = 300
-const val PROHIBITED_SYMBOLS = "*#[]?"
 

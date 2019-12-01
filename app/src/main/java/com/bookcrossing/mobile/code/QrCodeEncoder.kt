@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -17,6 +18,7 @@ package com.bookcrossing.mobile.code
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import androidx.core.graphics.createBitmap
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.BarcodeFormat.QR_CODE
 import com.google.zxing.EncodeHintType
@@ -63,7 +65,7 @@ class QrCodeEncoder(
 
     val pixels = processBitMatrix(bitMatrix)
 
-    val bitmap = Bitmap.createBitmap(bitMatrix.width, bitMatrix.height, Bitmap.Config.ARGB_8888)
+    val bitmap = createBitmap(bitMatrix.width, bitMatrix.height)
     bitmap.setPixels(pixels, 0, bitMatrix.width, 0, 0, bitMatrix.width, bitMatrix.height)
     return bitmap
   }

@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -34,7 +35,7 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 
 public class BooksViewHolder extends MvpBaseViewHolder implements BookItemView {
 
-  @InjectPresenter(tag = BookItemPresenter.TAG)
+  @InjectPresenter
   public BookItemPresenter itemPresenter;
 
   @BindView(R.id.cover) public ImageView cover;

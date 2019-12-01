@@ -18,10 +18,14 @@ package com.bookcrossing.mobile.ui.create
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
+import android.provider.MediaStore.Images.Media
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +33,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import butterknife.BindString
 import butterknife.BindView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -37,25 +42,23 @@ import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.list.listItems
+import com.bookcrossing.mobile.BuildConfig
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.presenters.BookCreatePresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
-import com.bookcrossing.mobile.util.PROHIBITED_SYMBOLS
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.afterTextChangeEvents
 import com.jakewharton.rxbinding3.widget.textChanges
-import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo
-import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
-import com.miguelbcr.ui.rx_paparazzo2.entities.Response
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
-import io.reactivex.schedulers.Schedulers
 import moxy.presenter.InjectPresenter
+import java.io.File
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 class BookCreateFragment : BaseFragment(), BookCreateView {
@@ -111,22 +114,27 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     registerSubscriptions()
   }
 
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+
+    if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
+      presenter.saveCoverTemporarily(data?.data)
+    }
+
+    if (resultCode == RESULT_OK && requestCode == TAKE_PHOTO) {
+      presenter.compressCoverPhoto(requireContext().contentResolver)
+    }
+  }
+
   private fun buildCoverChooserDialog() {
     coverChooserDialog = MaterialDialog(requireContext())
-      .title(R.string.cover_chooser_title, null)
+      .title(R.string.cover_chooser_title)
       .listItems(R.array.cover_chooser_dialog_items, selection = { _, index, _ ->
-        val chooserObservable: Observable<Response<BookCreateFragment, FileData>> =
-          if (index == 0) {
-            requestCoverImageFromGallery()
-          } else {
-            requestCoverImageFromCamera()
-          }
-        subscriptions.add(chooserObservable.subscribe { result ->
-          if (result.resultCode() == RESULT_OK) {
-            result.targetUI()
-              .presenter.saveCoverTemporarily(result.data())
-          }
-        })
+        if (index == 0) {
+          requestCoverImageFromGallery()
+        } else {
+          requestCoverImageFromCamera()
+        }
       })
   }
 
@@ -147,7 +155,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   private fun registerPublishButtonClickSubscription() {
     val publishSubscription = releaseButton.clicks()
       .flatMap { resolveUserCity() }
-      .flatMap { presenter.publishBook(it) }
+      .flatMap { presenter.releaseBook(it) }
       .retry()
       .subscribe()
     subscriptions.add(publishSubscription)
@@ -174,61 +182,115 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
   private fun registerDescriptionInputSubscription() {
     val descriptionSubscription = bookDescriptionInput.afterTextChangeEvents()
-      .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .filter { event -> !event.view.text.toString().contains(PROHIBITED_SYMBOLS) }
+      .doOnNext {
+        clearTextViewError(bookDescriptionInput)
+      }
+      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .subscribe { event -> presenter.onDescriptionChange(event.view.text.toString()) }
     subscriptions.add(descriptionSubscription)
   }
 
+  override fun onDescriptionError() {
+    bookDescriptionInput.error = getString(R.string.error_book_description_malformed)
+  }
+
   private fun registerPositionInputSubscription() {
     val positionSubscription = bookPositionInput.afterTextChangeEvents()
+      .doOnNext {
+        clearTextViewError(bookPositionInput)
+      }
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .filter { event -> !event.view.text.toString().contains(PROHIBITED_SYMBOLS) }
       .subscribe { event -> presenter.onPositionChange(event.view.text.toString()) }
     subscriptions.add(positionSubscription)
   }
 
+  override fun onPositionError() {
+    bookPositionInput.error = getString(R.string.error_book_position_malformed)
+  }
+
   private fun registerAuthorInputSubscription() {
     val authorSubscription = bookAuthorInput.afterTextChangeEvents()
+      .doOnNext {
+        clearTextViewError(bookAuthorInput)
+      }
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .filter { event -> !event.view.text.toString().contains(PROHIBITED_SYMBOLS) }
       .subscribe { event -> presenter.onAuthorChange(event.view.text.toString()) }
     subscriptions.add(authorSubscription)
   }
 
+  override fun onAuthorError() {
+    bookAuthorInput.error = getString(R.string.error_book_author_malformed)
+  }
+
   private fun registerNameInputSubscription() {
     val nameSubscription = bookNameInput.afterTextChangeEvents()
-      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .filter { event ->
-        val textFieldValue = event.view.text
-          .toString()
-        !textFieldValue.contains(PROHIBITED_SYMBOLS) && textFieldValue.isNotEmpty()
+      .doOnNext {
+        clearTextViewError(bookNameInput)
       }
+      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe { event -> presenter.onNameChange(event.view.text.toString()) }
     subscriptions.add(nameSubscription)
   }
 
+  private fun clearTextViewError(input: TextView) {
+    if (input.error != null) {
+      input.error = null
+    }
+  }
+
+  override fun onNameError() {
+    bookNameInput.error = getString(R.string.error_book_name_malformed)
+  }
+
   private fun registerCoverClickSubscription() {
     val coverSubscription = cover.clicks()
-      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+      .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe { coverChooserDialog?.show() }
     subscriptions.add(coverSubscription)
   }
 
-  private fun requestCoverImageFromGallery(): Observable<Response<BookCreateFragment, FileData>> {
-    return RxPaparazzo.single(this)
-      .usingGallery()
-      .subscribeOn(Schedulers.io())
-      .observeOn(AndroidSchedulers.mainThread())
+  private fun requestCoverImageFromGallery() {
+    val getIntent = Intent(Intent.ACTION_GET_CONTENT)
+    getIntent.type = "image/*"
+
+    val pickIntent = Intent(Intent.ACTION_PICK)
+    pickIntent.setDataAndType(
+      Media.EXTERNAL_CONTENT_URI,
+      "image/*"
+    )
+
+    val chooserIntent = Intent.createChooser(getIntent, getString(R.string.cover_chooser_title))
+    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(pickIntent))
+
+    chooserIntent.resolveActivity(requireActivity().packageManager)?.also {
+      startActivityForResult(chooserIntent, PICK_IMAGE)
+    }
   }
 
-  private fun requestCoverImageFromCamera(): Observable<Response<BookCreateFragment, FileData>> {
-    return RxPaparazzo.single(this)
-      .usingCamera()
-      .subscribeOn(Schedulers.io())
-      .observeOn(AndroidSchedulers.mainThread())
+  private fun requestCoverImageFromCamera() {
+    Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+      // Ensure that there's a camera activity to handle the intent
+      takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
+        // Create the File where the photo should go
+        val photoFile: File? = try {
+          presenter.createImageFile(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES))
+        } catch (ex: IOException) {
+          null
+        }
+        // Continue only if the File was successfully created
+        photoFile?.also {
+          val photoURI: Uri = FileProvider.getUriForFile(
+            requireContext(),
+            "${BuildConfig.APPLICATION_ID}.fileprovider",
+            it
+          )
+          takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+          startActivityForResult(takePictureIntent, TAKE_PHOTO)
+        }
+      }
+    }
   }
 
   override fun onCoverChosen(coverUri: Uri?) {
@@ -312,5 +374,10 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
       Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
     )
       .flatMapMaybe { presenter.resolveUserCity() }
+  }
+
+  companion object {
+    private const val PICK_IMAGE: Int = 11
+    private const val TAKE_PHOTO: Int = 22
   }
 }

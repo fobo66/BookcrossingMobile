@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -25,7 +26,7 @@ buildscript {
     maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:4.0.0-alpha03'
+    classpath "com.android.tools.build:gradle:4.0.0-alpha04"
     classpath "com.google.gms:google-services:4.3.3"
     classpath "io.fabric.tools:gradle:1.31.2"
     classpath "com.google.android.gms:oss-licenses-plugin:0.10.0"

@@ -79,7 +79,7 @@
         "Я особенная книга. Я путешествую по миру, "
         "приобретая новых друзей. Надеюсь, что я нашла в тебе друга.\n"
         "Пожалуйста, установи приложение Bookcrossing для Android и пометь, что я найдена, "
-        "введя мой код (написан ниже) или отсканировав мой QR код"
+        "введя мой код (написан ниже) в приложении или отсканировав мой QR код"
     </string>
   <string name="default_city">Неизвестен</string>
   <string name="title_activity_oss_licenses">Лицензии открытого ПО</string>
@@ -105,6 +105,10 @@
   <string name="camera_permission_denied_prompt">Разрешение для камеры нужно для сканирования QR кода книги</string>
   <string name="retry_permission_request_action">Повторить</string>
   <string name="go_to_settings_permission_request_action">Настройки</string>
+  <string name="error_book_name_malformed">Название книги содержит неправильные символы</string>
+  <string name="error_book_author_malformed">Имя автора книги содержит неправильные символы</string>
+  <string name="error_book_description_malformed">Описание книги содержит неправильные символы</string>
+  <string name="error_book_position_malformed">Местоположение книги содержит неправильные символы</string>
   <string-array name="cover_chooser_dialog_items">
     <item>Из галереи</item>
     <item>Сделать фото</item>

@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -15,9 +16,10 @@
 
 package com.bookcrossing.mobile.presenters
 
+import android.content.ContentResolver
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
 import androidx.core.content.edit
 import com.bookcrossing.mobile.code.BookStickerSaver
 import com.bookcrossing.mobile.code.QrCodeEncoder
@@ -29,7 +31,6 @@ import com.bookcrossing.mobile.util.EXTRA_DEFAULT_CITY
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.storage.StorageMetadata
 import com.google.zxing.WriterException
-import com.miguelbcr.ui.rx_paparazzo2.entities.FileData
 import durdinapps.rxfirebase2.RxFirebaseAuth
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import durdinapps.rxfirebase2.RxFirebaseStorage
@@ -38,7 +39,11 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
+import timber.log.Timber
+import java.io.File
+import java.io.IOException
 import java.util.Calendar
+import java.util.UUID
 
 /**
  * Presenter for book create view
@@ -48,8 +53,9 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
 
   private val book: BookBuilder = BookBuilder()
   private lateinit var tempCoverUri: Uri
+  private val prohibitedSymbols = "[*#\\[\\]?]".toRegex()
 
-  private fun uploadCover(key: String): Observable<String>? {
+  private fun uploadCover(key: String): Observable<String> {
     val metadata = StorageMetadata.Builder()
       .setContentType("image/jpeg")
       .build()
@@ -62,29 +68,81 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       .onErrorReturn { key }
   }
 
-  fun saveCoverTemporarily(result: FileData) {
-    tempCoverUri = Uri.fromFile(result.file)
+  /** Save chosen cover image URI and display it on UI */
+  fun saveCoverTemporarily(coverUri: Uri?) {
+    if (coverUri != null) {
+      tempCoverUri = coverUri
+    }
     viewState.onCoverChosen(tempCoverUri)
   }
 
+  /** Compress cover image to save space on Cloud Storage */
+  fun compressCoverPhoto(contentResolver: ContentResolver) {
+    var coverPhoto: Bitmap? = null
+    contentResolver.openInputStream(tempCoverUri)
+      .use {
+        coverPhoto = BitmapFactory.decodeStream(it)
+      }
+    contentResolver.openOutputStream(tempCoverUri)
+      .use {
+        coverPhoto?.compress(Bitmap.CompressFormat.JPEG, 60, it)
+      }
+    viewState.onCoverChosen(tempCoverUri)
+  }
+
+  /** Create temp file to store cover photo taken by user */
+  @Throws(IOException::class)
+  fun createImageFile(storageDir: File?): File {
+    return File.createTempFile(
+      "cover_${UUID.randomUUID()}_",
+      ".jpg",
+      storageDir
+    ).also {
+      tempCoverUri = Uri.fromFile(it)
+    }
+  }
+
+  /** Validate book name */
   fun onNameChange(name: String) {
-    book.setName(name)
-    viewState.showCover()
+    if (!name.contains(prohibitedSymbols)) {
+      book.setName(name)
+      if (name.isNotBlank()) {
+        viewState.showCover()
+      }
+    } else {
+      viewState.onNameError()
+    }
   }
 
+  /** Validate book author */
   fun onAuthorChange(author: String) {
-    book.setAuthor(author)
+    if (!author.contains(prohibitedSymbols)) {
+      book.setAuthor(author)
+    } else {
+      viewState.onAuthorError()
+    }
   }
 
+  /** Validate book position */
   fun onPositionChange(position: String) {
-    book.setPositionName(position)
+    if (!position.contains(prohibitedSymbols)) {
+      book.setPositionName(position)
+    } else {
+      viewState.onPositionError()
+    }
   }
 
+  /** Validate book description */
   fun onDescriptionChange(description: String) {
-    book.setDescription(description)
+    if (!description.contains(prohibitedSymbols)) {
+      book.setDescription(description)
+    } else {
+      viewState.onDescriptionError()
+    }
   }
 
-  fun publishBook(city: String): Observable<String> {
+  /** Release book */
+  fun releaseBook(city: String): Observable<String> {
     setPublicationDate()
     val newBook = book.createBook()
     newBook.city = city
@@ -100,7 +158,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       }
       .doOnError {
         Crashlytics.logException(it)
-        Log.e("releaseBook", "Failed to release book", it)
+        Timber.e(it, "Failed to release book")
         viewState.onFailedToRelease()
       }
   }
@@ -114,15 +172,16 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     book.setWentFreeAt(date)
   }
 
+  /** Generate QR code for the newly released book*/
   fun generateQrCode(key: String): Bitmap? {
     return try {
       QrCodeEncoder().encode(buildBookUri(key).toString())
     } catch (e: WriterException) {
-      Log.e(TAG, "Failed to encode book key to QR code")
+      Timber.e("Failed to encode book key to QR code")
       Crashlytics.logException(e)
       null
     } catch (e: IllegalArgumentException) {
-      Log.e(TAG, "Failed to save QR code in bitmap")
+      Timber.e("Failed to save QR code in bitmap")
       Crashlytics.logException(e)
       null
     }
@@ -157,7 +216,7 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       }
       .doOnSuccess { city -> saveCity(city) }
       .doOnError {
-        Log.e("resolveCity", "Failed to resolve city", it)
+        Timber.e(it, "Failed to resolve city")
         viewState.askUserToProvideDefaultCity()
       }
   }
@@ -170,9 +229,5 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       putString(EXTRA_CITY, city)
       putString(EXTRA_DEFAULT_CITY, city)
     }
-  }
-
-  companion object {
-    const val TAG = "BookCreatePresenter"
   }
 }

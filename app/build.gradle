@@ -168,9 +168,6 @@ dependencies {
   implementation "io.reactivex.rxjava2:rxkotlin:2.4.0"
   implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
 
-  implementation "com.github.miguelbcr:RxPaparazzo:2.x-SNAPSHOT"
-  implementation "com.github.VictorAlbertos:RxActivityResult:0.5.0-2.x"
-
   def permissionsVersion = "1.1.1"
   implementation "com.github.florent37:runtime-permission:$permissionsVersion"
   implementation "com.github.florent37:runtime-permission-rx:$permissionsVersion"
