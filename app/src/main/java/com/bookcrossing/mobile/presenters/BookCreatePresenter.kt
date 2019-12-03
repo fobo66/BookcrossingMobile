@@ -25,7 +25,7 @@ import com.bookcrossing.mobile.code.BookStickerSaver
 import com.bookcrossing.mobile.code.QrCodeEncoder
 import com.bookcrossing.mobile.models.BookBuilder
 import com.bookcrossing.mobile.models.Date
-import com.bookcrossing.mobile.ui.create.BookCreateView
+import com.bookcrossing.mobile.ui.create.BookReleaseView
 import com.bookcrossing.mobile.util.EXTRA_CITY
 import com.bookcrossing.mobile.util.EXTRA_DEFAULT_CITY
 import com.crashlytics.android.Crashlytics
@@ -49,7 +49,7 @@ import java.util.UUID
  * Presenter for book create view
  */
 @InjectViewState
-class BookCreatePresenter : BasePresenter<BookCreateView>() {
+class BookCreatePresenter : BasePresenter<BookReleaseView>() {
 
   private val book: BookBuilder = BookBuilder()
   private lateinit var tempCoverUri: Uri

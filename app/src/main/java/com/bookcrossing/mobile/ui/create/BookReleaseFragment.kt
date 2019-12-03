@@ -61,7 +61,7 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class BookCreateFragment : BaseFragment(), BookCreateView {
+class BookReleaseFragment : BaseFragment(), BookReleaseView {
 
   @InjectPresenter
   lateinit var presenter: BookCreatePresenter
@@ -99,7 +99,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    return inflater.inflate(R.layout.fragment_book_create, container, false)
+    return inflater.inflate(R.layout.fragment_book_release, container, false)
   }
 
   override fun onViewCreated(

@@ -26,7 +26,7 @@ import moxy.viewstate.strategy.StateStrategyType
  * View for release new book screen
  */
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface BookCreateView : MvpView {
+interface BookReleaseView : MvpView {
   /**
    * User has selected cover for the book
    */
