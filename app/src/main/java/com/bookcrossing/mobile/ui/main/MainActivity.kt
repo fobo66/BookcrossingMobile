@@ -176,10 +176,10 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
       val whereToGo = intent.getStringExtra(EXTRA_TARGET_FRAGMENT)
       when {
         whereToGo != null -> when {
-          "BookCreateFragment".equals(
+          "BookReleaseFragment".equals(
             whereToGo,
             ignoreCase = true
-          ) -> navController.navigate(R.id.bookCreateFragment)
+          ) -> navController.navigate(R.id.bookReleaseFragment)
           "ProfileFragment".equals(
             whereToGo,
             ignoreCase = true
@@ -267,6 +267,6 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
   }
 
   override fun onBookAdd() {
-    findNavController(R.id.nav_host_fragment).navigate(R.id.bookCreateFragment)
+    findNavController(R.id.nav_host_fragment).navigate(R.id.bookReleaseFragment)
   }
 }

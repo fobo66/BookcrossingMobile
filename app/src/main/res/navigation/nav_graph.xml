@@ -65,7 +65,7 @@
       app:destination="@+id/mainFragment" />
     <action
       android:id="@+id/action_mainFragment_to_bookCreateFragment"
-      app:destination="@id/bookCreateFragment"
+      app:destination="@id/bookReleaseFragment"
       app:enterAnim="@anim/fui_slide_in_right"
       app:exitAnim="@anim/fui_slide_out_left" />
     <action
@@ -73,13 +73,13 @@
       app:destination="@id/searchFragment" />
   </fragment>
   <fragment
-    android:id="@+id/bookCreateFragment"
+    android:id="@+id/bookReleaseFragment"
     android:name="com.bookcrossing.mobile.ui.create.BookReleaseFragment"
     android:label="@string/add_new_book_title"
     tools:layout="@layout/fragment_book_release">
     <action
       android:id="@+id/action_bookCreateFragment_pop"
-      app:popUpTo="@id/bookCreateFragment"
+      app:popUpTo="@id/bookReleaseFragment"
       app:popUpToInclusive="true" />
   </fragment>
   <fragment
