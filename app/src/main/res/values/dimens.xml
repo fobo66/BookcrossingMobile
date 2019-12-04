@@ -20,9 +20,4 @@
   <dimen name="default_padding">16dp</dimen>
   <dimen name="text_input_padding">8dp</dimen>
   <dimen name="sticker_padding">10dp</dimen>
-
-  <dimen name="book_name_length">50</dimen>
-  <dimen name="book_author_length">70</dimen>
-  <dimen name="book_description_length">500</dimen>
-  <dimen name="book_position_length">85</dimen>
 </resources>
