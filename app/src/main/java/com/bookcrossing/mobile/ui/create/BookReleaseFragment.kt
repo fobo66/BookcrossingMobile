@@ -93,8 +93,6 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
   @BindString(R.string.rendered_sticker_description)
   lateinit var stickerDescription: String
 
-  private var coverChooserDialog: MaterialDialog? = null
-
   private lateinit var permissions: RxPermissions
 
   override fun onCreateView(
