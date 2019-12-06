@@ -46,10 +46,10 @@ import java.util.Calendar
 import java.util.UUID
 
 /**
- * Presenter for book create view
+ * Presenter for book release view
  */
 @InjectViewState
-class BookCreatePresenter : BasePresenter<BookReleaseView>() {
+class BookReleasePresenter : BasePresenter<BookReleaseView>() {
 
   private val book: BookBuilder = BookBuilder()
   private lateinit var tempCoverUri: Uri

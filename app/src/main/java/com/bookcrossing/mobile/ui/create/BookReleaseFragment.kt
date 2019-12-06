@@ -45,7 +45,7 @@ import com.afollestad.materialdialogs.list.listItems
 import com.bookcrossing.mobile.BuildConfig
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.modules.GlideApp
-import com.bookcrossing.mobile.presenters.BookCreatePresenter
+import com.bookcrossing.mobile.presenters.BookReleasePresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
@@ -61,10 +61,13 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
+/**
+ * Screen for release new book
+ */
 class BookReleaseFragment : BaseFragment(), BookReleaseView {
 
   @InjectPresenter
-  lateinit var presenter: BookCreatePresenter
+  lateinit var presenter: BookReleasePresenter
 
   @BindView(R.id.cover)
   lateinit var cover: ImageView
@@ -110,7 +113,6 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
 
     permissions = RxPermissions(this)
 
-    buildCoverChooserDialog()
     registerSubscriptions()
   }
 
@@ -126,16 +128,17 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     }
   }
 
-  private fun buildCoverChooserDialog() {
-    coverChooserDialog = MaterialDialog(requireContext())
-      .title(R.string.cover_chooser_title)
-      .listItems(R.array.cover_chooser_dialog_items, selection = { _, index, _ ->
+  private fun showCoverChooserDialog() {
+    MaterialDialog(requireContext()).show {
+      title(R.string.cover_chooser_title)
+      listItems(R.array.cover_chooser_dialog_items, selection = { _, index, _ ->
         if (index == 0) {
           requestCoverImageFromGallery()
         } else {
           requestCoverImageFromCamera()
         }
       })
+    }
   }
 
   private fun registerSubscriptions() {
@@ -174,7 +177,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
           position.isNotBlank() &&
           description.isNotBlank()
       }
-        .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+        .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { enabled: Boolean -> releaseButton.isEnabled = enabled }
     subscriptions.add(publishSubscription)
@@ -247,7 +250,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     val coverSubscription = cover.clicks()
       .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .observeOn(AndroidSchedulers.mainThread())
-      .subscribe { coverChooserDialog?.show() }
+      .subscribe { showCoverChooserDialog() }
     subscriptions.add(coverSubscription)
   }
 
