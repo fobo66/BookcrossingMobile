@@ -129,7 +129,7 @@
   <string name="retry_permission_request_action">Retry</string>
   <string name="go_to_settings_permission_request_action">Go to settings</string>
   <string name="error_book_name_malformed">Name contains incorrect symbols</string>
-  <string name="error_book_author_malformed">Author\'s name contains prohibited symbols</string>
+  <string name="error_book_author_malformed">Author\'s name contains incorrect symbols</string>
   <string name="error_book_description_malformed">Description contains incorrect symbols</string>
   <string name="error_book_position_malformed">Book position contains incorrect symbols</string>
   <string-array name="cover_chooser_dialog_items">
