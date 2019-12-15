@@ -109,6 +109,8 @@
   <string name="error_book_author_malformed">Имя автора книги содержит неправильные символы</string>
   <string name="error_book_description_malformed">Описание книги содержит неправильные символы</string>
   <string name="error_book_position_malformed">Местоположение книги содержит неправильные символы</string>
+  <string name="error_input_incorrect_symbols">Поле содержит неправильные символы</string>
+  <string name="error_input_empty">Поле не должно быть пустым</string>
   <string-array name="cover_chooser_dialog_items">
     <item>Из галереи</item>
     <item>Сделать фото</item>

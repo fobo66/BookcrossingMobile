@@ -132,6 +132,8 @@
   <string name="error_book_author_malformed">Author\'s name contains incorrect symbols</string>
   <string name="error_book_description_malformed">Description contains incorrect symbols</string>
   <string name="error_book_position_malformed">Book position contains incorrect symbols</string>
+  <string name="error_input_incorrect_symbols">Input contains incorrect symbols</string>
+  <string name="error_input_empty">Input should not be empty</string>
   <string-array name="cover_chooser_dialog_items">
     <item>From gallery</item>
     <item>From camera</item>
