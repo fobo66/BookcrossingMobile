@@ -19,6 +19,7 @@ package com.bookcrossing.mobile.util
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.util.ValidationResult.Invalid
 import com.bookcrossing.mobile.util.ValidationResult.OK
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /**
@@ -30,44 +31,6 @@ class InputValidatorTest {
   fun validator_noRules_OK() {
     val validator = InputValidator()
     assert(validator.validate("test") is OK)
-  }
-
-  @Test
-  fun validator_emptyRule_OK() {
-    val validator = InputValidator(NotEmptyRule())
-    assert(validator.validate("test") is OK)
-  }
-
-  @Test
-  fun validator_emptyRule_Invalid() {
-    val validator = InputValidator(NotEmptyRule())
-    assert(validator.validate("") is Invalid)
-  }
-
-  @Test
-  fun validator_emptyRule_Invalid_correctMessage() {
-    val validator = InputValidator(NotEmptyRule())
-    val invalidResult: Invalid = validator.validate("") as Invalid
-    assert(invalidResult.messageId == R.string.error_input_empty)
-  }
-
-  @Test
-  fun validator_prohibitedSymbolsRule_OK() {
-    val validator = InputValidator(ProhibitedSymbolsRule())
-    assert(validator.validate("test") is OK)
-  }
-
-  @Test
-  fun validator_prohibitedSymbolsRule_Invalid() {
-    val validator = InputValidator(ProhibitedSymbolsRule("#".toRegex()))
-    assert(validator.validate("test#") is Invalid)
-  }
-
-  @Test
-  fun validator_prohibitedSymbolsRule_Invalid_correctMessage() {
-    val validator = InputValidator(ProhibitedSymbolsRule("#".toRegex()))
-    val invalidResult: Invalid = validator.validate("test#") as Invalid
-    assert(invalidResult.messageId == R.string.error_input_incorrect_symbols)
   }
 
   @Test
@@ -86,20 +49,20 @@ class InputValidatorTest {
   fun validator_listOfRules_Invalid_correctMessage() {
     val validator = InputValidator(NotEmptyRule(), ProhibitedSymbolsRule("#".toRegex()))
     val invalidResult: Invalid = validator.validate("test#") as Invalid
-    assert(invalidResult.messageId == R.string.error_input_incorrect_symbols)
+    assertEquals(R.string.error_input_incorrect_symbols, invalidResult.messageId)
   }
 
   @Test
   fun validator_listOfRules_emptyFirst_correctMessage() {
     val validator = InputValidator(NotEmptyRule(), ProhibitedSymbolsRule("#".toRegex()))
     val invalidResult: Invalid = validator.validate("") as Invalid
-    assert(invalidResult.messageId == R.string.error_input_empty)
+    assertEquals(R.string.error_input_empty, invalidResult.messageId)
   }
 
   @Test
   fun validator_listOfRules_prohibitedSymbolsFirst_correctMessage() {
     val validator = InputValidator(ProhibitedSymbolsRule("#".toRegex()), NotEmptyRule())
     val invalidResult: Invalid = validator.validate("test#") as Invalid
-    assert(invalidResult.messageId == R.string.error_input_incorrect_symbols)
+    assertEquals(R.string.error_input_incorrect_symbols, invalidResult.messageId)
   }
 }

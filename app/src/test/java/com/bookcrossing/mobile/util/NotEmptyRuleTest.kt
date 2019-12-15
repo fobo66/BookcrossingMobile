@@ -16,25 +16,35 @@
 
 package com.bookcrossing.mobile.util
 
+import com.bookcrossing.mobile.R
+import com.bookcrossing.mobile.util.ValidationResult.Invalid
 import com.bookcrossing.mobile.util.ValidationResult.OK
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
-/**
- * Validate string input from the user by list of predefined rules
- */
-class InputValidator(
-  private val rules: List<ValidationRule>
-) {
+class NotEmptyRuleTest {
 
-  constructor(vararg rulesArray: ValidationRule) : this(rulesArray.asList())
+  private val rule = NotEmptyRule()
 
-  fun validate(input: String): ValidationResult {
-    val initial: ValidationResult = OK
-    return rules.fold(initial) { acc: ValidationResult, validationRule: ValidationRule ->
-      if (acc is OK) {
-        validationRule.check(input)
-      } else {
-        acc
-      }
-    }
+  @Test
+  fun notEmpty_OK() {
+    assert(rule.check("test") is OK)
   }
+
+  @Test
+  fun emptyString_Invalid() {
+    assert(rule.check("") is Invalid)
+  }
+
+  @Test
+  fun blankString_Invalid() {
+    assert(rule.check("   ") is Invalid)
+  }
+
+  @Test
+  fun emptyString_Invalid_correctMessage() {
+    val invalidResult: Invalid = rule.check("") as Invalid
+    assertEquals(R.string.error_input_empty, invalidResult.messageId)
+  }
+
 }
