@@ -88,5 +88,4 @@ class SearchPresenter : BasePresenter<SearchView>() {
     searcher.cancel()
     connection.disconnect()
   }
-
 }

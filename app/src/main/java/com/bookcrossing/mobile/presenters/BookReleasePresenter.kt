@@ -85,7 +85,11 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
       }
     contentResolver.openOutputStream(tempCoverUri)
       .use {
-        coverPhoto?.compress(Bitmap.CompressFormat.JPEG, 60, it)
+        coverPhoto?.compress(
+          Bitmap.CompressFormat.JPEG,
+          COMPRESSION_QUALITY,
+          it
+        )
       }
     viewState.onCoverChosen(tempCoverUri)
   }
@@ -229,5 +233,9 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
       putString(EXTRA_CITY, city)
       putString(EXTRA_DEFAULT_CITY, city)
     }
+  }
+
+  companion object {
+    const val COMPRESSION_QUALITY: Int = 60
   }
 }

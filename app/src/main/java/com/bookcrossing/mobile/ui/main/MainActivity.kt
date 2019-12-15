@@ -123,7 +123,7 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
             try {
               privacyUrl = URL(PRIVACY_POLICY_URL)
             } catch (e: MalformedURLException) {
-              throw RuntimeException(e)
+              throw IllegalArgumentException("Privacy policy URL was malformed", e)
             }
 
             val form = ConsentForm.Builder(this@MainActivity, privacyUrl).withListener(
@@ -195,18 +195,18 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
   }
 
   override fun onMenuItemClick(item: MenuItem?): Boolean {
-    when (item?.itemId) {
+    return when (item?.itemId) {
       R.id.menu_action_search -> {
         findNavController(R.id.nav_host_fragment).navigate(R.id.searchFragment)
         item.expandActionView()
-        return true
+        true
       }
       R.id.menu_action_logout -> {
         AuthUI.getInstance().signOut(this).addOnCompleteListener { finish() }
-        return true
+        true
       }
+      else -> false
     }
-    return false
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
