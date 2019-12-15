@@ -106,6 +106,7 @@ dependencies {
   testImplementation "org.robolectric:robolectric:4.3.1"
   testImplementation "androidx.test:core:1.2.0"
   androidTestImplementation "androidx.test.ext:junit:1.1.1"
+  androidTestImplementation "org.mockito:mockito-android:3.2.0"
   androidTestImplementation "androidx.test.espresso:espresso-core:3.2.0"
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -117,7 +118,7 @@ dependencies {
   implementation "com.github.moxy-community:moxy-androidx:$moxyVersion"
 
   implementation "com.google.firebase:firebase-auth:19.2.0"
-  implementation "com.google.firebase:firebase-messaging:20.0.1"
+  implementation "com.google.firebase:firebase-messaging:20.1.0"
   implementation "com.google.firebase:firebase-ads:18.3.0"
   implementation "com.google.android.ads.consent:consent-library:1.0.7"
 
