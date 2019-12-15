@@ -19,33 +19,38 @@ package com.bookcrossing.mobile.util
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.util.ValidationResult.Invalid
 import com.bookcrossing.mobile.util.ValidationResult.OK
-import org.hamcrest.Matchers
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThat
+import org.hamcrest.Matchers.instanceOf
+import org.junit.Assert.*
 import org.junit.Test
 
-class ProhibitedSymbolsRuleTest {
-  private val rule = ProhibitedSymbolsRule()
+class LengthRuleTest {
+
+  private val rule = LengthRule(0, 10)
 
   @Test
-  fun plainText_OK() {
-    assertThat(rule.check("test"), Matchers.instanceOf(OK.javaClass))
+  fun correctLength_OK() {
+    assertThat(rule.check("test"), instanceOf(OK.javaClass))
   }
 
   @Test
-  fun defaultRegex_failedSymbol_Invalid() {
-    assertThat(rule.check("test#"), Matchers.instanceOf(Invalid::class.java))
+  fun tooLong_Invalid() {
+    assertThat(rule.check("testtesttesttesttest"), instanceOf(Invalid::class.java))
   }
 
   @Test
-  fun customRegex_failedSymbol_Invalid() {
-    val customRule = ProhibitedSymbolsRule("a".toRegex())
-    assertThat(customRule.check("testa"), Matchers.instanceOf(Invalid::class.java))
+  fun tooLong_Invalid_correctMessage() {
+    val invalidResult = rule.check("testtesttesttesttest") as Invalid
+    assertEquals(R.string.error_too_long, invalidResult.messageId)
   }
 
   @Test
-  fun failedSymbol_Invalid_correctMessage() {
-    val invalidResult: Invalid = rule.check("test#") as Invalid
-    assertEquals(R.string.error_input_incorrect_symbols, invalidResult.messageId)
+  fun empty_Invalid() {
+    assertThat(rule.check(""), instanceOf(Invalid::class.java))
+  }
+
+  @Test
+  fun empty_Invalid_correctMessage() {
+    val invalidResult = rule.check("") as Invalid
+    assertEquals(R.string.error_too_short, invalidResult.messageId)
   }
 }

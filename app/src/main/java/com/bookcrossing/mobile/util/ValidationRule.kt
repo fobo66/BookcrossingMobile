@@ -30,9 +30,25 @@ class NotEmptyRule : ValidationRule {
   }
 }
 
-class ProhibitedSymbolsRule(private val prohibitedSymbols: Regex = "[*#\\[\\]?]".toRegex()) :
-  ValidationRule {
+class ProhibitedSymbolsRule(
+  private val prohibitedSymbols: Regex = "[*#\\[\\]?]".toRegex()
+) : ValidationRule {
   override fun check(input: String): ValidationResult {
     return if (!input.contains(prohibitedSymbols)) OK else Invalid(R.string.error_input_incorrect_symbols)
+  }
+}
+
+class LengthRule(
+  private val minLength: Int = 0,
+  private val maxLength: Int
+) : ValidationRule {
+  override fun check(input: String): ValidationResult {
+    return if (input.length <= minLength) {
+      Invalid(R.string.error_too_short)
+    } else if (input.length > maxLength) {
+      Invalid(R.string.error_too_long)
+    } else {
+      OK
+    }
   }
 }
