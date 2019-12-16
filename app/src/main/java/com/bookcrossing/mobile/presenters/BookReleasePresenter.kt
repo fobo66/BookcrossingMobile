@@ -20,7 +20,9 @@ import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.annotation.IdRes
 import androidx.core.content.edit
+import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.code.BookStickerSaver
 import com.bookcrossing.mobile.code.QrCodeEncoder
 import com.bookcrossing.mobile.models.BookBuilder
@@ -116,41 +118,6 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   /** Validate user input */
   fun validateInput(input: String): ValidationResult = validator.validate(input)
 
-  /** Set book name */
-  fun onNameChange(name: String) {
-    book.setName(name)
-    if (name.isNotBlank()) {
-      viewState.showCover()
-    }
-  }
-
-  /** Validate book author */
-  fun onAuthorChange(author: String) {
-    if (!author.contains(prohibitedSymbols)) {
-      book.setAuthor(author)
-    } else {
-      viewState.onAuthorError()
-    }
-  }
-
-  /** Validate book position */
-  fun onPositionChange(position: String) {
-    if (!position.contains(prohibitedSymbols)) {
-      book.setPositionName(position)
-    } else {
-      viewState.onPositionError()
-    }
-  }
-
-  /** Validate book description */
-  fun onDescriptionChange(description: String) {
-    if (!description.contains(prohibitedSymbols)) {
-      book.setDescription(description)
-    } else {
-      viewState.onDescriptionError()
-    }
-  }
-
   /** Release book */
   fun releaseBook(city: String): Observable<String> {
     setPublicationDate()
@@ -238,6 +205,15 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
     systemServicesWrapper.preferences.edit {
       putString(EXTRA_CITY, city)
       putString(EXTRA_DEFAULT_CITY, city)
+    }
+  }
+
+  fun handleInputField(@IdRes id: Int, input: String) {
+    when (id) {
+      R.id.input_name -> book.setName(input)
+      R.id.input_author -> book.setAuthor(input)
+      R.id.input_position -> book.setPositionName(input)
+      R.id.input_description -> book.setDescription(input)
     }
   }
 

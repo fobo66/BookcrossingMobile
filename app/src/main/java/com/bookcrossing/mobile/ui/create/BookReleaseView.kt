@@ -51,24 +51,4 @@ interface BookReleaseView : MvpView {
    * Show prompt to user about the need to provide default city
    */
   fun askUserToProvideDefaultCity()
-
-  /**
-   * Show error indicator that book name contains prohibited symbols
-   */
-  fun onNameError()
-
-  /**
-   * Show error indicator that book author contains prohibited symbols
-   */
-  fun onAuthorError()
-
-  /**
-   * Show error indicator that book position contains prohibited symbols
-   */
-  fun onPositionError()
-
-  /**
-   * Show error indicator that book description contains prohibited symbols
-   */
-  fun onDescriptionError()
 }

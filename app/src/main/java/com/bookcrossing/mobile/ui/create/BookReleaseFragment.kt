@@ -142,17 +142,10 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
   }
 
   private fun registerSubscriptions() {
-    registerBookSubscriptions()
+    registerCoverClickSubscription()
+    registerInputProcessingSubscription()
     registerPublishButtonEnableSubscription()
     registerPublishButtonClickSubscription()
-  }
-
-  private fun registerBookSubscriptions() {
-    registerCoverClickSubscription()
-    registerNameInputSubscription()
-    registerAuthorInputSubscription()
-    registerPositionInputSubscription()
-    registerDescriptionInputSubscription()
   }
 
   private fun registerPublishButtonClickSubscription() {
@@ -183,59 +176,22 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     subscriptions.add(publishSubscription)
   }
 
-  private fun registerDescriptionInputSubscription() {
-    val descriptionSubscription = bookDescriptionInput.afterTextChangeEvents()
+  private fun registerInputProcessingSubscription() {
+    val nameSubscription = Observable.merge(
+      bookNameInput.afterTextChangeEvents(),
+      bookAuthorInput.afterTextChangeEvents(),
+      bookPositionInput.afterTextChangeEvents(),
+      bookDescriptionInput.afterTextChangeEvents()
+    )
       .doOnNext {
-        clearTextViewError(bookDescriptionInput)
-      }
-      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .subscribe { event -> presenter.onDescriptionChange(event.view.text.toString()) }
-    subscriptions.add(descriptionSubscription)
-  }
-
-  override fun onDescriptionError() {
-    bookDescriptionInput.error = getString(R.string.error_book_description_malformed)
-  }
-
-  private fun registerPositionInputSubscription() {
-    val positionSubscription = bookPositionInput.afterTextChangeEvents()
-      .doOnNext {
-        clearTextViewError(bookPositionInput)
-      }
-      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .subscribe { event -> presenter.onPositionChange(event.view.text.toString()) }
-    subscriptions.add(positionSubscription)
-  }
-
-  override fun onPositionError() {
-    bookPositionInput.error = getString(R.string.error_book_position_malformed)
-  }
-
-  private fun registerAuthorInputSubscription() {
-    val authorSubscription = bookAuthorInput.afterTextChangeEvents()
-      .doOnNext {
-        clearTextViewError(bookAuthorInput)
-      }
-      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .subscribe { event -> presenter.onAuthorChange(event.view.text.toString()) }
-    subscriptions.add(authorSubscription)
-  }
-
-  override fun onAuthorError() {
-    bookAuthorInput.error = getString(R.string.error_book_author_malformed)
-  }
-
-  private fun registerNameInputSubscription() {
-    val nameSubscription = bookNameInput.afterTextChangeEvents()
-      .doOnNext {
-        clearTextViewError(bookNameInput)
+        clearTextViewError(it.view)
       }
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe { event ->
         val input = event.view.text.toString()
         when (val result = presenter.validateInput(input)) {
-          is OK -> presenter.onNameChange(input)
+          is OK -> presenter.handleInputField(event.view.id, input)
           is Invalid -> event.view.error = getString(result.messageId)
         }
       }
@@ -246,10 +202,6 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     if (input.error != null) {
       input.error = null
     }
-  }
-
-  override fun onNameError() {
-    bookNameInput.error = getString(R.string.error_book_name_malformed)
   }
 
   private fun registerCoverClickSubscription() {
