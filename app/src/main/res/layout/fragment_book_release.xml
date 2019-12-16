@@ -44,7 +44,7 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/text_input_padding"
     app:counterEnabled="true"
-    app:counterMaxLength="50"
+    app:counterMaxLength="100"
     >
 
     <com.google.android.material.textfield.TextInputEditText
@@ -62,7 +62,7 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/text_input_padding"
     app:counterEnabled="true"
-    app:counterMaxLength="70"
+    app:counterMaxLength="100"
     >
 
     <com.google.android.material.textfield.TextInputEditText
@@ -80,7 +80,7 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/text_input_padding"
     app:counterEnabled="true"
-    app:counterMaxLength="85"
+    app:counterMaxLength="100"
     >
 
     <com.google.android.material.textfield.TextInputEditText
@@ -99,7 +99,7 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/text_input_padding"
     app:counterEnabled="true"
-    app:counterMaxLength="500"
+    app:counterMaxLength="100"
     >
 
     <com.google.android.material.textfield.TextInputEditText
