@@ -48,6 +48,8 @@ import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.presenters.BookReleasePresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
+import com.bookcrossing.mobile.util.ValidationResult.Invalid
+import com.bookcrossing.mobile.util.ValidationResult.OK
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.jakewharton.rxbinding3.view.clicks
@@ -230,7 +232,13 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
       }
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .observeOn(AndroidSchedulers.mainThread())
-      .subscribe { event -> presenter.onNameChange(event.view.text.toString()) }
+      .subscribe { event ->
+        val input = event.view.text.toString()
+        when (val result = presenter.validateInput(input)) {
+          is OK -> presenter.onNameChange(input)
+          is Invalid -> event.view.error = getString(result.messageId)
+        }
+      }
     subscriptions.add(nameSubscription)
   }
 

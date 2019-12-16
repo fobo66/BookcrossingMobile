@@ -23,7 +23,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class NotEmptyRuleTest {
-
   private val rule = NotEmptyRule()
 
   @Test
@@ -46,5 +45,4 @@ class NotEmptyRuleTest {
     val invalidResult: Invalid = rule.check("") as Invalid
     assertEquals(R.string.error_input_empty, invalidResult.messageId)
   }
-
 }

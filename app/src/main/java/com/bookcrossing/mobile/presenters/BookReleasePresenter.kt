@@ -28,6 +28,11 @@ import com.bookcrossing.mobile.models.Date
 import com.bookcrossing.mobile.ui.create.BookReleaseView
 import com.bookcrossing.mobile.util.EXTRA_CITY
 import com.bookcrossing.mobile.util.EXTRA_DEFAULT_CITY
+import com.bookcrossing.mobile.util.InputValidator
+import com.bookcrossing.mobile.util.LengthRule
+import com.bookcrossing.mobile.util.NotEmptyRule
+import com.bookcrossing.mobile.util.ProhibitedSymbolsRule
+import com.bookcrossing.mobile.util.ValidationResult
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.storage.StorageMetadata
 import com.google.zxing.WriterException
@@ -54,6 +59,8 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   private val book: BookBuilder = BookBuilder()
   private lateinit var tempCoverUri: Uri
   private val prohibitedSymbols = "[*#\\[\\]?]".toRegex()
+  private val validator =
+    InputValidator(NotEmptyRule(), ProhibitedSymbolsRule(), LengthRule(maxLength = 100))
 
   private fun uploadCover(key: String): Observable<String> {
     val metadata = StorageMetadata.Builder()
@@ -106,15 +113,14 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
     }
   }
 
-  /** Validate book name */
+  /** Validate user input */
+  fun validateInput(input: String): ValidationResult = validator.validate(input)
+
+  /** Set book name */
   fun onNameChange(name: String) {
-    if (!name.contains(prohibitedSymbols)) {
-      book.setName(name)
-      if (name.isNotBlank()) {
-        viewState.showCover()
-      }
-    } else {
-      viewState.onNameError()
+    book.setName(name)
+    if (name.isNotBlank()) {
+      viewState.showCover()
     }
   }
 

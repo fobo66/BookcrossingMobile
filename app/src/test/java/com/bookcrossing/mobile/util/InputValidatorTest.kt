@@ -65,4 +65,15 @@ class InputValidatorTest {
     val invalidResult: Invalid = validator.validate("test#") as Invalid
     assertEquals(R.string.error_input_incorrect_symbols, invalidResult.messageId)
   }
+
+  @Test
+  fun validator_listOfRules_lastRuleMatches_correctMessage() {
+    val validator = InputValidator(
+      NotEmptyRule(),
+      ProhibitedSymbolsRule("#".toRegex()),
+      LengthRule(maxLength = 5)
+    )
+    val invalidResult: Invalid = validator.validate("testtesttest") as Invalid
+    assertEquals(R.string.error_too_long, invalidResult.messageId)
+  }
 }

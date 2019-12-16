@@ -20,16 +20,32 @@ import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.util.ValidationResult.Invalid
 import com.bookcrossing.mobile.util.ValidationResult.OK
 
+/**
+ * Rule by which correctness of user's input is determined
+ */
 interface ValidationRule {
+  /**
+   * Check if input string conforms with conditions defined in this rule
+   *
+   * @param input user's input
+   *
+   * @return result which describes, is input OK or not and specifies corresponding error message
+   */
   fun check(input: String): ValidationResult
 }
 
+/**
+ * Rule for allowing only non-empty strings
+ */
 class NotEmptyRule : ValidationRule {
   override fun check(input: String): ValidationResult {
     return if (input.isNotBlank()) OK else Invalid(R.string.error_input_empty)
   }
 }
 
+/**
+ * Rule that prohibits certain symbols
+ */
 class ProhibitedSymbolsRule(
   private val prohibitedSymbols: Regex = "[*#\\[\\]?]".toRegex()
 ) : ValidationRule {
@@ -38,17 +54,24 @@ class ProhibitedSymbolsRule(
   }
 }
 
+/**
+ * Rule for limiting string length that can be inputted
+ */
 class LengthRule(
   private val minLength: Int = 0,
   private val maxLength: Int
 ) : ValidationRule {
   override fun check(input: String): ValidationResult {
-    return if (input.length <= minLength) {
-      Invalid(R.string.error_too_short)
-    } else if (input.length > maxLength) {
-      Invalid(R.string.error_too_long)
-    } else {
-      OK
+    return when {
+      input.length <= minLength -> {
+        Invalid(R.string.error_too_short)
+      }
+      input.length > maxLength -> {
+        Invalid(R.string.error_too_long)
+      }
+      else -> {
+        OK
+      }
     }
   }
 }
