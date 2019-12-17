@@ -172,7 +172,7 @@ dependencies {
   implementation "com.github.florent37:runtime-permission:$permissionsVersion"
   implementation "com.github.florent37:runtime-permission-rx:$permissionsVersion"
 
-  def firebaseUiVersion = "6.1.0"
+  def firebaseUiVersion = "6.2.0"
   implementation "com.firebaseui:firebase-ui:$firebaseUiVersion"
   implementation "com.firebaseui:firebase-ui-storage:$firebaseUiVersion"
   implementation "com.firebaseui:firebase-ui-database:$firebaseUiVersion"
