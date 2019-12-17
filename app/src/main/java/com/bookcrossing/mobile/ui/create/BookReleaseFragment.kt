@@ -183,6 +183,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
       bookPositionInput.afterTextChangeEvents(),
       bookDescriptionInput.afterTextChangeEvents()
     )
+      .skip(4)
       .doOnNext {
         clearTextViewError(it.view)
       }
@@ -194,6 +195,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
           is OK -> presenter.handleInputField(event.view.id, input)
           is Invalid -> event.view.error = getString(result.messageId)
         }
+        showCover()
       }
     subscriptions.add(nameSubscription)
   }
