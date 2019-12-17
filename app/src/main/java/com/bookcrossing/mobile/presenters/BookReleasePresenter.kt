@@ -33,7 +33,6 @@ import com.bookcrossing.mobile.util.EXTRA_DEFAULT_CITY
 import com.bookcrossing.mobile.util.InputValidator
 import com.bookcrossing.mobile.util.LengthRule
 import com.bookcrossing.mobile.util.NotEmptyRule
-import com.bookcrossing.mobile.util.ProhibitedSymbolsRule
 import com.bookcrossing.mobile.util.ValidationResult
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.storage.StorageMetadata
@@ -61,7 +60,7 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   private val book: BookBuilder = BookBuilder()
   private lateinit var tempCoverUri: Uri
   private val validator =
-    InputValidator(NotEmptyRule(), ProhibitedSymbolsRule(), LengthRule(maxLength = 100))
+    InputValidator(NotEmptyRule(), LengthRule(maxLength = 100))
 
   private fun uploadCover(key: String): Observable<String> {
     val metadata = StorageMetadata.Builder()
