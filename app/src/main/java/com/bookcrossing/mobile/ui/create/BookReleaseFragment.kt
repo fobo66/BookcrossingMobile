@@ -45,9 +45,11 @@ import com.afollestad.materialdialogs.list.listItems
 import com.bookcrossing.mobile.BuildConfig
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.modules.GlideApp
-import com.bookcrossing.mobile.presenters.BookCreatePresenter
+import com.bookcrossing.mobile.presenters.BookReleasePresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
+import com.bookcrossing.mobile.util.ValidationResult.Invalid
+import com.bookcrossing.mobile.util.ValidationResult.OK
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.jakewharton.rxbinding3.view.clicks
@@ -61,10 +63,13 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class BookCreateFragment : BaseFragment(), BookCreateView {
+/**
+ * Screen for release new book
+ */
+class BookReleaseFragment : BaseFragment(), BookReleaseView {
 
   @InjectPresenter
-  lateinit var presenter: BookCreatePresenter
+  lateinit var presenter: BookReleasePresenter
 
   @BindView(R.id.cover)
   lateinit var cover: ImageView
@@ -90,8 +95,6 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
   @BindString(R.string.rendered_sticker_description)
   lateinit var stickerDescription: String
 
-  private var coverChooserDialog: MaterialDialog? = null
-
   private lateinit var permissions: RxPermissions
 
   override fun onCreateView(
@@ -99,7 +102,7 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    return inflater.inflate(R.layout.fragment_book_create, container, false)
+    return inflater.inflate(R.layout.fragment_book_release, container, false)
   }
 
   override fun onViewCreated(
@@ -110,7 +113,6 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
 
     permissions = RxPermissions(this)
 
-    buildCoverChooserDialog()
     registerSubscriptions()
   }
 
@@ -126,30 +128,24 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     }
   }
 
-  private fun buildCoverChooserDialog() {
-    coverChooserDialog = MaterialDialog(requireContext())
-      .title(R.string.cover_chooser_title)
-      .listItems(R.array.cover_chooser_dialog_items, selection = { _, index, _ ->
+  private fun showCoverChooserDialog() {
+    MaterialDialog(requireContext()).show {
+      title(R.string.cover_chooser_title)
+      listItems(R.array.cover_chooser_dialog_items, selection = { _, index, _ ->
         if (index == 0) {
           requestCoverImageFromGallery()
         } else {
           requestCoverImageFromCamera()
         }
       })
+    }
   }
 
   private fun registerSubscriptions() {
-    registerBookSubscriptions()
+    registerCoverClickSubscription()
+    registerInputProcessingSubscription()
     registerPublishButtonEnableSubscription()
     registerPublishButtonClickSubscription()
-  }
-
-  private fun registerBookSubscriptions() {
-    registerCoverClickSubscription()
-    registerNameInputSubscription()
-    registerAuthorInputSubscription()
-    registerPositionInputSubscription()
-    registerDescriptionInputSubscription()
   }
 
   private fun registerPublishButtonClickSubscription() {
@@ -174,62 +170,33 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
           position.isNotBlank() &&
           description.isNotBlank()
       }
-        .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+        .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { enabled: Boolean -> releaseButton.isEnabled = enabled }
     subscriptions.add(publishSubscription)
   }
 
-  private fun registerDescriptionInputSubscription() {
-    val descriptionSubscription = bookDescriptionInput.afterTextChangeEvents()
+  private fun registerInputProcessingSubscription() {
+    val nameSubscription = Observable.merge(
+      bookNameInput.afterTextChangeEvents(),
+      bookAuthorInput.afterTextChangeEvents(),
+      bookPositionInput.afterTextChangeEvents(),
+      bookDescriptionInput.afterTextChangeEvents()
+    )
+      .skip(4)
       .doOnNext {
-        clearTextViewError(bookDescriptionInput)
-      }
-      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .subscribe { event -> presenter.onDescriptionChange(event.view.text.toString()) }
-    subscriptions.add(descriptionSubscription)
-  }
-
-  override fun onDescriptionError() {
-    bookDescriptionInput.error = getString(R.string.error_book_description_malformed)
-  }
-
-  private fun registerPositionInputSubscription() {
-    val positionSubscription = bookPositionInput.afterTextChangeEvents()
-      .doOnNext {
-        clearTextViewError(bookPositionInput)
-      }
-      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .subscribe { event -> presenter.onPositionChange(event.view.text.toString()) }
-    subscriptions.add(positionSubscription)
-  }
-
-  override fun onPositionError() {
-    bookPositionInput.error = getString(R.string.error_book_position_malformed)
-  }
-
-  private fun registerAuthorInputSubscription() {
-    val authorSubscription = bookAuthorInput.afterTextChangeEvents()
-      .doOnNext {
-        clearTextViewError(bookAuthorInput)
-      }
-      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-      .subscribe { event -> presenter.onAuthorChange(event.view.text.toString()) }
-    subscriptions.add(authorSubscription)
-  }
-
-  override fun onAuthorError() {
-    bookAuthorInput.error = getString(R.string.error_book_author_malformed)
-  }
-
-  private fun registerNameInputSubscription() {
-    val nameSubscription = bookNameInput.afterTextChangeEvents()
-      .doOnNext {
-        clearTextViewError(bookNameInput)
+        clearTextViewError(it.view)
       }
       .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .observeOn(AndroidSchedulers.mainThread())
-      .subscribe { event -> presenter.onNameChange(event.view.text.toString()) }
+      .subscribe { event ->
+        val input = event.view.text.toString()
+        when (val result = presenter.validateInput(input)) {
+          is OK -> presenter.handleInputField(event.view.id, input)
+          is Invalid -> event.view.error = getString(result.messageId)
+        }
+        showCover()
+      }
     subscriptions.add(nameSubscription)
   }
 
@@ -239,15 +206,11 @@ class BookCreateFragment : BaseFragment(), BookCreateView {
     }
   }
 
-  override fun onNameError() {
-    bookNameInput.error = getString(R.string.error_book_name_malformed)
-  }
-
   private fun registerCoverClickSubscription() {
     val coverSubscription = cover.clicks()
       .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
       .observeOn(AndroidSchedulers.mainThread())
-      .subscribe { coverChooserDialog?.show() }
+      .subscribe { showCoverChooserDialog() }
     subscriptions.add(coverSubscription)
   }
 

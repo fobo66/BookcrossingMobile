@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~     Copyright 2019 Andrey Mukamolov
+  ~    Copyright 2019 Andrey Mukamolov
   ~
-  ~     Licensed under the Apache License, Version 2.0 (the "License");
-  ~     you may not use this file except in compliance with the License.
-  ~     You may obtain a copy of the License at
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
   ~
-  ~         http://www.apache.org/licenses/LICENSE-2.0
+  ~        http://www.apache.org/licenses/LICENSE-2.0
   ~
-  ~     Unless required by applicable law or agreed to in writing, software
-  ~     distributed under the License is distributed on an "AS IS" BASIS,
-  ~     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~     See the License for the specific language governing permissions and
-  ~     limitations under the License.
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
   -->
 
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
@@ -65,7 +65,7 @@
       app:destination="@+id/mainFragment" />
     <action
       android:id="@+id/action_mainFragment_to_bookCreateFragment"
-      app:destination="@id/bookCreateFragment"
+      app:destination="@id/bookReleaseFragment"
       app:enterAnim="@anim/fui_slide_in_right"
       app:exitAnim="@anim/fui_slide_out_left" />
     <action
@@ -73,13 +73,13 @@
       app:destination="@id/searchFragment" />
   </fragment>
   <fragment
-    android:id="@+id/bookCreateFragment"
-    android:name="com.bookcrossing.mobile.ui.create.BookCreateFragment"
+    android:id="@+id/bookReleaseFragment"
+    android:name="com.bookcrossing.mobile.ui.create.BookReleaseFragment"
     android:label="@string/add_new_book_title"
-    tools:layout="@layout/fragment_book_create">
+    tools:layout="@layout/fragment_book_release">
     <action
       android:id="@+id/action_bookCreateFragment_pop"
-      app:popUpTo="@id/bookCreateFragment"
+      app:popUpTo="@id/bookReleaseFragment"
       app:popUpToInclusive="true" />
   </fragment>
   <fragment

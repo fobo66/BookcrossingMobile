@@ -16,11 +16,30 @@
 
 package com.bookcrossing.mobile.util
 
-import android.content.Context
-import javax.inject.Inject
+import com.bookcrossing.mobile.util.ValidationResult.OK
 
-class ResourceProviderImpl @Inject constructor(
-        private val context: Context
-) : ResourceProvider {
-    override fun getString(stringRes: Int): String = context.getString(stringRes)
+/**
+ * Validate string input from the user by list of predefined rules
+ */
+class InputValidator(
+  private val rules: List<ValidationRule>
+) {
+
+  constructor(vararg rulesArray: ValidationRule) : this(rulesArray.asList())
+
+  /**
+   * Validate string input
+   *
+   * @param input User's input from text field
+   */
+  fun validate(input: String): ValidationResult {
+    val initial: ValidationResult = OK
+    return rules.fold(initial) { acc: ValidationResult, validationRule: ValidationRule ->
+      if (acc is OK) {
+        validationRule.check(input)
+      } else {
+        acc
+      }
+    }
+  }
 }

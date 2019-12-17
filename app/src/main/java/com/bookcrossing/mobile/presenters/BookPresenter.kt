@@ -18,7 +18,6 @@ package com.bookcrossing.mobile.presenters
 
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.ui.bookpreview.BookView
-import com.crashlytics.android.Crashlytics
 import com.google.firebase.database.DatabaseReference
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import moxy.InjectViewState
@@ -71,7 +70,7 @@ class BookPresenter : BasePresenter<BookView>() {
   }
 
   fun reportAbuse(key: String) {
-    Crashlytics.log(String.format("Users complaining to book %s. Consider to check it", key))
+    Timber.e("Users complaining to book %s. Consider to check it", key)
     viewState.onAbuseReported()
   }
 }

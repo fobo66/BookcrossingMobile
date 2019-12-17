@@ -20,14 +20,20 @@ import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.annotation.IdRes
 import androidx.core.content.edit
+import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.code.BookStickerSaver
 import com.bookcrossing.mobile.code.QrCodeEncoder
 import com.bookcrossing.mobile.models.BookBuilder
 import com.bookcrossing.mobile.models.Date
-import com.bookcrossing.mobile.ui.create.BookCreateView
+import com.bookcrossing.mobile.ui.create.BookReleaseView
 import com.bookcrossing.mobile.util.EXTRA_CITY
 import com.bookcrossing.mobile.util.EXTRA_DEFAULT_CITY
+import com.bookcrossing.mobile.util.InputValidator
+import com.bookcrossing.mobile.util.LengthRule
+import com.bookcrossing.mobile.util.NotEmptyRule
+import com.bookcrossing.mobile.util.ValidationResult
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.storage.StorageMetadata
 import com.google.zxing.WriterException
@@ -46,14 +52,15 @@ import java.util.Calendar
 import java.util.UUID
 
 /**
- * Presenter for book create view
+ * Presenter for book release view
  */
 @InjectViewState
-class BookCreatePresenter : BasePresenter<BookCreateView>() {
+class BookReleasePresenter : BasePresenter<BookReleaseView>() {
 
   private val book: BookBuilder = BookBuilder()
   private lateinit var tempCoverUri: Uri
-  private val prohibitedSymbols = "[*#\\[\\]?]".toRegex()
+  private val validator =
+    InputValidator(NotEmptyRule(), LengthRule(maxLength = 100))
 
   private fun uploadCover(key: String): Observable<String> {
     val metadata = StorageMetadata.Builder()
@@ -85,7 +92,11 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       }
     contentResolver.openOutputStream(tempCoverUri)
       .use {
-        coverPhoto?.compress(Bitmap.CompressFormat.JPEG, 60, it)
+        coverPhoto?.compress(
+          Bitmap.CompressFormat.JPEG,
+          COMPRESSION_QUALITY,
+          it
+        )
       }
     viewState.onCoverChosen(tempCoverUri)
   }
@@ -102,44 +113,8 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
     }
   }
 
-  /** Validate book name */
-  fun onNameChange(name: String) {
-    if (!name.contains(prohibitedSymbols)) {
-      book.setName(name)
-      if (name.isNotBlank()) {
-        viewState.showCover()
-      }
-    } else {
-      viewState.onNameError()
-    }
-  }
-
-  /** Validate book author */
-  fun onAuthorChange(author: String) {
-    if (!author.contains(prohibitedSymbols)) {
-      book.setAuthor(author)
-    } else {
-      viewState.onAuthorError()
-    }
-  }
-
-  /** Validate book position */
-  fun onPositionChange(position: String) {
-    if (!position.contains(prohibitedSymbols)) {
-      book.setPositionName(position)
-    } else {
-      viewState.onPositionError()
-    }
-  }
-
-  /** Validate book description */
-  fun onDescriptionChange(description: String) {
-    if (!description.contains(prohibitedSymbols)) {
-      book.setDescription(description)
-    } else {
-      viewState.onDescriptionError()
-    }
-  }
+  /** Validate user input */
+  fun validateInput(input: String): ValidationResult = validator.validate(input)
 
   /** Release book */
   fun releaseBook(city: String): Observable<String> {
@@ -229,5 +204,21 @@ class BookCreatePresenter : BasePresenter<BookCreateView>() {
       putString(EXTRA_CITY, city)
       putString(EXTRA_DEFAULT_CITY, city)
     }
+  }
+
+  /**
+   * Set correct value from user input
+   */
+  fun handleInputField(@IdRes id: Int, input: String) {
+    when (id) {
+      R.id.input_name -> book.setName(input)
+      R.id.input_author -> book.setAuthor(input)
+      R.id.input_position -> book.setPositionName(input)
+      R.id.input_description -> book.setDescription(input)
+    }
+  }
+
+  companion object {
+    const val COMPRESSION_QUALITY: Int = 60
   }
 }
