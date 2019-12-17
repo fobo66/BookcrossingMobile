@@ -27,6 +27,11 @@ class InputValidator(
 
   constructor(vararg rulesArray: ValidationRule) : this(rulesArray.asList())
 
+  /**
+   * Validate string input
+   *
+   * @param input User's input from text field
+   */
   fun validate(input: String): ValidationResult {
     val initial: ValidationResult = OK
     return rules.fold(initial) { acc: ValidationResult, validationRule: ValidationRule ->

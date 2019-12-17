@@ -18,7 +18,13 @@ package com.bookcrossing.mobile.util
 
 import androidx.annotation.StringRes
 
+/**
+ * Indicator class that allows handling invalid input on UI
+ */
 sealed class ValidationResult {
+  /** Indicates that input is valid*/
   object OK : ValidationResult()
+
+  /** Indicates that input is invalid, with description of the reason why*/
   class Invalid(@StringRes val messageId: Int) : ValidationResult()
 }
