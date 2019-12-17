@@ -60,7 +60,6 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
 
   private val book: BookBuilder = BookBuilder()
   private lateinit var tempCoverUri: Uri
-  private val prohibitedSymbols = "[*#\\[\\]?]".toRegex()
   private val validator =
     InputValidator(NotEmptyRule(), ProhibitedSymbolsRule(), LengthRule(maxLength = 100))
 
@@ -208,6 +207,9 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
     }
   }
 
+  /**
+   * Set correct value from user input
+   */
   fun handleInputField(@IdRes id: Int, input: String) {
     when (id) {
       R.id.input_name -> book.setName(input)
