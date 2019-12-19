@@ -111,8 +111,8 @@
   <string name="error_book_position_malformed">Местоположение книги содержит неправильные символы</string>
   <string name="error_input_incorrect_symbols">Поле содержит неправильные символы</string>
   <string name="error_input_empty">Поле не должно быть пустым</string>
-  <string name="error_too_long">Input is too long</string>
-  <string name="error_too_short">Input is too short</string>
+  <string name="error_too_long">Текст слишком длинный</string>
+  <string name="error_too_short">Текст слишком короткий</string>
   <string-array name="cover_chooser_dialog_items">
     <item>Из галереи</item>
     <item>Сделать фото</item>
