@@ -128,9 +128,7 @@ dependencies {
   implementation "com.google.android.gms:play-services-oss-licenses:17.0.0"
 
   implementation "com.google.android.material:material:1.0.0"
-  implementation "androidx.browser:browser:1.2.0"
   implementation "androidx.cardview:cardview:1.0.0"
-  implementation "androidx.palette:palette-ktx:1.0.0"
   implementation "androidx.preference:preference-ktx:1.1.0"
 
   def androidxCoreVersion = "1.2.0-rc01"
@@ -141,7 +139,6 @@ dependencies {
   implementation "androidx.vectordrawable:vectordrawable:1.1.0"
   implementation "androidx.appcompat:appcompat:1.1.0"
   implementation "androidx.recyclerview:recyclerview:1.1.0"
-  implementation "androidx.exifinterface:exifinterface:1.1.0"
 
   implementation "dev.chrisbanes:insetter-ktx:0.2.0"
 
