@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~    Copyright 2019 Andrey Mukamolov
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,13 +13,8 @@
   ~    See the License for the specific language governing permissions and
   ~    limitations under the License.
   -->
-
-<resources>
-  <!-- Default screen margins, per the Android Design guidelines. -->
-  <dimen name="activity_horizontal_margin">16dp</dimen>
-  <dimen name="default_padding">16dp</dimen>
-  <dimen name="text_input_padding">8dp</dimen>
-  <dimen name="sticker_padding">10dp</dimen>
-  <dimen name="list_item_spacing">16dp</dimen>
-  <dimen name="list_item_spacing_half">8dp</dimen>
-</resources>
+<com.mapbox.mapboxsdk.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/book_location_picker_map"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  />
