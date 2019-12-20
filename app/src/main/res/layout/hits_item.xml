@@ -46,18 +46,18 @@
       tools:src="@drawable/ic_book_cover_placeholder"
       />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/search_hit_current_position"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginTop="16dp"
       android:layout_marginEnd="16dp"
       android:layout_marginBottom="16dp"
-      android:drawableStart="@drawable/ic_place"
       android:ellipsize="end"
       android:maxLines="3"
       android:scrollHorizontally="false"
       android:textAlignment="center"
+      app:drawableStartCompat="@drawable/ic_place"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="@+id/search_hit_author"

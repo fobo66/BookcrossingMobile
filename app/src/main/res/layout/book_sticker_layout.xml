@@ -24,10 +24,10 @@
       android:orientation="vertical"
       android:padding="@dimen/sticker_padding"
       >
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableTop="@mipmap/ic_launcher"
+        app:drawableTopCompat="@mipmap/ic_launcher"
         android:text="@string/book_sticker_heading_text"
         android:textAlignment="center"
         android:textColor="@color/backgroundDark"
