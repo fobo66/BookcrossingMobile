@@ -136,6 +136,7 @@
   <string name="error_input_empty">Input should not be empty</string>
   <string name="error_too_long">Input is too long</string>
   <string name="error_too_short">Input is too short</string>
+  <string name="pick_location_on_map">Pick location on map</string>
   <string-array name="cover_chooser_dialog_items">
     <item>From gallery</item>
     <item>From camera</item>

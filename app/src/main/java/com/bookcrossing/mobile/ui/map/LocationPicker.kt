@@ -23,7 +23,7 @@ import android.view.ViewGroup
 import com.bookcrossing.mobile.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-/**P
+/**
  * A fragment that shows map for picking book's location as a modal bottom sheet.
  */
 class LocationPicker : BottomSheetDialogFragment() {

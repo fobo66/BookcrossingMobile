@@ -47,6 +47,7 @@ import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.presenters.BookReleasePresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
+import com.bookcrossing.mobile.ui.map.LocationPicker
 import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
 import com.bookcrossing.mobile.util.ValidationResult.Invalid
 import com.bookcrossing.mobile.util.ValidationResult.OK
@@ -62,6 +63,7 @@ import moxy.presenter.InjectPresenter
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
  * Screen for release new book
@@ -85,6 +87,9 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
 
   @BindView(R.id.input_description)
   lateinit var bookDescriptionInput: TextView
+
+  @BindView(R.id.pick_book_position_button)
+  lateinit var pickBookPositionButton: Button
 
   @BindView(R.id.publish_book)
   lateinit var releaseButton: Button
@@ -146,6 +151,15 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     registerInputProcessingSubscription()
     registerPublishButtonEnableSubscription()
     registerPublishButtonClickSubscription()
+    registerPickLocationButtonClickSubscription()
+  }
+
+  private fun registerPickLocationButtonClickSubscription() {
+    subscriptions.add(
+      pickBookPositionButton.clicks()
+        .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
+        .subscribe { LocationPicker().show(requireActivity().supportFragmentManager, null) }
+    )
   }
 
   private fun registerPublishButtonClickSubscription() {
@@ -270,12 +284,12 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
   }
 
   override fun askUserToProvideDefaultCity() {
-    MaterialDialog(requireContext())
-      .title(R.string.enter_city_title)
-      .message(R.string.error_enter_city_content)
-      .input(hintRes = R.string.city_hint, callback =
+    MaterialDialog(requireContext()).show {
+      title(R.string.enter_city_title)
+      message(R.string.error_enter_city_content)
+      input(hintRes = R.string.city_hint, callback =
       { _, input -> presenter.saveCity(input.toString()) })
-      .show()
+    }
   }
 
   override fun onReleased(newKey: String) {
