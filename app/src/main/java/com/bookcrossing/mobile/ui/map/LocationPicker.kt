@@ -20,18 +20,70 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import butterknife.BindView
+import butterknife.ButterKnife
+import butterknife.Unbinder
 import com.bookcrossing.mobile.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.mapbox.mapboxsdk.maps.MapView
+import com.mapbox.mapboxsdk.maps.Style
+import timber.log.Timber
 
 /**
  * A fragment that shows map for picking book's location as a modal bottom sheet.
  */
 class LocationPicker : BottomSheetDialogFragment() {
 
+  @BindView(R.id.book_location_picker_map)
+  lateinit var mapView: MapView
+
+  private lateinit var unbinder: Unbinder
+
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
     return inflater.inflate(R.layout.fragment_location_picker, container, false)
+  }
+
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    unbinder = ButterKnife.bind(this, view)
+
+
+    mapView.onCreate(savedInstanceState)
+
+    mapView.getMapAsync { map ->
+      map.setStyle(Style.MAPBOX_STREETS) {
+        Timber.d("Map loaded")
+      }
+    }
+  }
+
+  override fun onResume() {
+    super.onResume()
+    mapView.onResume()
+  }
+
+  override fun onPause() {
+    super.onPause()
+    mapView.onPause()
+  }
+
+  override fun onStop() {
+    super.onStop()
+    mapView.onStop()
+  }
+
+  override fun onLowMemory() {
+    super.onLowMemory()
+    mapView.onLowMemory()
+  }
+
+  override fun onDestroyView() {
+    super.onDestroyView()
+
+    mapView.onDestroy()
+    unbinder.unbind()
   }
 }
