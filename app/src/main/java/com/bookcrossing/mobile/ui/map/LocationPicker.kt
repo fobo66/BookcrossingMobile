@@ -25,6 +25,10 @@ import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.bookcrossing.mobile.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.mapbox.android.core.permissions.PermissionsListener
+import com.mapbox.android.core.permissions.PermissionsManager
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
+import com.mapbox.mapboxsdk.location.LocationComponentOptions
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.Style
 import timber.log.Timber
@@ -32,12 +36,13 @@ import timber.log.Timber
 /**
  * A fragment that shows map for picking book's location as a modal bottom sheet.
  */
-class LocationPicker : BottomSheetDialogFragment() {
+class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
 
   @BindView(R.id.book_location_picker_map)
   lateinit var mapView: MapView
 
   private lateinit var unbinder: Unbinder
+  private lateinit var permissionsManager: PermissionsManager
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
@@ -49,13 +54,29 @@ class LocationPicker : BottomSheetDialogFragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     unbinder = ButterKnife.bind(this, view)
+    permissionsManager = PermissionsManager(this)
 
 
     mapView.onCreate(savedInstanceState)
 
     mapView.getMapAsync { map ->
-      map.setStyle(Style.MAPBOX_STREETS) {
+      map.setStyle(Style.MAPBOX_STREETS) { style ->
         Timber.d("Map loaded")
+
+        if (PermissionsManager.areLocationPermissionsGranted(requireContext())) {
+          val locationComponentOptions = LocationComponentOptions.builder(requireContext())
+            .build()
+
+          val locationComponentActivationOptions = LocationComponentActivationOptions
+            .builder(requireContext(), style)
+            .locationComponentOptions(locationComponentOptions)
+            .build()
+
+          val locationComponent = map.locationComponent
+          locationComponent.activateLocationComponent(locationComponentActivationOptions)
+        } else {
+          permissionsManager.requestLocationPermissions(requireActivity())
+        }
       }
     }
   }
@@ -85,5 +106,20 @@ class LocationPicker : BottomSheetDialogFragment() {
 
     mapView.onDestroy()
     unbinder.unbind()
+  }
+
+  override fun onRequestPermissionsResult(
+    requestCode: Int, permissions: Array<String>,
+    grantResults: IntArray
+  ) {
+    permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults)
+  }
+
+  override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  }
+
+  override fun onPermissionResult(granted: Boolean) {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
 }

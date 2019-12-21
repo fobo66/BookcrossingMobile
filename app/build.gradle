@@ -201,6 +201,7 @@ dependencies {
   implementation "com.mapbox.mapboxsdk:mapbox-android-sdk:8.5.0"
   implementation "com.mapbox.mapboxsdk:mapbox-sdk-core:$mapboxSdkVersion"
   implementation "com.mapbox.mapboxsdk:mapbox-sdk-services:$mapboxSdkVersion"
+  implementation "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:0.7.0"
 
   implementation "com.algolia:instantsearch-android:2.2.1"
 
