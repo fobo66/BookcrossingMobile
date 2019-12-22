@@ -18,6 +18,7 @@ package com.bookcrossing.mobile.ui.map
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,8 @@ import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.string
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.mapbox.android.core.permissions.PermissionsListener
@@ -65,7 +68,6 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
     unbinder = ButterKnife.bind(this, view)
     permissionsManager = PermissionsManager(this)
 
-
     mapView.onCreate(savedInstanceState)
 
     mapView.getMapAsync { map ->
@@ -84,6 +86,21 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
   override fun onResume() {
     super.onResume()
     mapView.onResume()
+  }
+
+  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    val dialog = super.onCreateDialog(savedInstanceState)
+    dialog.setOnShowListener {
+      val bottomSheetDialog = it as BottomSheetDialog
+
+      val bottomSheetLayout: View? = bottomSheetDialog.findViewById(com.google.android.material.R.id.design_bottom_sheet)
+      BottomSheetBehavior.from(bottomSheetLayout).apply {
+        isHideable = false
+        skipCollapsed = true
+        state = BottomSheetBehavior.STATE_EXPANDED
+      }
+    }
+    return dialog
   }
 
   override fun onPause() {
