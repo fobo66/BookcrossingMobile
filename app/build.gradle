@@ -127,7 +127,7 @@ dependencies {
   implementation "com.google.android.gms:play-services-auth:17.0.0"
   implementation "com.google.android.gms:play-services-oss-licenses:17.0.0"
 
-  implementation "com.google.android.material:material:1.0.0"
+  implementation 'com.google.android.material:material:1.2.0-alpha03'
   implementation "androidx.cardview:cardview:1.0.0"
   implementation "androidx.preference:preference-ktx:1.1.0"
 
@@ -135,7 +135,7 @@ dependencies {
   implementation "androidx.core:core:$androidxCoreVersion"
   implementation "androidx.core:core-ktx:$androidxCoreVersion"
 
-  implementation "androidx.fragment:fragment-ktx:1.1.0"
+  implementation 'androidx.fragment:fragment-ktx:1.2.0-rc04'
   implementation "androidx.vectordrawable:vectordrawable:1.1.0"
   implementation "androidx.appcompat:appcompat:1.1.0"
   implementation "androidx.recyclerview:recyclerview:1.1.0"
@@ -198,7 +198,7 @@ dependencies {
   implementation "com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.3"
 
   def mapboxSdkVersion = "4.9.0"
-  implementation "com.mapbox.mapboxsdk:mapbox-android-sdk:8.5.0"
+  implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.6.0'
   implementation "com.mapbox.mapboxsdk:mapbox-sdk-core:$mapboxSdkVersion"
   implementation "com.mapbox.mapboxsdk:mapbox-sdk-services:$mapboxSdkVersion"
   implementation "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:0.7.0"
