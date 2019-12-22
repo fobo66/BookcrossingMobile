@@ -158,7 +158,9 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     subscriptions.add(
       pickBookPositionButton.clicks()
         .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
-        .subscribe { LocationPicker().show(requireActivity().supportFragmentManager, null) }
+        .subscribe {
+          LocationPicker().show(requireActivity().supportFragmentManager, "com.bookcrossing.mobile.ui.create.LocationPicker")
+        }
     )
   }
 
@@ -184,7 +186,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
           position.isNotBlank() &&
           description.isNotBlank()
       }
-        .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+        .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { enabled: Boolean -> releaseButton.isEnabled = enabled }
     subscriptions.add(publishSubscription)
@@ -201,7 +203,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
       .doOnNext {
         clearTextViewError(it.view)
       }
-      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe { event ->
         val input = event.view.text.toString()
@@ -222,7 +224,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
 
   private fun registerCoverClickSubscription() {
     val coverSubscription = cover.clicks()
-      .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+      .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe { showCoverChooserDialog() }
     subscriptions.add(coverSubscription)
