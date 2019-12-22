@@ -25,8 +25,10 @@ import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.bookcrossing.mobile.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
+import com.mapbox.mapboxsdk.location.LocationComponent
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
 import com.mapbox.mapboxsdk.location.LocationComponentOptions
 import com.mapbox.mapboxsdk.maps.MapView
@@ -64,16 +66,7 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
         Timber.d("Map loaded")
 
         if (PermissionsManager.areLocationPermissionsGranted(requireContext())) {
-          val locationComponentOptions = LocationComponentOptions.builder(requireContext())
-            .build()
-
-          val locationComponentActivationOptions = LocationComponentActivationOptions
-            .builder(requireContext(), style)
-            .locationComponentOptions(locationComponentOptions)
-            .build()
-
-          val locationComponent = map.locationComponent
-          locationComponent.activateLocationComponent(locationComponentActivationOptions)
+          setupCurrentLocation(style, map.locationComponent)
         } else {
           permissionsManager.requestLocationPermissions(requireActivity())
         }
@@ -115,11 +108,32 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
     permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults)
   }
 
+  private fun setupCurrentLocation(
+    style: Style,
+    locationComponent: LocationComponent
+  ) {
+    val locationComponentOptions = LocationComponentOptions.builder(requireContext())
+      .build()
+
+    val locationComponentActivationOptions = LocationComponentActivationOptions
+      .builder(requireContext(), style)
+      .locationComponentOptions(locationComponentOptions)
+      .build()
+
+    locationComponent.activateLocationComponent(locationComponentActivationOptions)
+  }
+
   override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    Snackbar.make(mapView, R.string.location_permission_denied_prompt, Snackbar.LENGTH_LONG).show()
   }
 
   override fun onPermissionResult(granted: Boolean) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    if (granted) {
+      mapView.getMapAsync { map ->
+        map.getStyle { style ->
+          setupCurrentLocation(style, map.locationComponent)
+        }
+      }
+    }
   }
 }

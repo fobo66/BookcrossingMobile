@@ -126,6 +126,7 @@
   <string name="author_icon_description">Author</string>
   <string name="place_icon_description">Current position</string>
   <string name="camera_permission_denied_prompt">We need camera permission to be able to scan QR code of the book</string>
+  <string name="location_permission_denied_prompt">We need location permission to be able to display your location on the map</string>
   <string name="retry_permission_request_action">Retry</string>
   <string name="go_to_settings_permission_request_action">Go to settings</string>
   <string name="error_book_name_malformed">Name contains incorrect symbols</string>
