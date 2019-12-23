@@ -18,6 +18,8 @@ package com.bookcrossing.mobile.ui.map
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
+import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +30,11 @@ import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.string
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_DRAGGING
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.mapbox.android.core.permissions.PermissionsListener
@@ -51,6 +58,21 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
 
   private lateinit var unbinder: Unbinder
   private lateinit var permissionsManager: PermissionsManager
+
+  private val bottomSheetCallback: BottomSheetCallback by lazy {
+    object : BottomSheetCallback() {
+      override fun onSlide(bottomSheet: View, slideOffset: Float) {
+        // do nothing
+      }
+
+      override fun onStateChanged(bottomSheet: View, newState: Int) {
+        if (newState == STATE_DRAGGING) {
+          BottomSheetBehavior.from(bottomSheet).state = STATE_COLLAPSED
+        }
+      }
+
+    }
+  }
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
@@ -80,6 +102,12 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
     }
   }
 
+  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+    dialog.behavior.addBottomSheetCallback(bottomSheetCallback)
+    return dialog
+  }
+
   override fun onResume() {
     super.onResume()
     mapView.onResume()
@@ -105,6 +133,10 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
 
     mapView.onDestroy()
     unbinder.unbind()
+  }
+
+  override fun onCancel(dialog: DialogInterface) {
+    (dialog as BottomSheetDialog).behavior.removeBottomSheetCallback(bottomSheetCallback)
   }
 
   override fun onRequestPermissionsResult(
