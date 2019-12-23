@@ -32,11 +32,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
-import com.mapbox.mapboxsdk.camera.CameraPosition
-import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.location.LocationComponent
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
 import com.mapbox.mapboxsdk.location.LocationComponentOptions
+import com.mapbox.mapboxsdk.location.modes.CameraMode
+import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.Style
 import timber.log.Timber
@@ -76,8 +76,6 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
         } else {
           permissionsManager.requestLocationPermissions(requireActivity())
         }
-
-        map.gesturesManager.moveGestureDetector.isEnabled = false
       }
     }
   }
@@ -130,8 +128,12 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
       .useDefaultLocationEngine(true)
       .build()
 
-    locationComponent.activateLocationComponent(locationComponentActivationOptions)
-    locationComponent.isLocationComponentEnabled = true
+    locationComponent.apply {
+      activateLocationComponent(locationComponentActivationOptions)
+      isLocationComponentEnabled = true
+      renderMode = RenderMode.NORMAL
+      cameraMode = CameraMode.TRACKING
+    }
   }
 
   override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) {
@@ -144,10 +146,6 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
       mapView.getMapAsync { map ->
         map.getStyle { style ->
           setupCurrentLocation(style, map.locationComponent)
-
-          map.cameraPosition = CameraPosition.Builder()
-            .target(LatLng(map.locationComponent.lastKnownLocation))
-            .build()
         }
       }
     } else {

@@ -14,7 +14,9 @@
   ~    limitations under the License.
   -->
 <com.mapbox.mapboxsdk.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   android:id="@+id/book_location_picker_map"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
+  app:mapbox_cameraZoom="10"
   />
