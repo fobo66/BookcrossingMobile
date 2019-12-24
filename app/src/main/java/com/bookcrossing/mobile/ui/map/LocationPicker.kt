@@ -34,6 +34,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -47,22 +48,25 @@ import com.google.android.material.snackbar.Snackbar
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
 import timber.log.Timber
+import kotlin.LazyThreadSafetyMode.NONE
+
 
 /**
  * A fragment that shows map for picking book's location as a modal bottom sheet.
  */
-class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
+class LocationPicker : BottomSheetDialogFragment(), PermissionsListener, OnMapReadyCallback {
 
   @BindView(R.id.book_location_picker_map)
   lateinit var mapView: MapView
 
+  private lateinit var map: GoogleMap
   private lateinit var unbinder: Unbinder
   private lateinit var permissionsManager: PermissionsManager
 
   private var bookLocation: Marker? = null
 
   // workaround for map gestures : disable bottom sheet dragging to be able to use map gestures
-  private val bottomSheetCallback: BottomSheetCallback by lazy {
+  private val bottomSheetCallback: BottomSheetCallback by lazy(mode = NONE) {
     object : BottomSheetCallback() {
       override fun onSlide(bottomSheet: View, slideOffset: Float) {
         // do nothing
@@ -84,7 +88,6 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
     return inflater.inflate(R.layout.fragment_location_picker, container, false)
   }
 
-  @SuppressLint("MissingPermission") // permission is checked in PermissionManager
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     unbinder = ButterKnife.bind(this, view)
@@ -92,25 +95,28 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
 
     mapView.onCreate(savedInstanceState)
 
-    mapView.getMapAsync { map ->
-      Timber.d("Map loaded")
+    mapView.getMapAsync(this)
+  }
 
+  @SuppressLint("MissingPermission") // permission is checked in PermissionManager
+  override fun onMapReady(googleMap: GoogleMap) {
+    Timber.d("Map loaded")
+    map = googleMap
 
-      if (PermissionsManager.areLocationPermissionsGranted(requireContext())) {
-        setupCurrentLocation(map)
+    if (PermissionsManager.areLocationPermissionsGranted(requireContext())) {
+      setupCurrentLocation(map)
+    } else {
+      permissionsManager.requestLocationPermissions(requireActivity())
+    }
+
+    map.setOnMapClickListener {
+      if (bookLocation == null) {
+        bookLocation = map.addMarker(
+          MarkerOptions()
+            .position(it)
+        )
       } else {
-        permissionsManager.requestLocationPermissions(requireActivity())
-      }
-
-      map.setOnMapClickListener {
-        if (bookLocation == null) {
-          bookLocation = map.addMarker(
-            MarkerOptions()
-              .position(it)
-          )
-        } else {
-          bookLocation?.position = it
-        }
+        bookLocation?.position = it
       }
     }
   }
@@ -192,9 +198,7 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
   @SuppressLint("MissingPermission") // permission is checked by PermissionManager
   override fun onPermissionResult(granted: Boolean) {
     if (granted) {
-      mapView.getMapAsync { map ->
-        setupCurrentLocation(map)
-      }
+      setupCurrentLocation(map)
     } else {
       showExplanation()
       dismiss()

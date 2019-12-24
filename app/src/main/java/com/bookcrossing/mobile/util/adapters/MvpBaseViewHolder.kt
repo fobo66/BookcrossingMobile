@@ -13,30 +13,18 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+package com.bookcrossing.mobile.util.adapters
 
-package com.bookcrossing.mobile.util.adapters;
-
-import android.view.View;
-
-import moxy.MvpDelegate;
+import android.view.View
+import moxy.MvpDelegate
 
 /**
  * Created by fobo66 on 09.05.17.
  */
+open class MvpBaseViewHolder(view: View) : BaseViewHolder(view) {
+  private val mvpDelegate: MvpDelegate<out BaseViewHolder> by lazy { MvpDelegate(this) }
 
-public class MvpBaseViewHolder extends BaseViewHolder {
-  private MvpDelegate<? extends BaseViewHolder> mMvpDelegate;
-
-  public MvpBaseViewHolder(View view) {
-    super(view);
-    getMvpDelegate().onCreate();
-  }
-
-  private MvpDelegate getMvpDelegate() {
-    if (this.mMvpDelegate == null) {
-      this.mMvpDelegate = new MvpDelegate<>(this);
-    }
-
-    return this.mMvpDelegate;
+  init {
+    mvpDelegate.onCreate()
   }
 }
