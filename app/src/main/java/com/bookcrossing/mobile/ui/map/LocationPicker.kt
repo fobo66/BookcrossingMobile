@@ -61,7 +61,7 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
 
   private lateinit var map: GoogleMap
   private lateinit var unbinder: Unbinder
-  private lateinit var permissionsManager: RxPermissions
+  private lateinit var permissions: RxPermissions
 
   private var bookLocation: Marker? = null
 
@@ -93,7 +93,7 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     unbinder = ButterKnife.bind(this, view)
-    permissionsManager = RxPermissions(this)
+    permissions = RxPermissions(this)
 
     mapView.onCreate(savedInstanceState)
 
@@ -121,7 +121,7 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
   @SuppressLint("MissingPermission") // permission is checked in RxPermission
   private fun requestLocationPermissions() {
     subscriptions.add(
-      permissionsManager.request(ACCESS_FINE_LOCATION)
+      permissions.request(ACCESS_FINE_LOCATION)
         .subscribe({
           setupCurrentLocation(map)
         }, { error ->

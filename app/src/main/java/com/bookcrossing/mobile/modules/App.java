@@ -26,7 +26,6 @@ import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.FirebaseDatabase;
-import com.mapbox.mapboxsdk.Mapbox;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
@@ -47,7 +46,6 @@ public class App extends MultiDexApplication {
     super.onCreate();
     FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     MobileAds.initialize(this, getResources().getString(R.string.admob_app_id));
-    Mapbox.getInstance(getApplicationContext(), getString(R.string.mapbox_access_token));
 
     if (BuildConfig.DEBUG) {
       Timber.plant(new Timber.DebugTree());
