@@ -30,6 +30,7 @@ import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.string
+import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -45,8 +46,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_DRAGGIN
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
-import com.mapbox.android.core.permissions.PermissionsListener
-import com.mapbox.android.core.permissions.PermissionsManager
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import kotlin.LazyThreadSafetyMode.NONE
 
@@ -54,16 +54,18 @@ import kotlin.LazyThreadSafetyMode.NONE
 /**
  * A fragment that shows map for picking book's location as a modal bottom sheet.
  */
-class LocationPicker : BottomSheetDialogFragment(), PermissionsListener, OnMapReadyCallback {
+class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
 
   @BindView(R.id.book_location_picker_map)
   lateinit var mapView: MapView
 
   private lateinit var map: GoogleMap
   private lateinit var unbinder: Unbinder
-  private lateinit var permissionsManager: PermissionsManager
+  private lateinit var permissionsManager: RxPermissions
 
   private var bookLocation: Marker? = null
+
+  private val subscriptions = CompositeDisposable()
 
   // workaround for map gestures : disable bottom sheet dragging to be able to use map gestures
   private val bottomSheetCallback: BottomSheetCallback by lazy(mode = NONE) {
@@ -91,23 +93,18 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener, OnMapRe
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     unbinder = ButterKnife.bind(this, view)
-    permissionsManager = PermissionsManager(this)
+    permissionsManager = RxPermissions(this)
 
     mapView.onCreate(savedInstanceState)
 
     mapView.getMapAsync(this)
   }
 
-  @SuppressLint("MissingPermission") // permission is checked in PermissionManager
   override fun onMapReady(googleMap: GoogleMap) {
     Timber.d("Map loaded")
     map = googleMap
 
-    if (PermissionsManager.areLocationPermissionsGranted(requireContext())) {
-      setupCurrentLocation(map)
-    } else {
-      permissionsManager.requestLocationPermissions(requireActivity())
-    }
+    requestLocationPermissions()
 
     map.setOnMapClickListener {
       if (bookLocation == null) {
@@ -119,6 +116,20 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener, OnMapRe
         bookLocation?.position = it
       }
     }
+  }
+
+  @SuppressLint("MissingPermission") // permission is checked in RxPermission
+  private fun requestLocationPermissions() {
+    subscriptions.add(
+      permissionsManager.request(ACCESS_FINE_LOCATION)
+        .subscribe({
+          setupCurrentLocation(map)
+        }, { error ->
+          Timber.e(error)
+          showExplanation()
+          dismiss()
+        })
+    )
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -152,17 +163,11 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener, OnMapRe
 
     mapView.onDestroy()
     unbinder.unbind()
+    subscriptions.clear()
   }
 
   override fun onCancel(dialog: DialogInterface) {
     (dialog as BottomSheetDialog).behavior.removeBottomSheetCallback(bottomSheetCallback)
-  }
-
-  override fun onRequestPermissionsResult(
-    requestCode: Int, permissions: Array<String>,
-    grantResults: IntArray
-  ) {
-    permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults)
   }
 
   @RequiresPermission(ACCESS_FINE_LOCATION)
@@ -188,20 +193,6 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener, OnMapRe
           )
         )
       }
-    }
-  }
-
-  override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) {
-    showExplanation()
-  }
-
-  @SuppressLint("MissingPermission") // permission is checked by PermissionManager
-  override fun onPermissionResult(granted: Boolean) {
-    if (granted) {
-      setupCurrentLocation(map)
-    } else {
-      showExplanation()
-      dismiss()
     }
   }
 
