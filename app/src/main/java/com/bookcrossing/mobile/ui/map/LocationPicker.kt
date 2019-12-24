@@ -20,7 +20,6 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +30,13 @@ import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.string
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
@@ -40,18 +46,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
-import com.mapbox.mapboxsdk.location.LocationComponent
-import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
-import com.mapbox.mapboxsdk.location.LocationComponentOptions
-import com.mapbox.mapboxsdk.location.modes.CameraMode
-import com.mapbox.mapboxsdk.location.modes.RenderMode
-import com.mapbox.mapboxsdk.maps.MapView
-import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.mapboxsdk.plugins.annotation.Symbol
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
-import com.mapbox.mapboxsdk.style.layers.SymbolLayer
-import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import timber.log.Timber
 
 /**
@@ -65,7 +59,7 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
   private lateinit var unbinder: Unbinder
   private lateinit var permissionsManager: PermissionsManager
 
-  private var bookLocation: Symbol? = null
+  private var bookLocation: Marker? = null
 
   // workaround for map gestures : disable bottom sheet dragging to be able to use map gestures
   private val bottomSheetCallback: BottomSheetCallback by lazy {
@@ -99,29 +93,23 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
     mapView.onCreate(savedInstanceState)
 
     mapView.getMapAsync { map ->
-      map.setStyle(prepareMapStyle()) { style ->
-        Timber.d("Map loaded")
+      Timber.d("Map loaded")
 
-        if (PermissionsManager.areLocationPermissionsGranted(requireContext())) {
-          setupCurrentLocation(style, map.locationComponent)
+
+      if (PermissionsManager.areLocationPermissionsGranted(requireContext())) {
+        setupCurrentLocation(map)
+      } else {
+        permissionsManager.requestLocationPermissions(requireActivity())
+      }
+
+      map.setOnMapClickListener {
+        if (bookLocation == null) {
+          bookLocation = map.addMarker(
+            MarkerOptions()
+              .position(it)
+          )
         } else {
-          permissionsManager.requestLocationPermissions(requireActivity())
-        }
-
-        val symbolManager = SymbolManager(mapView, map, style)
-
-        map.addOnMapClickListener {
-          if (bookLocation == null) {
-            bookLocation = symbolManager.create(
-              SymbolOptions()
-                .withLatLng(it)
-                .withIconImage(IMAGE_ID)
-            )
-          } else {
-            bookLocation?.latLng = it
-            symbolManager.update(bookLocation)
-          }
-          true
+          bookLocation?.position = it
         }
       }
     }
@@ -173,23 +161,27 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
 
   @RequiresPermission(ACCESS_FINE_LOCATION)
   private fun setupCurrentLocation(
-    style: Style,
-    locationComponent: LocationComponent
+    map: GoogleMap
   ) {
-    val locationComponentOptions = LocationComponentOptions.builder(requireContext())
-      .build()
+    val fusedLocationProviderClient =
+      LocationServices.getFusedLocationProviderClient(requireActivity())
 
-    val locationComponentActivationOptions = LocationComponentActivationOptions
-      .builder(requireContext(), style)
-      .locationComponentOptions(locationComponentOptions)
-      .useDefaultLocationEngine(true)
-      .build()
+    fusedLocationProviderClient.lastLocation.addOnCompleteListener {
+      if (it.isSuccessful) {
 
-    locationComponent.apply {
-      activateLocationComponent(locationComponentActivationOptions)
-      isLocationComponentEnabled = true
-      renderMode = RenderMode.NORMAL
-      cameraMode = CameraMode.TRACKING
+        val latLng = it.result?.let {
+          LatLng(it.latitude, it.longitude)
+        }
+
+        map.isMyLocationEnabled = true
+
+        map.animateCamera(
+          CameraUpdateFactory.newLatLngZoom(
+            latLng,
+            15.0f
+          )
+        )
+      }
     }
   }
 
@@ -201,9 +193,7 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
   override fun onPermissionResult(granted: Boolean) {
     if (granted) {
       mapView.getMapAsync { map ->
-        map.getStyle { style ->
-          setupCurrentLocation(style, map.locationComponent)
-        }
+        setupCurrentLocation(map)
       }
     } else {
       showExplanation()
@@ -211,23 +201,7 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
     }
   }
 
-  private fun prepareMapStyle(): Style.Builder = Style.Builder()
-    .fromUri(Style.MAPBOX_STREETS)
-    .withImage(
-      IMAGE_ID,
-      BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_default)
-    )
-    .withSource(GeoJsonSource(SOURCE_ID))
-    .withLayer(
-      SymbolLayer("book-location-markers", SOURCE_ID)
-    )
-
   private fun showExplanation() {
     Snackbar.make(mapView, string.location_permission_denied_prompt, Snackbar.LENGTH_LONG).show()
-  }
-
-  companion object {
-    const val IMAGE_ID = "book-position"
-    const val SOURCE_ID = "book-location"
   }
 }
