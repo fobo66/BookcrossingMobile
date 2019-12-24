@@ -13,8 +13,44 @@
   ~    See the License for the specific language governing permissions and
   ~    limitations under the License.
   -->
-<com.google.android.gms.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/book_location_picker_map"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  />
+  >
+  <com.google.android.gms.maps.MapView
+    android:id="@+id/book_location_picker_map"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/book_location_picker_header"
+    />
+  <com.google.android.material.appbar.MaterialToolbar
+    android:id="@+id/book_location_picker_header"
+    style="@style/ThemeOverlay.MaterialComponents.Toolbar.Primary"
+    android:layout_width="0dp"
+    android:layout_height="48dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.0"
+    app:navigationIcon="@drawable/ic_close"
+    app:title="@string/pick_location_on_map"
+    />
+  <Button
+    android:id="@+id/book_location_picker_button"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="332dp"
+    android:layout_marginEnd="8dp"
+    android:text="@string/pick_location_button_text"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.0"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/book_location_picker_header"
+    />
+</androidx.constraintlayout.widget.ConstraintLayout>

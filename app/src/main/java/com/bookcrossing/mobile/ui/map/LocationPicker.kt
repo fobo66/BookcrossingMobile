@@ -24,6 +24,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.annotation.RequiresPermission
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -39,6 +40,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
@@ -46,6 +48,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_DRAGGIN
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
+import com.jakewharton.rxbinding3.appcompat.navigationClicks
+import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import kotlin.LazyThreadSafetyMode.NONE
@@ -58,6 +62,12 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
 
   @BindView(R.id.book_location_picker_map)
   lateinit var mapView: MapView
+
+  @BindView(R.id.book_location_picker_header)
+  lateinit var toolbar: MaterialToolbar
+
+  @BindView(R.id.book_location_picker_button)
+  lateinit var pickLocationButton: Button
 
   private lateinit var map: GoogleMap
   private lateinit var unbinder: Unbinder
@@ -98,6 +108,12 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
     mapView.onCreate(savedInstanceState)
 
     mapView.getMapAsync(this)
+
+    subscriptions.add(toolbar.navigationClicks()
+      .subscribe { dismiss() })
+
+    subscriptions.add(pickLocationButton.clicks()
+      .subscribe { dismiss() })
   }
 
   override fun onMapReady(googleMap: GoogleMap) {
@@ -135,6 +151,7 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
     dialog.behavior.addBottomSheetCallback(bottomSheetCallback)
+    dialog.setTitle(string.pick_location_on_map)
     return dialog
   }
 
