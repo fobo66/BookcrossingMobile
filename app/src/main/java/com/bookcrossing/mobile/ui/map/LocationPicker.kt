@@ -20,6 +20,7 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -46,6 +47,11 @@ import com.mapbox.mapboxsdk.location.modes.CameraMode
 import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.annotation.Symbol
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import timber.log.Timber
 
 /**
@@ -59,6 +65,9 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
   private lateinit var unbinder: Unbinder
   private lateinit var permissionsManager: PermissionsManager
 
+  private var bookLocation: Symbol? = null
+
+  // workaround for map gestures : disable bottom sheet dragging to be able to use map gestures
   private val bottomSheetCallback: BottomSheetCallback by lazy {
     object : BottomSheetCallback() {
       override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -90,13 +99,29 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
     mapView.onCreate(savedInstanceState)
 
     mapView.getMapAsync { map ->
-      map.setStyle(Style.MAPBOX_STREETS) { style ->
+      map.setStyle(prepareMapStyle()) { style ->
         Timber.d("Map loaded")
 
         if (PermissionsManager.areLocationPermissionsGranted(requireContext())) {
           setupCurrentLocation(style, map.locationComponent)
         } else {
           permissionsManager.requestLocationPermissions(requireActivity())
+        }
+
+        val symbolManager = SymbolManager(mapView, map, style)
+
+        map.addOnMapClickListener {
+          if (bookLocation == null) {
+            bookLocation = symbolManager.create(
+              SymbolOptions()
+                .withLatLng(it)
+                .withIconImage(IMAGE_ID)
+            )
+          } else {
+            bookLocation?.latLng = it
+            symbolManager.update(bookLocation)
+          }
+          true
         }
       }
     }
@@ -186,7 +211,23 @@ class LocationPicker : BottomSheetDialogFragment(), PermissionsListener {
     }
   }
 
+  private fun prepareMapStyle(): Style.Builder = Style.Builder()
+    .fromUri(Style.MAPBOX_STREETS)
+    .withImage(
+      IMAGE_ID,
+      BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_default)
+    )
+    .withSource(GeoJsonSource(SOURCE_ID))
+    .withLayer(
+      SymbolLayer("book-location-markers", SOURCE_ID)
+    )
+
   private fun showExplanation() {
     Snackbar.make(mapView, string.location_permission_denied_prompt, Snackbar.LENGTH_LONG).show()
+  }
+
+  companion object {
+    const val IMAGE_ID = "book-position"
+    const val SOURCE_ID = "book-location"
   }
 }
