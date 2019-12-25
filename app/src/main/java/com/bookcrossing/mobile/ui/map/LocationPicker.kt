@@ -128,6 +128,7 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
           MarkerOptions()
             .position(it)
         )
+        pickLocationButton.isEnabled = true
       } else {
         bookLocation?.position = it
       }
@@ -151,7 +152,6 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
     dialog.behavior.addBottomSheetCallback(bottomSheetCallback)
-    dialog.setTitle(string.pick_location_on_map)
     return dialog
   }
 
