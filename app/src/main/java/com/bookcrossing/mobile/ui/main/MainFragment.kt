@@ -20,16 +20,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import com.bookcrossing.mobile.R
+import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.presenters.MainPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.adapters.BooksViewHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.firebase.ui.database.FirebaseRecyclerOptions.Builder
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -57,7 +57,7 @@ class MainFragment : BaseFragment(), MainView {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    return inflater.inflate(R.layout.fragment_main, container, false)
+    return inflater.inflate(layout.fragment_main, container, false)
   }
 
   override fun onDestroyView() {
@@ -87,32 +87,14 @@ class MainFragment : BaseFragment(), MainView {
 
   private fun setupBookList() {
     rv.layoutManager = LinearLayoutManager(activity)
-    adapter = object : FirebaseRecyclerAdapter<Book, BooksViewHolder>(
-      FirebaseRecyclerOptions.Builder<Book>().setQuery(presenter.books, Book::class.java)
+    adapter = BooksAdapter(
+      Builder<Book>().setQuery(presenter.books, Book::class.java)
         .setLifecycleOwner(viewLifecycleOwner)
         .build()
-    ) {
-      override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-      ): BooksViewHolder {
-        val view = LayoutInflater.from(parent.context)
-          .inflate(R.layout.book_list_item_main, parent, false)
-        return BooksViewHolder(view)
-      }
-
-      override fun onBindViewHolder(
-        holder: BooksViewHolder,
-        position: Int,
-        model: Book
-      ) {
-        holder.setKey(this.getRef(position).key)
-        holder.bind(model)
-      }
-    }
+    )
 
     rv.adapter = adapter
-    LinearSnapHelper().attachToRecyclerView(rv)
     adapter.startListening()
   }
 }
+

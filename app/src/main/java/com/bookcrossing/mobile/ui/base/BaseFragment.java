@@ -67,10 +67,6 @@ public abstract class BaseFragment extends MvpAppCompatFragment {
   @Override public void onDestroyView() {
     super.onDestroyView();
     unbinder.unbind();
-  }
-
-  @Override public void onDestroy() {
-    super.onDestroy();
-    subscriptions.dispose();
+    subscriptions.clear();
   }
 }
