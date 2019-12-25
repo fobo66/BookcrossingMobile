@@ -26,6 +26,7 @@ import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.code.BookStickerSaver
 import com.bookcrossing.mobile.code.QrCodeEncoder
 import com.bookcrossing.mobile.models.BookBuilder
+import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.models.Date
 import com.bookcrossing.mobile.ui.create.BookReleaseView
 import com.bookcrossing.mobile.util.EXTRA_CITY
@@ -116,6 +117,10 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   /** Validate user input */
   fun validateInput(input: String): ValidationResult = validator.validate(input)
 
+  fun locationPicked(coordinates: Coordinates) {
+    book.setPosition(coordinates)
+  }
+
   /** Release book */
   fun releaseBook(city: String): Observable<String> {
     setPublicationDate()
@@ -125,6 +130,7 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
     val key = newBookReference.key.orEmpty()
 
     return RxFirebaseDatabase.setValue(newBookReference, newBook)
+      .andThen(RxFirebaseDatabase.setValue(places(key), newBook.position))
       .andThen(uploadCover(key))
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())

@@ -15,11 +15,14 @@
 
 package com.bookcrossing.mobile.models;
 
+import org.jetbrains.annotations.NotNull;
+
 public class BookBuilder {
   private String author;
   private String name;
   private String description;
   private boolean free = true;
+  private Coordinates position;
   private String positionName;
   private Date wentFreeAt;
 
@@ -54,6 +57,11 @@ public class BookBuilder {
   }
 
   public Book createBook() {
-    return new Book(author, name, description, free, positionName, wentFreeAt);
+    return new Book(author, name, description, free, position, positionName, wentFreeAt);
+  }
+
+  public BookBuilder setPosition(@NotNull Coordinates coordinates) {
+    this.position = coordinates;
+    return this;
   }
 }

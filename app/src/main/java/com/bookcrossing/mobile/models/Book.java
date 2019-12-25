@@ -83,12 +83,13 @@ import com.google.firebase.database.IgnoreExtraProperties;
     this.wentFreeAt = wentFreeAt;
   }
 
-  public Book(String author, String name, String description, boolean free, String positionName,
-      Date wentFreeAt) {
+  public Book(String author, String name, String description, boolean free, Coordinates position,
+    String positionName, Date wentFreeAt) {
     this.author = author;
     this.name = name;
     this.description = description;
     this.free = free;
+    this.position = position;
     this.positionName = positionName;
     this.wentFreeAt = wentFreeAt;
   }

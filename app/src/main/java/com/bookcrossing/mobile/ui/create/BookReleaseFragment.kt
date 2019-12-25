@@ -60,7 +60,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
 import moxy.presenter.InjectPresenter
-import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit.MILLISECONDS
@@ -167,7 +166,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
           locationPicker.onBookLocationPicked()
         }
         .subscribe {
-          Timber.d("Coordinates seleted: %f, %f", it.lat, it.lng)
+          presenter.locationPicked(it)
         }
     )
   }

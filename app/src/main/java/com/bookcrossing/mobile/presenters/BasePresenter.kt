@@ -94,6 +94,11 @@ open class BasePresenter<V : MvpView> : MvpPresenter<V>() {
     return firebaseWrapper.database.getReference("places")
   }
 
+  protected fun places(key: String): DatabaseReference {
+    return firebaseWrapper.database.getReference("places")
+      .child(key)
+  }
+
   protected fun placesHistory(key: String): DatabaseReference {
     return firebaseWrapper.database.getReference("placesHistory")
       .child(key)
