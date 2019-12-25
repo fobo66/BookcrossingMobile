@@ -31,6 +31,7 @@ import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.string
+import com.bookcrossing.mobile.models.Coordinates
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -51,6 +52,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding3.appcompat.navigationClicks
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 import kotlin.LazyThreadSafetyMode.NONE
 
@@ -77,6 +79,8 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
 
   private val subscriptions = CompositeDisposable()
 
+  private val bookLocationPicked = PublishSubject.create<Coordinates>()
+
   // workaround for map gestures : disable bottom sheet dragging to be able to use map gestures
   private val bottomSheetCallback: BottomSheetCallback by lazy(mode = NONE) {
     object : BottomSheetCallback() {
@@ -92,6 +96,9 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
 
     }
   }
+
+  /** Observe book location picked*/
+  fun onBookLocationPicked() = bookLocationPicked.hide()
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
@@ -113,7 +120,10 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
       .subscribe { dismiss() })
 
     subscriptions.add(pickLocationButton.clicks()
-      .subscribe { dismiss() })
+      .subscribe {
+        bookLocationPicked.onNext(Coordinates(bookLocation?.position))
+        dismiss()
+      })
   }
 
   override fun onMapReady(googleMap: GoogleMap) {
