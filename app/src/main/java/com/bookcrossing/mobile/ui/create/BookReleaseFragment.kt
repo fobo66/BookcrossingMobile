@@ -60,6 +60,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
 import moxy.presenter.InjectPresenter
+import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit.MILLISECONDS
@@ -157,8 +158,16 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     subscriptions.add(
       pickBookPositionButton.clicks()
         .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
+        .flatMap {
+          val locationPicker = LocationPicker()
+          locationPicker.show(
+            requireActivity().supportFragmentManager,
+            "com.bookcrossing.mobile.ui.create.LocationPicker"
+          )
+          return@flatMap locationPicker.onBookLocationPicked()
+        }
         .subscribe {
-          LocationPicker().show(requireActivity().supportFragmentManager, "com.bookcrossing.mobile.ui.create.LocationPicker")
+          Timber.d("Coordinates seleted: %f, %f", it.lat, it.lng)
         }
     )
   }
