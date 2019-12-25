@@ -164,7 +164,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
             requireActivity().supportFragmentManager,
             "com.bookcrossing.mobile.ui.create.LocationPicker"
           )
-          return@flatMap locationPicker.onBookLocationPicked()
+          locationPicker.onBookLocationPicked()
         }
         .subscribe {
           Timber.d("Coordinates seleted: %f, %f", it.lat, it.lng)

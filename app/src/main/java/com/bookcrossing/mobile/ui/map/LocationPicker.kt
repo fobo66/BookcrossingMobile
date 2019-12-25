@@ -51,6 +51,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding3.appcompat.navigationClicks
 import com.jakewharton.rxbinding3.view.clicks
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
@@ -98,7 +99,7 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
   }
 
   /** Observe book location picked*/
-  fun onBookLocationPicked() = bookLocationPicked.hide()
+  fun onBookLocationPicked(): Observable<Coordinates> = bookLocationPicked.hide()
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
