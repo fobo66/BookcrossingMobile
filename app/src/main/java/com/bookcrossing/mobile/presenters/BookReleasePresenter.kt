@@ -131,6 +131,12 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
 
     return RxFirebaseDatabase.setValue(newBookReference, newBook)
       .andThen(RxFirebaseDatabase.setValue(places(key), newBook.position))
+      .andThen(
+        RxFirebaseDatabase.setValue(
+          placesHistory(key).child("${newBook.city}, ${newBook.positionName}"),
+          newBook.position
+        )
+      )
       .andThen(uploadCover(key))
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
