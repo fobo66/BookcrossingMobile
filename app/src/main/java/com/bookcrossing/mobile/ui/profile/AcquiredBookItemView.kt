@@ -16,7 +16,6 @@
 package com.bookcrossing.mobile.ui.profile
 
 import com.bookcrossing.mobile.models.Book
-
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
@@ -29,5 +28,8 @@ interface AcquiredBookItemView : MvpView {
   /**
    * Fill view with book content
    */
-  fun bind(book: Book)
+  fun bind(
+    book: Book,
+    key: String?
+  )
 }

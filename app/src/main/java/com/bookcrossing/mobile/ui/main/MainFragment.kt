@@ -27,6 +27,7 @@ import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.presenters.MainPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
+import com.bookcrossing.mobile.util.adapters.BooksAdapter
 import com.bookcrossing.mobile.util.adapters.BooksViewHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions.Builder

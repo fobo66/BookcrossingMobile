@@ -47,9 +47,10 @@ class AcquiredBooksViewHolder(view: View) : MvpBaseViewHolder(view), AcquiredBoo
   @BindView(R.id.author)
   lateinit var author: TextView
 
-  override fun bind(book: Book) {
+  override fun bind(book: Book, key: String?) {
     bookName.text = book.name
     author.text = book.author
+    this.key = key.orEmpty()
   }
 
   @OnClick(R.id.release_button)
@@ -70,17 +71,13 @@ class AcquiredBooksViewHolder(view: View) : MvpBaseViewHolder(view), AcquiredBoo
               dialog.getInputField().error = null
               dialog.getActionButton(POSITIVE).isEnabled = true
             }
-            is Invalid -> dialog.getInputField().error =
-              itemView.context.getString(result.messageId)
+            is Invalid -> {
+              dialog.getInputField().error =
+                itemView.context.getString(result.messageId)
+              dialog.getActionButton(POSITIVE).isEnabled = false
+            }
           }
         })
     }
-  }
-
-  /**
-   * Associate this view holder with the given book key
-   */
-  fun setKey(key: String) {
-    this.key = key
   }
 }

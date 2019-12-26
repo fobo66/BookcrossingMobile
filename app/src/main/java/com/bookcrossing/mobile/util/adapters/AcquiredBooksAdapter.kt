@@ -14,33 +14,28 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.ui.main
+package com.bookcrossing.mobile.util.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.models.Book
-import com.bookcrossing.mobile.util.adapters.BooksViewHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 
-class BooksAdapter(options: FirebaseRecyclerOptions<Book>) :
-  FirebaseRecyclerAdapter<Book, BooksViewHolder>(options) {
-  override fun onCreateViewHolder(
-    parent: ViewGroup,
-    viewType: Int
-  ): BooksViewHolder {
+class AcquiredBooksAdapter(options: FirebaseRecyclerOptions<Book>) :
+  FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder>(options) {
+
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcquiredBooksViewHolder {
     val view = LayoutInflater.from(parent.context)
-      .inflate(layout.book_list_item_main, parent, false)
-    return BooksViewHolder(view)
+      .inflate(layout.acquired_book_list_item, parent, false)
+    return AcquiredBooksViewHolder(view)
   }
 
   override fun onBindViewHolder(
-    holder: BooksViewHolder,
-    position: Int,
+    holder: AcquiredBooksViewHolder, position: Int,
     model: Book
   ) {
-    holder.setKey(this.getRef(position).key)
-    holder.bind(model)
+    holder.bind(model, getRef(position).key)
   }
 }
