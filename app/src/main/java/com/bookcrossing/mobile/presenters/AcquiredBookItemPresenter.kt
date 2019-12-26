@@ -16,6 +16,10 @@
 package com.bookcrossing.mobile.presenters
 
 import com.bookcrossing.mobile.ui.profile.AcquiredBookItemView
+import com.bookcrossing.mobile.util.InputValidator
+import com.bookcrossing.mobile.util.LengthRule
+import com.bookcrossing.mobile.util.NotEmptyRule
+import com.bookcrossing.mobile.util.ValidationResult
 
 import moxy.InjectViewState
 
@@ -24,6 +28,9 @@ import moxy.InjectViewState
  */
 @InjectViewState
 class AcquiredBookItemPresenter : BasePresenter<AcquiredBookItemView>() {
+
+  private val validator =
+    InputValidator(NotEmptyRule(), LengthRule(maxLength = 100))
 
   /**
    * Update book info to mark it as released
@@ -36,6 +43,11 @@ class AcquiredBookItemPresenter : BasePresenter<AcquiredBookItemView>() {
     books().child(key).child("positionName").setValue(position)
     books().child(key).child("free").setValue(true)
   }
+
+  /**
+   * Validate user's input
+   */
+  fun validateInput(input: CharSequence): ValidationResult = validator.validate(input.toString())
 
   companion object {
     const val TAG = "AcquiredBookItemPresenter"

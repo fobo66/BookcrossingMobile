@@ -28,6 +28,8 @@ import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.presenters.AcquiredBookItemPresenter
 import com.bookcrossing.mobile.ui.profile.AcquiredBookItemView
+import com.bookcrossing.mobile.util.ValidationResult.Invalid
+import com.bookcrossing.mobile.util.ValidationResult.OK
 import moxy.presenter.InjectPresenter
 
 /**
@@ -50,7 +52,8 @@ class AcquiredBooksViewHolder(view: View) : MvpBaseViewHolder(view), AcquiredBoo
     author.text = book.author
   }
 
-  @OnClick(R.id.release_button) fun release() {
+  @OnClick(R.id.release_button)
+  fun release() {
     MaterialDialog(itemView.context).show {
       title(R.string.release_book_dialog_title)
       positiveButton(R.string.release_book, click = { dialog ->
@@ -60,10 +63,16 @@ class AcquiredBooksViewHolder(view: View) : MvpBaseViewHolder(view), AcquiredBoo
         )
       })
       input(
-        hintRes = R.string.hint_position, prefillRes = R.string.filler_position,
+        hintRes = R.string.hint_position,
         callback = { dialog, input: CharSequence ->
-          dialog.getActionButton(POSITIVE)
-            .isEnabled = !(input.length < 5 || input.length > 50)
+          when (val result = presenter.validateInput(input)) {
+            is OK -> {
+              dialog.getInputField().error = null
+              dialog.getActionButton(POSITIVE).isEnabled = true
+            }
+            is Invalid -> dialog.getInputField().error =
+              itemView.context.getString(result.messageId)
+          }
         })
     }
   }
