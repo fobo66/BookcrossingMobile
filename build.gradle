@@ -38,7 +38,6 @@ buildscript {
 
 plugins {
   id "io.gitlab.arturbosch.detekt" version "1.2.2"
-  id "io.github.fobo66.propertiesloader" version "1.0"
 }
 
 allprojects {
@@ -56,10 +55,6 @@ subprojects {
   pluginManager.withPlugin("kotlin-kapt") {
     kapt.useBuildCache = true
   }
-}
-
-propertiesLoader {
-  propertiesFiles.from(rootProject.file("api.properties"), rootProject.file("keystore.properties"))
 }
 
 task clean(type: Delete) {
