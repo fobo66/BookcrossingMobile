@@ -24,12 +24,9 @@ apply plugin: "io.github.fobo66.propertiesloader"
  *    limitations under the License.
  */
 
-//loadProperties
-apply from: "https://gist.githubusercontent.com/fobo66/17d5116b5c7bccf5f28036f401f3c09d/raw/ad621696be25a46919f7556207a104d1fe82b993/propertiesLoader.gradle"
+def keystoreProperties = PropertiesLoaderKt.loadProperties(rootProject.file("keystore.properties"))
 
-def keystoreProperties = loadProperties("keystore.properties")
-
-def apiProperties = loadProperties("api.properties")
+def apiProperties = PropertiesLoaderKt.loadProperties(rootProject.file("api.properties"))
 
 android {
   compileSdkVersion 29
