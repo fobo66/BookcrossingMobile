@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.ui.create
+package com.bookcrossing.mobile.ui.releasebook
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
@@ -90,7 +90,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
   @BindView(R.id.pick_book_position_button)
   lateinit var pickBookPositionButton: Button
 
-  @BindView(R.id.publish_book)
+  @BindView(R.id.release_book)
   lateinit var releaseButton: Button
 
   @BindString(R.string.rendered_sticker_name)

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~    Copyright 2019 Andrey Mukamolov
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  >
+
+
+  <TextView
+    android:id="@+id/release_acquired_book_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="32dp"
+    android:layout_marginTop="32dp"
+    android:layout_marginEnd="32dp"
+    android:text="@string/release_acquired_book_title"
+    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    />
+  <ImageView
+    android:id="@+id/acquired_book_cover"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="32dp"
+    android:layout_marginTop="32dp"
+    android:contentDescription="@string/cover_description"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/release_acquired_book_title"
+    app:srcCompat="@drawable/ic_book_cover_placeholder"
+    />
+  <com.google.android.gms.maps.MapView
+    android:id="@+id/mapView"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="16dp"
+    app:layout_constraintBottom_toTopOf="@+id/acquired_book_input_position_container"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/acquired_book_cover"
+    />
+
+  <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/acquired_book_input_position_container"
+    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="32dp"
+    android:padding="@dimen/text_input_padding"
+    app:counterEnabled="true"
+    app:counterMaxLength="100"
+    app:layout_constraintBottom_toTopOf="@+id/release_acquired_book"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    >
+
+    <com.google.android.material.textfield.TextInputEditText
+      android:id="@+id/acquired_book_input_position"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:hint="@string/hint_position"
+      android:maxLines="1"
+      />
+  </com.google.android.material.textfield.TextInputLayout>
+  <TextView
+    android:id="@+id/acquired_book_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="32dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.21"
+    app:layout_constraintStart_toEndOf="@+id/acquired_book_cover"
+    app:layout_constraintTop_toBottomOf="@+id/release_acquired_book_title"
+    tools:text="War and Peace"
+    />
+  <TextView
+    android:id="@+id/acquired_book_author"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.21"
+    app:layout_constraintStart_toEndOf="@+id/acquired_book_cover"
+    app:layout_constraintTop_toBottomOf="@+id/acquired_book_title"
+    tools:text="Leo Tolstoy"
+    />
+  <Button
+    android:id="@+id/release_acquired_book"
+    style="@style/Widget.MaterialComponents.Button"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="16dp"
+    android:enabled="false"
+    android:text="@string/release_book"
+    android:textSize="16sp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -28,7 +28,7 @@ import com.bookcrossing.mobile.code.QrCodeEncoder
 import com.bookcrossing.mobile.models.BookBuilder
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.models.Date
-import com.bookcrossing.mobile.ui.create.BookReleaseView
+import com.bookcrossing.mobile.ui.releasebook.BookReleaseView
 import com.bookcrossing.mobile.util.EXTRA_CITY
 import com.bookcrossing.mobile.util.EXTRA_DEFAULT_CITY
 import com.bookcrossing.mobile.util.InputValidator

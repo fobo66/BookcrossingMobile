@@ -74,7 +74,7 @@
   </fragment>
   <fragment
     android:id="@+id/bookReleaseFragment"
-    android:name="com.bookcrossing.mobile.ui.create.BookReleaseFragment"
+    android:name="com.bookcrossing.mobile.ui.releasebook.BookReleaseFragment"
     android:label="@string/add_new_book_title"
     tools:layout="@layout/fragment_book_release">
     <action

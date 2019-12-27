@@ -117,6 +117,7 @@
   <string name="pick_location_on_map">Выбрать местоположение книги на карте</string>
   <string name="pick_location_button_text">Выбрать местоположение</string>
   <string name="sign_in_success">Добро пожаловать в Bookcrossing!</string>
+  <string name="release_acquired_book_title">You are going to release this book</string>
   <string-array name="cover_chooser_dialog_items">
     <item>Из галереи</item>
     <item>Сделать фото</item>

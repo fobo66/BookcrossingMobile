@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.ui.create
+package com.bookcrossing.mobile.ui.releasebook
 
 import android.net.Uri
 
