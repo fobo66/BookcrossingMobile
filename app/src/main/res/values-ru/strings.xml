@@ -115,7 +115,8 @@
   <string name="error_too_long">Текст слишком длинный</string>
   <string name="error_too_short">Текст слишком короткий</string>
   <string name="pick_location_on_map">Выбрать местоположение книги на карте</string>
-  <string name="pick_location_button_text">Pick location</string>
+  <string name="pick_location_button_text">Выбрать местоположение</string>
+  <string name="sign_in_success">Добро пожаловать в Bookcrossing!</string>
   <string-array name="cover_chooser_dialog_items">
     <item>Из галереи</item>
     <item>Сделать фото</item>

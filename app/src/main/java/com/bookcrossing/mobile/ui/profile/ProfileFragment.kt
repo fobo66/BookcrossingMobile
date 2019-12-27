@@ -15,6 +15,8 @@
  */
 package com.bookcrossing.mobile.ui.profile
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +32,7 @@ import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.presenters.ProfilePresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
+import com.bookcrossing.mobile.util.RC_SIGN_IN
 import com.bookcrossing.mobile.util.adapters.AcquiredBooksAdapter
 import com.bookcrossing.mobile.util.adapters.AcquiredBooksViewHolder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -61,17 +64,28 @@ class ProfileFragment : BaseFragment(), ProfileView {
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-    setupAcquiredBookList()
     if (presenter.isAuthenticated) {
-      adapter.startListening()
-      GlideApp.with(this)
-        .load(presenter.photoUrl)
-        .placeholder(drawable.ic_account_circle_black_24dp)
-        .transition(DrawableTransitionOptions.withCrossFade())
-        .into(profileImage)
+      setupAcquiredBookList()
+      loadProfileInfo()
     } else {
       authenticate()
     }
+  }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    if (requestCode == RC_SIGN_IN && resultCode == RESULT_OK) {
+      setupAcquiredBookList()
+      loadProfileInfo()
+    }
+  }
+
+  private fun loadProfileInfo() {
+    adapter.startListening()
+    GlideApp.with(this)
+      .load(presenter.photoUrl)
+      .placeholder(drawable.ic_account_circle_black_24dp)
+      .transition(DrawableTransitionOptions.withCrossFade())
+      .into(profileImage)
   }
 
   private fun setupAcquiredBookList() {
@@ -85,12 +99,5 @@ class ProfileFragment : BaseFragment(), ProfileView {
         .build()
     )
     acquiredBooksList.adapter = adapter
-  }
-
-  override fun onDestroyView() {
-    super.onDestroyView()
-    if (presenter.isAuthenticated) {
-      adapter.stopListening()
-    }
   }
 }
