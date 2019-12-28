@@ -16,11 +16,13 @@
 
 package com.bookcrossing.mobile.presenters
 
+import android.Manifest
 import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.annotation.IdRes
+import androidx.annotation.RequiresPermission
 import androidx.core.content.edit
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.code.BookStickerSaver
@@ -41,8 +43,8 @@ import com.google.zxing.WriterException
 import durdinapps.rxfirebase2.RxFirebaseAuth
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import durdinapps.rxfirebase2.RxFirebaseStorage
-import io.reactivex.Maybe
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
@@ -194,9 +196,10 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   /**
    * Determine the city in which the user currently resides to set location of the released book
    */
-  fun resolveUserCity(): Maybe<String> {
+  @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
+  fun resolveUserCity(): Single<String> {
     return systemServicesWrapper.locationRepository.getLastKnownUserLocation()
-      .flatMapMaybe<String> { location ->
+      .flatMap<String> { location ->
         systemServicesWrapper.locationRepository.resolveUserCity(
           location
         )

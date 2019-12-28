@@ -17,6 +17,7 @@
 package com.bookcrossing.mobile.ui.releasebook
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Bitmap
@@ -355,11 +356,12 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     presenter.saveSticker(stickerBitmap, stickerName, stickerDescription)
   }
 
+  @SuppressLint("MissingPermission") // permssion handled via RxPermission
   private fun resolveUserCity(): Observable<String> {
     return permissions.request(
       Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
     )
-      .flatMapMaybe { presenter.resolveUserCity() }
+      .flatMapSingle { presenter.resolveUserCity() }
   }
 
   companion object {

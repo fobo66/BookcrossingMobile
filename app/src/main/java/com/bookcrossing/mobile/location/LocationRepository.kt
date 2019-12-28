@@ -15,15 +15,17 @@
 
 package com.bookcrossing.mobile.location
 
+import android.Manifest
 import android.location.Location
+import androidx.annotation.RequiresPermission
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.util.LocaleProvider
 import com.bookcrossing.mobile.util.ResourceProvider
+import com.bookcrossing.mobile.util.observeLastLocation
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.mapbox.api.geocoding.v5.GeocodingCriteria
 import com.mapbox.api.geocoding.v5.MapboxGeocoding
 import com.mapbox.geojson.Point.fromLngLat
-import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -34,15 +36,12 @@ class LocationRepository @Inject constructor(
   private val localeProvider: LocaleProvider
 ) {
 
-  fun getLastKnownUserLocation(): Single<Location?> {
-    return Single.create { emitter ->
-      fusedLocationProviderClient.lastLocation
-        .addOnSuccessListener { emitter.onSuccess(it) }
-        .addOnFailureListener { emitter.onError(it) }
-    }
+  @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
+  fun getLastKnownUserLocation(): Single<Location> {
+    return fusedLocationProviderClient.observeLastLocation()
   }
 
-  fun resolveUserCity(location: Location): Maybe<String?> {
+  fun resolveUserCity(location: Location): Single<String> {
     val reverseGeocodeRequest = MapboxGeocoding.builder()
       .accessToken(resourceProvider.getString(R.string.mapbox_access_token))
       .languages(localeProvider.currentLocale.language)
@@ -51,14 +50,18 @@ class LocationRepository @Inject constructor(
       .geocodingTypes(GeocodingCriteria.TYPE_PLACE)
       .build()
 
+    val defaultCity = resourceProvider.getString(R.string.default_city)
+
     return Single.fromCallable { reverseGeocodeRequest.executeCall() }
       .map { response ->
         response.body()
-          ?.features()
+          ?.features() ?: emptyList()
       }
       .filter { features -> features.isNotEmpty() }
       .map { features -> features[0] }
-      .map { feature -> feature.text() }
+      .map { feature -> feature.text() ?: defaultCity }
+      .switchIfEmpty(Single.just(defaultCity))
+      .onErrorReturnItem(defaultCity)
       .subscribeOn(Schedulers.io())
   }
 }
