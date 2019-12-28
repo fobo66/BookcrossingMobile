@@ -141,6 +141,7 @@
   <string name="pick_location_button_text">Pick location</string>
   <string name="sign_in_success">Welcome to Bookcrossing!</string>
   <string name="release_acquired_book_title">You are going to release this book</string>
+  <string name="release_acquired_book">Release book</string>
   <string-array name="cover_chooser_dialog_items">
     <item>From gallery</item>
     <item>From camera</item>

@@ -16,16 +16,26 @@
 
 package com.bookcrossing.mobile.ui.releasebook
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import butterknife.BindView
 import com.bookcrossing.mobile.R
+import com.bookcrossing.mobile.R.drawable
+import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.modules.GlideApp
+import com.bookcrossing.mobile.presenters.ReleaseAcquiredBookPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
+import com.bookcrossing.mobile.util.EXTRA_KEY
 import com.bookcrossing.mobile.util.MapDelegate
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.gms.maps.MapView
+import moxy.presenter.InjectPresenter
 
 /**
  * Screen for releasing acquired book. User can specify new book location here.
@@ -34,6 +44,18 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView {
 
   @BindView(R.id.acquired_book_map)
   lateinit var mapView: MapView
+
+  @BindView(R.id.acquired_book_cover)
+  lateinit var cover: ImageView
+
+  @BindView(R.id.acquired_book_author)
+  lateinit var authorTextView: TextView
+
+  @BindView(R.id.acquired_book_title)
+  lateinit var bookNameTextView: TextView
+
+  @InjectPresenter
+  lateinit var presenter: ReleaseAcquiredBookPresenter
 
   private lateinit var permissions: RxPermissions
   private lateinit var mapDelegate: MapDelegate
@@ -50,6 +72,7 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView {
     super.onViewCreated(view, savedInstanceState)
 
     mapDelegate = MapDelegate(mapView, viewLifecycleOwner)
+    presenter.loadBook(requireArguments().getString(EXTRA_KEY))
   }
 
   override fun onLowMemory() {
@@ -57,11 +80,21 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView {
     mapDelegate.onLowMemory()
   }
 
-  override fun showCover() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  override fun showBookDetails(
+    book: Book,
+    coverUri: Uri?
+  ) {
+    GlideApp.with(this)
+      .load(coverUri)
+      .placeholder(drawable.ic_book_cover_placeholder)
+      .transition(DrawableTransitionOptions.withCrossFade())
+      .into(cover)
+
+    authorTextView.text = book.author
+    bookNameTextView.text = book.name
   }
 
-  override fun onReleased(newKey: String) {
+  override fun onReleased() {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
 

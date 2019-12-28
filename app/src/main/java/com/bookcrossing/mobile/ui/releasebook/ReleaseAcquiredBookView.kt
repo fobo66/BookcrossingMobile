@@ -16,6 +16,8 @@
 
 package com.bookcrossing.mobile.ui.releasebook
 
+import android.net.Uri
+import com.bookcrossing.mobile.models.Book
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
@@ -27,14 +29,14 @@ import moxy.viewstate.strategy.StateStrategyType
 interface ReleaseAcquiredBookView : MvpView {
 
   /**
-   * Show cover after book info has been loaded
+   * Show book info after it has been loaded
    */
-  fun showCover()
+  fun showBookDetails(book: Book, coverUri: Uri?)
 
   /**
    * Book was successfully released
    */
-  fun onReleased(newKey: String)
+  fun onReleased()
 
   /**
    * Error happened during releasing the book

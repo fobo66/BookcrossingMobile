@@ -17,19 +17,15 @@ package com.bookcrossing.mobile.util.adapters
 
 import android.view.View
 import android.widget.TextView
+import androidx.core.os.bundleOf
+import androidx.navigation.findNavController
 import butterknife.BindView
 import butterknife.OnClick
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.WhichButton.POSITIVE
-import com.afollestad.materialdialogs.actions.getActionButton
-import com.afollestad.materialdialogs.input.getInputField
-import com.afollestad.materialdialogs.input.input
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.presenters.AcquiredBookItemPresenter
 import com.bookcrossing.mobile.ui.profile.AcquiredBookItemView
-import com.bookcrossing.mobile.util.ValidationResult.Invalid
-import com.bookcrossing.mobile.util.ValidationResult.OK
+import com.bookcrossing.mobile.util.EXTRA_KEY
 import moxy.presenter.InjectPresenter
 
 /**
@@ -55,29 +51,7 @@ class AcquiredBooksViewHolder(view: View) : MvpBaseViewHolder(view), AcquiredBoo
 
   @OnClick(R.id.release_button)
   fun release() {
-    MaterialDialog(itemView.context).show {
-      title(R.string.release_book_dialog_title)
-      positiveButton(R.string.release_book, click = { dialog ->
-        presenter.releaseCurrentBook(
-          key,
-          dialog.getInputField().text.toString()
-        )
-      })
-      input(
-        hintRes = R.string.hint_position,
-        callback = { dialog, input: CharSequence ->
-          when (val result = presenter.validateInput(input)) {
-            is OK -> {
-              dialog.getInputField().error = null
-              dialog.getActionButton(POSITIVE).isEnabled = true
-            }
-            is Invalid -> {
-              dialog.getInputField().error =
-                itemView.context.getString(result.messageId)
-              dialog.getActionButton(POSITIVE).isEnabled = false
-            }
-          }
-        })
-    }
+    itemView.findNavController()
+      .navigate(R.id.releaseAcquiredBookFragment, bundleOf(EXTRA_KEY to key))
   }
 }

@@ -71,7 +71,7 @@
     android:padding="@dimen/text_input_padding"
     app:counterEnabled="true"
     app:counterMaxLength="100"
-    app:layout_constraintBottom_toTopOf="@+id/release_acquired_book"
+    app:layout_constraintBottom_toTopOf="@id/release_acquired_book"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     >
@@ -89,10 +89,11 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="32dp"
+    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.21"
-    app:layout_constraintStart_toEndOf="@+id/acquired_book_cover"
-    app:layout_constraintTop_toBottomOf="@+id/release_acquired_book_title"
+    app:layout_constraintHorizontal_bias="0.1"
+    app:layout_constraintStart_toEndOf="@id/acquired_book_cover"
+    app:layout_constraintTop_toBottomOf="@id/release_acquired_book_title"
     tools:text="War and Peace"
     />
   <TextView
@@ -100,10 +101,11 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
+    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.21"
-    app:layout_constraintStart_toEndOf="@+id/acquired_book_cover"
-    app:layout_constraintTop_toBottomOf="@+id/acquired_book_title"
+    app:layout_constraintHorizontal_bias="0.0"
+    app:layout_constraintStart_toStartOf="@id/acquired_book_title"
+    app:layout_constraintTop_toBottomOf="@id/acquired_book_title"
     tools:text="Leo Tolstoy"
     />
   <Button
