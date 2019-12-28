@@ -25,16 +25,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.annotation.RequiresPermission
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.string
 import com.bookcrossing.mobile.models.Coordinates
+import com.bookcrossing.mobile.util.MapDelegate
+import com.bookcrossing.mobile.util.observeLastLocation
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -72,7 +72,7 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
   @BindView(R.id.book_location_picker_button)
   lateinit var pickLocationButton: Button
 
-  private lateinit var map: GoogleMap
+  private lateinit var mapDelegate: MapDelegate
   private lateinit var unbinder: Unbinder
   private lateinit var permissions: RxPermissions
 
@@ -113,29 +113,29 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
     unbinder = ButterKnife.bind(this, view)
     permissions = RxPermissions(this)
 
-    mapView.onCreate(savedInstanceState)
+    mapDelegate = MapDelegate(mapView, viewLifecycleOwner)
+
+    setupCurrentLocation()
 
     mapView.getMapAsync(this)
 
     subscriptions.add(toolbar.navigationClicks()
       .subscribe { dismiss() })
 
-    subscriptions.add(pickLocationButton.clicks()
-      .subscribe {
-        bookLocationPicked.onNext(Coordinates(bookLocation?.position))
-        dismiss()
+    subscriptions.add(
+      pickLocationButton.clicks()
+        .subscribe {
+          bookLocationPicked.onNext(Coordinates(bookLocation?.position))
+          dismiss()
       })
   }
 
   override fun onMapReady(googleMap: GoogleMap) {
     Timber.d("Map loaded")
-    map = googleMap
 
-    requestLocationPermissions()
-
-    map.setOnMapClickListener {
+    googleMap.setOnMapClickListener {
       if (bookLocation == null) {
-        bookLocation = map.addMarker(
+        bookLocation = googleMap.addMarker(
           MarkerOptions()
             .position(it)
         )
@@ -147,11 +147,15 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
   }
 
   @SuppressLint("MissingPermission") // permission is checked in RxPermission
-  private fun requestLocationPermissions() {
+  private fun setupCurrentLocation() {
     subscriptions.add(
       permissions.request(ACCESS_FINE_LOCATION)
+        .flatMapSingle {
+          LocationServices.getFusedLocationProviderClient(requireActivity()).observeLastLocation()
+        }
+        .map { LatLng(it.latitude, it.longitude) }
         .subscribe({
-          setupCurrentLocation(map)
+          mapDelegate.setupCurrentLocation(it)
         }, { error ->
           Timber.e(error)
           showExplanation()
@@ -166,62 +170,26 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
     return dialog
   }
 
-  override fun onResume() {
-    super.onResume()
-    mapView.onResume()
-  }
-
-  override fun onPause() {
-    super.onPause()
-    mapView.onPause()
-  }
-
-  override fun onStop() {
-    super.onStop()
-    mapView.onStop()
-  }
-
   override fun onLowMemory() {
     super.onLowMemory()
-    mapView.onLowMemory()
+    mapDelegate.onLowMemory()
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
 
-    mapView.onDestroy()
     unbinder.unbind()
     subscriptions.clear()
   }
 
   override fun onCancel(dialog: DialogInterface) {
     (dialog as BottomSheetDialog).behavior.removeBottomSheetCallback(bottomSheetCallback)
+    subscriptions.clear()
   }
 
-  @RequiresPermission(ACCESS_FINE_LOCATION)
-  private fun setupCurrentLocation(
-    map: GoogleMap
-  ) {
-    val fusedLocationProviderClient =
-      LocationServices.getFusedLocationProviderClient(requireActivity())
-
-    fusedLocationProviderClient.lastLocation.addOnCompleteListener {
-      if (it.isSuccessful) {
-
-        val latLng = it.result?.let {
-          LatLng(it.latitude, it.longitude)
-        }
-
-        map.isMyLocationEnabled = true
-
-        map.animateCamera(
-          CameraUpdateFactory.newLatLngZoom(
-            latLng,
-            15.0f
-          )
-        )
-      }
-    }
+  override fun onDismiss(dialog: DialogInterface) {
+    super.onDismiss(dialog)
+    subscriptions.clear()
   }
 
   private fun showExplanation() {

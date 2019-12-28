@@ -16,18 +16,27 @@
 
 package com.bookcrossing.mobile.ui.releasebook
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import butterknife.BindView
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.ui.base.BaseFragment
+import com.bookcrossing.mobile.util.MapDelegate
 import com.github.florent37.runtimepermission.rx.RxPermissions
+import com.google.android.gms.maps.MapView
 
+/**
+ * Screen for releasing acquired book. User can specify new book location here.
+ */
 class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView {
 
+  @BindView(R.id.acquired_book_map)
+  lateinit var mapView: MapView
+
   private lateinit var permissions: RxPermissions
+  private lateinit var mapDelegate: MapDelegate
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -37,8 +46,15 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView {
     return inflater.inflate(R.layout.fragment_book_release_acquired, container, false)
   }
 
-  override fun onCoverChosen(coverUri: Uri?) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+
+    mapDelegate = MapDelegate(mapView, viewLifecycleOwner)
+  }
+
+  override fun onLowMemory() {
+    super.onLowMemory()
+    mapDelegate.onLowMemory()
   }
 
   override fun showCover() {

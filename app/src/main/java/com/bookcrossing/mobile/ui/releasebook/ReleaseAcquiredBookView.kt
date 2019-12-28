@@ -16,24 +16,18 @@
 
 package com.bookcrossing.mobile.ui.releasebook
 
-import android.net.Uri
-
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
 /**
- * View for release new book screen
+ * View for release acquired book screen
  */
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface ReleaseAcquiredBookView : MvpView {
-  /**
-   * User has selected cover for the book
-   */
-  fun onCoverChosen(coverUri: Uri?)
 
   /**
-   * Show cover after user has typed a name of the book
+   * Show cover after book info has been loaded
    */
   fun showCover()
 
