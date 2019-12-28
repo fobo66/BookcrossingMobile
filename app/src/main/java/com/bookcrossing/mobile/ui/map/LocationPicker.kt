@@ -34,6 +34,7 @@ import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.util.MapDelegate
 import com.bookcrossing.mobile.util.observeLastLocation
 import com.github.florent37.runtimepermission.rx.RxPermissions
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -75,6 +76,7 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
   private lateinit var mapDelegate: MapDelegate
   private lateinit var unbinder: Unbinder
   private lateinit var permissions: RxPermissions
+  private lateinit var locationProvider: FusedLocationProviderClient
 
   private var bookLocation: Marker? = null
 
@@ -112,6 +114,8 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
     super.onViewCreated(view, savedInstanceState)
     unbinder = ButterKnife.bind(this, view)
     permissions = RxPermissions(this)
+    locationProvider =
+      LocationServices.getFusedLocationProviderClient(requireActivity())
 
     mapDelegate = MapDelegate(mapView, viewLifecycleOwner)
 
@@ -151,7 +155,7 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
     subscriptions.add(
       permissions.request(ACCESS_FINE_LOCATION)
         .flatMapSingle {
-          LocationServices.getFusedLocationProviderClient(requireActivity()).observeLastLocation()
+          locationProvider.observeLastLocation()
         }
         .map { LatLng(it.latitude, it.longitude) }
         .subscribe({
@@ -189,7 +193,7 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
 
   override fun onDismiss(dialog: DialogInterface) {
     super.onDismiss(dialog)
-    subscriptions.clear()
+    onCancel(dialog)
   }
 
   private fun showExplanation() {
