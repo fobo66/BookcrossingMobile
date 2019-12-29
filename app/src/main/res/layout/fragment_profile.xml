@@ -12,13 +12,14 @@
     android:layout_height="100dp"
     android:layout_marginStart="8dp"
     android:layout_marginLeft="8dp"
-    android:layout_marginTop="8dp"
+    android:layout_marginTop="16dp"
     android:layout_marginEnd="8dp"
     android:layout_marginRight="8dp"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toRightOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:srcCompat="@drawable/ic_account_circle_black_24dp"
+    android:contentDescription="@string/profile_picture_description"
     />
 
   <TextView
@@ -48,6 +49,19 @@
     app:layout_constraintRight_toRightOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/acquiredBooksListHeader"
     tools:listitem="@layout/acquired_book_list_item"
+    />
+  <androidx.appcompat.widget.AppCompatTextView
+    android:id="@+id/acquiredBooksListEmptyIndicator"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/acquired_books_empty_indicator"
+    android:visibility="gone"
+    app:drawableTopCompat="@drawable/ic_book_black_24dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="@id/acquiredBooksList"
+    tools:visibility="visible"
     />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

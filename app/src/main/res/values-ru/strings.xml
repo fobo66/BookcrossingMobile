@@ -118,6 +118,8 @@
   <string name="sign_in_success">Добро пожаловать в Bookcrossing!</string>
   <string name="release_acquired_book_title">Вы собираетесь освободить эту книгу</string>
   <string name="release_acquired_book">Освободить книгу</string>
+  <string name="acquired_books_empty_indicator">No acquired books</string>
+  <string name="profile_picture_description">Profile picture</string>
   <string-array name="cover_chooser_dialog_items">
     <item>Из галереи</item>
     <item>Сделать фото</item>

@@ -20,8 +20,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
@@ -50,6 +52,9 @@ class ProfileFragment : BaseFragment(), ProfileView {
   lateinit var profileImage: ImageView
   @BindView(R.id.acquiredBooksList)
   lateinit var acquiredBooksList: RecyclerView
+  @BindView(R.id.acquiredBooksListEmptyIndicator)
+  lateinit var acquiredBooksListEmptyIndicator: AppCompatTextView
+
   private lateinit var adapter: FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder>
 
   override fun onCreateView(
@@ -86,6 +91,10 @@ class ProfileFragment : BaseFragment(), ProfileView {
       .placeholder(drawable.ic_account_circle_black_24dp)
       .transition(DrawableTransitionOptions.withCrossFade())
       .into(profileImage)
+
+    if (adapter.itemCount == 0) {
+      acquiredBooksListEmptyIndicator.visibility = VISIBLE
+    }
   }
 
   private fun setupAcquiredBookList() {
