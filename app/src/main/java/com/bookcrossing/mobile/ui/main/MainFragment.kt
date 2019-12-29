@@ -106,24 +106,22 @@ class MainFragment : BaseFragment(), MainView {
 
         val error = signInResult.error
 
-        if (error != null) {
-          Timber.e(error, "Sign in failed")
-          if (error.errorCode == ErrorCodes.NO_NETWORK) {
+        Timber.e(error, "Sign in failed")
+
+        when (error?.errorCode) {
+          ErrorCodes.NO_NETWORK -> {
             Snackbar.make(
               rv,
               resources.getString(R.string.no_internet_connection), Snackbar.LENGTH_LONG
             )
               .show()
-            return
           }
-
-          if (error.errorCode == ErrorCodes.UNKNOWN_ERROR) {
+          ErrorCodes.UNKNOWN_ERROR -> {
             Snackbar.make(
               rv,
               resources.getString(R.string.unknown_signin_error), Snackbar.LENGTH_LONG
             )
               .show()
-            return
           }
         }
       }
