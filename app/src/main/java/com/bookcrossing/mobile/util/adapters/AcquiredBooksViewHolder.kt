@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -31,7 +32,7 @@ import moxy.presenter.InjectPresenter
 /**
  * View holder for acquired books list item
  */
-class AcquiredBooksViewHolder(view: View) : MvpBaseViewHolder(view), AcquiredBookItemView {
+class AcquiredBooksViewHolder(view: View) : BaseViewHolder(view), AcquiredBookItemView {
 
   @InjectPresenter(tag = AcquiredBookItemPresenter.TAG)
   lateinit var presenter: AcquiredBookItemPresenter
@@ -49,6 +50,9 @@ class AcquiredBooksViewHolder(view: View) : MvpBaseViewHolder(view), AcquiredBoo
     this.key = key.orEmpty()
   }
 
+  /**
+   * Handle release of the acquired book
+   */
   @OnClick(R.id.release_button)
   fun release() {
     itemView.findNavController()
