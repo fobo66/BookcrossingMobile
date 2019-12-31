@@ -24,13 +24,13 @@
 
   <TextView
     android:id="@+id/release_acquired_book_title"
-    android:layout_width="wrap_content"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginStart="32dp"
     android:layout_marginTop="32dp"
     android:layout_marginEnd="32dp"
     android:text="@string/release_acquired_book_title"
-    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
