@@ -101,8 +101,4 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView {
   override fun onFailedToRelease() {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
-
-  override fun askUserToProvideDefaultCity() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
 }
