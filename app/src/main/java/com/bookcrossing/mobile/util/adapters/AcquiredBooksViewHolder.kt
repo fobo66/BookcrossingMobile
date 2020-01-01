@@ -24,18 +24,13 @@ import butterknife.BindView
 import butterknife.OnClick
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.models.Book
-import com.bookcrossing.mobile.presenters.AcquiredBookItemPresenter
 import com.bookcrossing.mobile.ui.profile.AcquiredBookItemView
 import com.bookcrossing.mobile.util.EXTRA_KEY
-import moxy.presenter.InjectPresenter
 
 /**
  * View holder for acquired books list item
  */
 class AcquiredBooksViewHolder(view: View) : BaseViewHolder(view), AcquiredBookItemView {
-
-  @InjectPresenter(tag = AcquiredBookItemPresenter.TAG)
-  lateinit var presenter: AcquiredBookItemPresenter
 
   private lateinit var key: String
   @BindView(R.id.book_name)

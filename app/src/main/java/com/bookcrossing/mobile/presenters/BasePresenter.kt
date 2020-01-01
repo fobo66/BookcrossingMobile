@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -16,11 +17,8 @@
 package com.bookcrossing.mobile.presenters
 
 import android.net.Uri
-import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.util.DEFAULT_USER
-import com.bookcrossing.mobile.util.EXTRA_CITY
-import com.bookcrossing.mobile.util.EXTRA_DEFAULT_CITY
 import com.bookcrossing.mobile.util.EXTRA_KEY
 import com.bookcrossing.mobile.util.FirebaseWrapper
 import com.bookcrossing.mobile.util.PACKAGE_NAME
@@ -38,29 +36,16 @@ import moxy.MvpView
 
 open class BasePresenter<V : MvpView> : MvpPresenter<V>() {
   private val compositeSubscription = CompositeDisposable()
-  protected var firebaseWrapper: FirebaseWrapper
-  protected var systemServicesWrapper: SystemServicesWrapper
+  protected var firebaseWrapper: FirebaseWrapper = FirebaseWrapper()
+  protected var systemServicesWrapper: SystemServicesWrapper = SystemServicesWrapper()
 
   private val userId: String
     get() = firebaseWrapper.auth.currentUser?.uid ?: DEFAULT_USER
-
-  protected val city: String?
-    get() = systemServicesWrapper.preferences
-      .getString(EXTRA_CITY, defaultCity)
-
-  val defaultCity: String?
-    get() = systemServicesWrapper.preferences
-      .getString(
-        EXTRA_DEFAULT_CITY,
-        systemServicesWrapper.app.getString(R.string.default_city)
-      )
 
   val isAuthenticated: Boolean
     get() = firebaseWrapper.auth.currentUser != null
 
   init {
-    firebaseWrapper = FirebaseWrapper()
-    systemServicesWrapper = SystemServicesWrapper()
     App.getComponent()
       .inject(firebaseWrapper)
     App.getComponent()

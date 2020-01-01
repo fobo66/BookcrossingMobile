@@ -16,14 +16,11 @@
 
 package com.bookcrossing.mobile.presenters
 
-import android.Manifest
 import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.annotation.IdRes
-import androidx.annotation.RequiresPermission
-import androidx.core.content.edit
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.code.BookStickerSaver
 import com.bookcrossing.mobile.code.QrCodeEncoder
@@ -31,8 +28,6 @@ import com.bookcrossing.mobile.models.BookBuilder
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.models.Date
 import com.bookcrossing.mobile.ui.releasebook.BookReleaseView
-import com.bookcrossing.mobile.util.EXTRA_CITY
-import com.bookcrossing.mobile.util.EXTRA_DEFAULT_CITY
 import com.bookcrossing.mobile.util.InputValidator
 import com.bookcrossing.mobile.util.LengthRule
 import com.bookcrossing.mobile.util.NotEmptyRule
@@ -124,10 +119,9 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   }
 
   /** Release book */
-  fun releaseBook(city: String): Observable<String> {
+  fun releaseBook(): Observable<String> {
     setPublicationDate()
     val newBook = book.createBook()
-    newBook.city = city
     val newBookReference = books().push()
     val key = newBookReference.key.orEmpty()
 
@@ -143,6 +137,7 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .doOnNext {
+        book.clear()
         viewState.onReleased(it)
       }
       .doOnError {
@@ -194,31 +189,21 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   }
 
   /**
-   * Determine the city in which the user currently resides to set location of the released book
+   * Determine the city of the location of the book
    */
-  @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
-  fun resolveUserCity(): Single<String> {
-    return systemServicesWrapper.locationRepository.getLastKnownUserLocation()
-      .flatMap<String> { location ->
-        systemServicesWrapper.locationRepository.resolveUserCity(
-          location
-        )
-      }
-      .doOnSuccess { city -> saveCity(city) }
-      .doOnError {
-        Timber.e(it, "Failed to resolve city")
-        viewState.askUserToProvideDefaultCity()
-      }
+  fun resolveCity(coordinates: Coordinates): Single<String> {
+    return systemServicesWrapper.locationRepository.resolveUserCity(
+      coordinates.lat,
+      coordinates.lng
+    )
+      .doOnError(Timber::e)
   }
 
   /**
    * Save city to preferences
    */
   fun saveCity(city: String) {
-    systemServicesWrapper.preferences.edit {
-      putString(EXTRA_CITY, city)
-      putString(EXTRA_DEFAULT_CITY, city)
-    }
+    book.setCity(city)
   }
 
   /**

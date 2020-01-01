@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -36,17 +37,19 @@ class LocationRepository @Inject constructor(
   private val localeProvider: LocaleProvider
 ) {
 
+  /** Load last location of the device. Throws error if location is null */
   @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
   fun getLastKnownUserLocation(): Single<Location> {
     return fusedLocationProviderClient.observeLastLocation()
   }
 
-  fun resolveUserCity(location: Location): Single<String> {
+  /** Geocode city from coordinates */
+  fun resolveUserCity(latitude: Double, longitude: Double): Single<String> {
     val reverseGeocodeRequest = MapboxGeocoding.builder()
       .accessToken(resourceProvider.getString(R.string.mapbox_access_token))
       .languages(localeProvider.currentLocale.language)
       .limit(1)
-      .query(fromLngLat(location.longitude, location.latitude))
+      .query(fromLngLat(longitude, latitude))
       .geocodingTypes(GeocodingCriteria.TYPE_PLACE)
       .build()
 
