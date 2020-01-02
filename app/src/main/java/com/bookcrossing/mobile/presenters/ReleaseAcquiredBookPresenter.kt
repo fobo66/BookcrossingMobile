@@ -19,8 +19,11 @@ package com.bookcrossing.mobile.presenters
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.ui.releasebook.ReleaseAcquiredBookView
+import com.bookcrossing.mobile.util.observe
 import com.google.android.gms.maps.model.LatLng
 import durdinapps.rxfirebase2.RxFirebaseDatabase
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
 
 
@@ -48,5 +51,23 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
   /** Save selected position of the book */
   fun savePosition(bookPosition: LatLng) {
     book.position = Coordinates(bookPosition)
+  }
+
+  /** Release acquired book */
+  fun releaseBook(key: String): Completable {
+    book.isFree = true
+
+    return RxFirebaseDatabase.setValue(books().child(key), book)
+      .andThen(RxFirebaseDatabase.setValue(places(key), book.position))
+      .andThen(
+        RxFirebaseDatabase.setValue(
+          placesHistory(key).child("${book.city}, ${book.positionName}"),
+          book.position
+        )
+      )
+      .andThen(
+        acquiredBooks().child(key).removeValue().observe().ignoreElement()
+      )
+      .subscribeOn(Schedulers.io())
   }
 }
