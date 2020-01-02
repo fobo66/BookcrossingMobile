@@ -37,7 +37,7 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
         RxFirebaseDatabase.observeSingleValueEvent(books().child(key), Book::class.java)
           .subscribe {
             book = it
-            viewState.showBookDetails(it, firebaseWrapper.auth.currentUser?.photoUrl)
+            viewState.showBookDetails(it, resolveCover(key))
           }
       )
     }

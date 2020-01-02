@@ -16,8 +16,8 @@
 
 package com.bookcrossing.mobile.ui.releasebook
 
-import android.net.Uri
 import com.bookcrossing.mobile.models.Book
+import com.google.firebase.storage.StorageReference
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
@@ -31,7 +31,7 @@ interface ReleaseAcquiredBookView : MvpView {
   /**
    * Show book info after it has been loaded
    */
-  fun showBookDetails(book: Book, coverUri: Uri?)
+  fun showBookDetails(book: Book, coverUri: StorageReference)
 
   /**
    * Book was successfully released

@@ -16,7 +16,6 @@
 
 package com.bookcrossing.mobile.ui.releasebook
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,6 +34,7 @@ import com.bookcrossing.mobile.util.MapDelegate
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.gms.maps.MapView
+import com.google.firebase.storage.StorageReference
 import moxy.presenter.InjectPresenter
 
 /**
@@ -82,7 +82,7 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView {
 
   override fun showBookDetails(
     book: Book,
-    coverUri: Uri?
+    coverUri: StorageReference
   ) {
     GlideApp.with(this)
       .load(coverUri)
