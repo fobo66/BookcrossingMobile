@@ -16,13 +16,10 @@
 
 package com.bookcrossing.mobile.util
 
-import android.Manifest
-import androidx.annotation.RequiresPermission
 import com.google.android.gms.tasks.Task
 import io.reactivex.Single
 
 /** Wrap Play Services Task API with RxJava */
-@RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
 fun <T> Task<T>.observe(): Single<T> = Single.create { emitter ->
   addOnCompleteListener {
     if (it.isSuccessful) {
