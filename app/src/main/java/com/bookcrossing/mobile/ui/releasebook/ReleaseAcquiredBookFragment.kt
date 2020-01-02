@@ -16,6 +16,8 @@
 
 package com.bookcrossing.mobile.ui.releasebook
 
+import android.Manifest.permission
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,11 +33,16 @@ import com.bookcrossing.mobile.presenters.ReleaseAcquiredBookPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.EXTRA_KEY
 import com.bookcrossing.mobile.util.MapDelegate
+import com.bookcrossing.mobile.util.observe
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.florent37.runtimepermission.rx.RxPermissions
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.storage.StorageReference
 import moxy.presenter.InjectPresenter
+import timber.log.Timber
 
 /**
  * Screen for releasing acquired book. User can specify new book location here.
@@ -44,7 +51,6 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView {
 
   @BindView(R.id.acquired_book_map)
   lateinit var mapView: MapView
-
   @BindView(R.id.acquired_book_cover)
   lateinit var cover: ImageView
 
@@ -59,6 +65,7 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView {
 
   private lateinit var permissions: RxPermissions
   private lateinit var mapDelegate: MapDelegate
+  private lateinit var locationProvider: FusedLocationProviderClient
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -72,7 +79,25 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView {
     super.onViewCreated(view, savedInstanceState)
 
     mapDelegate = MapDelegate(mapView, viewLifecycleOwner)
+    permissions = RxPermissions(this)
+    locationProvider = LocationServices.getFusedLocationProviderClient(requireActivity())
     presenter.loadBook(requireArguments().getString(EXTRA_KEY))
+
+    setupCurrentLocation()
+  }
+
+  @SuppressLint("MissingPermission")
+  private fun setupCurrentLocation() {
+    subscriptions.add(
+      permissions.request(permission.ACCESS_FINE_LOCATION)
+        .flatMapSingle {
+          locationProvider.lastLocation.observe()
+        }
+        .map { LatLng(it.latitude, it.longitude) }
+        .subscribe({
+          mapDelegate.setupCurrentLocation(it)
+        }, Timber::e)
+    )
   }
 
   override fun onLowMemory() {
