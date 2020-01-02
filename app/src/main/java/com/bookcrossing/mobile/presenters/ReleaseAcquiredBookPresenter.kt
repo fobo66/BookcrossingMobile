@@ -17,7 +17,9 @@
 package com.bookcrossing.mobile.presenters
 
 import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.ui.releasebook.ReleaseAcquiredBookView
+import com.google.android.gms.maps.model.LatLng
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import moxy.InjectViewState
 
@@ -41,5 +43,9 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
           }
       )
     }
+  }
+
+  fun savePosition(bookPosition: LatLng) {
+    book.position = Coordinates(bookPosition)
   }
 }

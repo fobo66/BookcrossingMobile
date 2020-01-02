@@ -38,8 +38,12 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.storage.StorageReference
 import moxy.presenter.InjectPresenter
 import timber.log.Timber
@@ -47,13 +51,12 @@ import timber.log.Timber
 /**
  * Screen for releasing acquired book. User can specify new book location here.
  */
-class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView {
+class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView, OnMapReadyCallback {
 
   @BindView(R.id.acquired_book_map)
   lateinit var mapView: MapView
   @BindView(R.id.acquired_book_cover)
   lateinit var cover: ImageView
-
   @BindView(R.id.acquired_book_author)
   lateinit var authorTextView: TextView
 
@@ -62,6 +65,8 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView {
 
   @InjectPresenter
   lateinit var presenter: ReleaseAcquiredBookPresenter
+
+  private var bookLocationMarker: Marker? = null
 
   private lateinit var permissions: RxPermissions
   private lateinit var mapDelegate: MapDelegate
@@ -84,6 +89,8 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView {
     presenter.loadBook(requireArguments().getString(EXTRA_KEY))
 
     setupCurrentLocation()
+
+    mapView.getMapAsync(this)
   }
 
   @SuppressLint("MissingPermission")
@@ -125,5 +132,17 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView {
 
   override fun onFailedToRelease() {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  }
+
+  override fun onMapReady(map: GoogleMap) {
+    map.setOnMapClickListener {
+      if (bookLocationMarker == null) {
+        bookLocationMarker = map.addMarker(MarkerOptions().position(it))
+      } else {
+        bookLocationMarker?.position = it
+      }
+
+      presenter.savePosition(it)
+    }
   }
 }
