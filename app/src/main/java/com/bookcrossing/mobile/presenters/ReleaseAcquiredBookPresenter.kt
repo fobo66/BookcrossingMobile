@@ -32,7 +32,7 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
 
   private lateinit var book: Book
 
-  /** Load book details*/
+  /** Load book details */
   fun loadBook(key: String?) {
     if (!key.isNullOrEmpty()) {
       unsubscribeOnDestroy(
@@ -45,6 +45,7 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
     }
   }
 
+  /** Save selected position of the book */
   fun savePosition(bookPosition: LatLng) {
     book.position = Coordinates(bookPosition)
   }
