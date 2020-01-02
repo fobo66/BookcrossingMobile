@@ -17,25 +17,25 @@
 package com.bookcrossing.mobile.util
 
 import android.Manifest
-import android.location.Location
 import androidx.annotation.RequiresPermission
-import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.tasks.Task
 import io.reactivex.Single
 
+/** Wrap Play Services Task API with RxJava */
 @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
-fun FusedLocationProviderClient.observeLastLocation(): Single<Location> = Single.create { emitter ->
-  lastLocation.addOnCompleteListener {
+fun <T> Task<T>.observe(): Single<T> = Single.create { emitter ->
+  addOnCompleteListener {
     if (it.isSuccessful) {
       if (!emitter.isDisposed) {
-        it.result?.let { location -> emitter.onSuccess(location) } ?: emitter.onError(
-          LocationException("Last location unavailable")
+        it.result?.let { result -> emitter.onSuccess(result) } ?: emitter.onError(
+          TaskException("Task result was null")
         )
       }
     } else {
       if (!emitter.isDisposed) {
         emitter.onError(
-          LocationNotLoadedException(
-            "Last location retrieving was unsuccessful",
+          TaskFailedException(
+            "Task result retrieving was unsuccessful",
             it.exception
           )
         )
@@ -44,6 +44,8 @@ fun FusedLocationProviderClient.observeLastLocation(): Single<Location> = Single
   }
 }
 
-class LocationException(message: String) : Exception(message)
+/** Indicates that Task result is null */
+class TaskException(message: String) : Exception(message)
 
-class LocationNotLoadedException(message: String, cause: Throwable?) : Exception(message, cause)
+/** Indicates that task completion was unsuccessful */
+class TaskFailedException(message: String, cause: Throwable?) : Exception(message, cause)

@@ -114,6 +114,7 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   /** Validate user input */
   fun validateInput(input: String): ValidationResult = validator.validate(input)
 
+  /** Save picked location of the book */
   fun locationPicked(coordinates: Coordinates) {
     book.setPosition(coordinates)
   }

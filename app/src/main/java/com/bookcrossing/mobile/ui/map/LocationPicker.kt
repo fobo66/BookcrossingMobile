@@ -32,7 +32,7 @@ import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.string
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.util.MapDelegate
-import com.bookcrossing.mobile.util.observeLastLocation
+import com.bookcrossing.mobile.util.observe
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -155,7 +155,7 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
     subscriptions.add(
       permissions.request(ACCESS_FINE_LOCATION)
         .flatMapSingle {
-          locationProvider.observeLastLocation()
+          locationProvider.lastLocation.observe()
         }
         .map { LatLng(it.latitude, it.longitude) }
         .subscribe({

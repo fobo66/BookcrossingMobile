@@ -22,7 +22,7 @@ import androidx.annotation.RequiresPermission
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.util.LocaleProvider
 import com.bookcrossing.mobile.util.ResourceProvider
-import com.bookcrossing.mobile.util.observeLastLocation
+import com.bookcrossing.mobile.util.observe
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.mapbox.api.geocoding.v5.GeocodingCriteria
 import com.mapbox.api.geocoding.v5.MapboxGeocoding
@@ -40,7 +40,7 @@ class LocationRepository @Inject constructor(
   /** Load last location of the device. Throws error if location is null */
   @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
   fun getLastKnownUserLocation(): Single<Location> {
-    return fusedLocationProviderClient.observeLastLocation()
+    return fusedLocationProviderClient.lastLocation.observe()
   }
 
   /** Geocode city from coordinates */
