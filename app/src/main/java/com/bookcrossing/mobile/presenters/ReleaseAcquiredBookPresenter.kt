@@ -19,6 +19,10 @@ package com.bookcrossing.mobile.presenters
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.ui.releasebook.ReleaseAcquiredBookView
+import com.bookcrossing.mobile.util.InputValidator
+import com.bookcrossing.mobile.util.LengthRule
+import com.bookcrossing.mobile.util.NotEmptyRule
+import com.bookcrossing.mobile.util.ValidationResult
 import com.bookcrossing.mobile.util.observe
 import com.google.android.gms.maps.model.LatLng
 import durdinapps.rxfirebase2.RxFirebaseDatabase
@@ -34,6 +38,9 @@ import moxy.InjectViewState
 class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
 
   private lateinit var book: Book
+
+  private val validator =
+    InputValidator(NotEmptyRule(), LengthRule(maxLength = 100))
 
   /** Load book details */
   fun loadBook(key: String?) {
@@ -52,6 +59,12 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
   fun savePosition(bookPosition: LatLng) {
     book.position = Coordinates(bookPosition)
   }
+
+  /**
+   * Validate user's input
+   */
+  fun validateInput(input: CharSequence): ValidationResult = validator.validate(input.toString())
+
 
   /** Release acquired book */
   fun releaseBook(key: String): Completable {
