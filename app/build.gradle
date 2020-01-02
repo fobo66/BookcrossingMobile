@@ -184,7 +184,6 @@ dependencies {
   def materialDialogsVersion = "3.1.1"
   implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
   implementation "com.afollestad.material-dialogs:input:$materialDialogsVersion"
-  implementation "com.afollestad.material-dialogs:bottomsheets:$materialDialogsVersion"
 
   implementation "com.github.curioustechizen.android-ago:library:1.4.0"
 
