@@ -22,6 +22,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
@@ -31,6 +32,7 @@ import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.presenters.ReleaseAcquiredBookPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
+import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
 import com.bookcrossing.mobile.util.EXTRA_KEY
 import com.bookcrossing.mobile.util.MapDelegate
 import com.bookcrossing.mobile.util.observe
@@ -44,9 +46,13 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.storage.StorageReference
+import com.jakewharton.rxbinding3.widget.afterTextChangeEvents
+import io.reactivex.android.schedulers.AndroidSchedulers
 import moxy.presenter.InjectPresenter
 import timber.log.Timber
+import java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
  * Screen for releasing acquired book. User can specify new book location here.
@@ -55,13 +61,21 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView, OnM
 
   @BindView(R.id.acquired_book_map)
   lateinit var mapView: MapView
+
   @BindView(R.id.acquired_book_cover)
   lateinit var cover: ImageView
+
   @BindView(R.id.acquired_book_author)
   lateinit var authorTextView: TextView
 
   @BindView(R.id.acquired_book_title)
   lateinit var bookNameTextView: TextView
+
+  @BindView(R.id.acquired_book_input_position)
+  lateinit var bookPositionNameInput: TextInputEditText
+
+  @BindView(R.id.release_acquired_book)
+  lateinit var releaseButton: Button
 
   @InjectPresenter
   lateinit var presenter: ReleaseAcquiredBookPresenter
@@ -89,8 +103,25 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView, OnM
     presenter.loadBook(requireArguments().getString(EXTRA_KEY))
 
     setupCurrentLocation()
+    setupReleaseButtonEnabledStateListener()
 
     mapView.getMapAsync(this)
+  }
+
+  private fun setupReleaseButtonEnabledStateListener() {
+    subscriptions.add(
+      bookPositionNameInput.afterTextChangeEvents()
+        .doOnNext {
+          if (it.view.error != null) {
+            it.view.error = null
+          }
+        }
+        .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe {
+          releaseButton.isEnabled = it.view.text.isNotBlank() && bookLocationMarker != null
+        }
+    )
   }
 
   @SuppressLint("MissingPermission")
