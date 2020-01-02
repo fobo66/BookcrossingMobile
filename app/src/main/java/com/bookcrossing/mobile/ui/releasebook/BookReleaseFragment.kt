@@ -39,7 +39,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onCancel
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
-import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.list.listItems
 import com.bookcrossing.mobile.BuildConfig
 import com.bookcrossing.mobile.R
@@ -290,15 +289,6 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
   override fun showCover() {
     if (cover.visibility == View.INVISIBLE) {
       cover.visibility = View.VISIBLE
-    }
-  }
-
-  override fun askUserToProvideDefaultCity() {
-    MaterialDialog(requireContext()).show {
-      title(R.string.enter_city_title)
-      message(R.string.error_enter_city_content)
-      input(hintRes = R.string.city_hint, callback =
-      { _, input -> presenter.saveCity(input.toString()) })
     }
   }
 

@@ -46,9 +46,4 @@ interface BookReleaseView : MvpView {
    * Error happened during releasing the book
    */
   fun onFailedToRelease()
-
-  /**
-   * Show prompt to user about the need to provide default city
-   */
-  fun askUserToProvideDefaultCity()
 }
