@@ -23,6 +23,7 @@ import com.bookcrossing.mobile.models.Book
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 
+/** Adapter for acquired books */
 class AcquiredBooksAdapter(options: FirebaseRecyclerOptions<Book>) :
   FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder>(options) {
 

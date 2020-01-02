@@ -23,6 +23,7 @@ import com.bookcrossing.mobile.models.Book
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 
+/** Adapter for books on main screen */
 class BooksAdapter(options: FirebaseRecyclerOptions<Book>) :
   FirebaseRecyclerAdapter<Book, BooksViewHolder>(options) {
   override fun onCreateViewHolder(
