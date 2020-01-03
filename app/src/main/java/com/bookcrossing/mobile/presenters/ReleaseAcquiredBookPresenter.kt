@@ -23,7 +23,7 @@ import com.bookcrossing.mobile.util.InputValidator
 import com.bookcrossing.mobile.util.LengthRule
 import com.bookcrossing.mobile.util.NotEmptyRule
 import com.bookcrossing.mobile.util.ValidationResult
-import com.bookcrossing.mobile.util.observe
+import com.bookcrossing.mobile.util.ignoreElement
 import com.google.android.gms.maps.model.LatLng
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Completable
@@ -74,16 +74,15 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
       positionName = newPositionName
     }
 
-    return RxFirebaseDatabase.setValue(books().child(key), book)
-      .andThen(RxFirebaseDatabase.setValue(places(key), book.position))
+    return books().child(key).setValue(book).ignoreElement()
+      .andThen(places(key).setValue(book.position).ignoreElement())
       .andThen(
-        RxFirebaseDatabase.setValue(
-          placesHistory(key).child("${book.city}, ${book.positionName}"),
-          book.position
-        )
+        placesHistory(key).child("${book.city}, ${book.positionName}")
+          .setValue(book.position)
+          .ignoreElement()
       )
       .andThen(
-        acquiredBooks().child(key).removeValue().observe().ignoreElement()
+        acquiredBooks().child(key).removeValue().ignoreElement()
       )
       .subscribeOn(Schedulers.io())
   }

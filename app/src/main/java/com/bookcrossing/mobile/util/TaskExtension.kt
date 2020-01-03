@@ -17,7 +17,28 @@
 package com.bookcrossing.mobile.util
 
 import com.google.android.gms.tasks.Task
+import io.reactivex.Completable
 import io.reactivex.Single
+
+/** Wrap Play Services Task API with RxJava Completable for the case whe result of the task is ignored */
+fun <T> Task<T>.ignoreElement(): Completable = Completable.create { emitter ->
+  addOnCompleteListener {
+    if (it.isSuccessful) {
+      if (!emitter.isDisposed) {
+        emitter.onComplete()
+      }
+    } else {
+      if (!emitter.isDisposed) {
+        emitter.onError(
+          TaskFailedException(
+            "Task was unsuccessful",
+            it.exception
+          )
+        )
+      }
+    }
+  }
+}
 
 /** Wrap Play Services Task API with RxJava */
 fun <T> Task<T>.observe(): Single<T> = Single.create { emitter ->
@@ -40,6 +61,7 @@ fun <T> Task<T>.observe(): Single<T> = Single.create { emitter ->
     }
   }
 }
+
 
 /** Indicates that Task result is null */
 class TaskException(message: String) : Exception(message)
