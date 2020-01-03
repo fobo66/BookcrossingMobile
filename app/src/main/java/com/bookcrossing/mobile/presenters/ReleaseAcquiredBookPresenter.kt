@@ -67,8 +67,12 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
 
 
   /** Release acquired book */
-  fun releaseBook(key: String): Completable {
-    book.isFree = true
+  fun releaseBook(key: String, newCity: String, newPositionName: String): Completable {
+    book.apply {
+      isFree = true
+      city = newCity
+      positionName = newPositionName
+    }
 
     return RxFirebaseDatabase.setValue(books().child(key), book)
       .andThen(RxFirebaseDatabase.setValue(places(key), book.position))
