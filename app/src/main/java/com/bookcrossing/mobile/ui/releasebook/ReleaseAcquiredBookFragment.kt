@@ -35,6 +35,8 @@ import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
 import com.bookcrossing.mobile.util.EXTRA_KEY
 import com.bookcrossing.mobile.util.MapDelegate
+import com.bookcrossing.mobile.util.ValidationResult.Invalid
+import com.bookcrossing.mobile.util.ValidationResult.OK
 import com.bookcrossing.mobile.util.observe
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.florent37.runtimepermission.rx.RxPermissions
@@ -119,7 +121,12 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView, OnM
         .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe {
-          releaseButton.isEnabled = it.view.text.isNotBlank() && bookLocationMarker != null
+          val validationResult = presenter.validateInput(it.view.text)
+          releaseButton.isEnabled = validationResult is OK && bookLocationMarker != null
+
+          if (validationResult is Invalid) {
+            it.view.error = getString(validationResult.messageId)
+          }
         }
     )
   }
