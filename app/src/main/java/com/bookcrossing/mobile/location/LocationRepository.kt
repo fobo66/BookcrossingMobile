@@ -44,7 +44,7 @@ class LocationRepository @Inject constructor(
   }
 
   /** Geocode city from coordinates */
-  fun resolveUserCity(latitude: Double, longitude: Double): Single<String> {
+  fun resolveCity(latitude: Double, longitude: Double): Single<String> {
     val reverseGeocodeRequest = MapboxGeocoding.builder()
       .accessToken(resourceProvider.getString(R.string.mapbox_access_token))
       .languages(localeProvider.currentLocale.language)

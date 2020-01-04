@@ -50,7 +50,9 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.storage.StorageReference
+import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.afterTextChangeEvents
+import com.jakewharton.rxbinding3.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
 import moxy.presenter.InjectPresenter
 import timber.log.Timber
@@ -106,8 +108,28 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView, OnM
 
     setupCurrentLocation()
     setupReleaseButtonEnabledStateListener()
+    setupReleaseButtonClickSubscription()
 
     mapView.getMapAsync(this)
+  }
+
+  private fun setupReleaseButtonClickSubscription() {
+    subscriptions.add(
+      releaseButton.clicks()
+        .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
+        .flatMap { bookPositionNameInput.textChanges() }
+        .flatMapCompletable { positionName ->
+          presenter.releaseBook(
+            positionName.toString()
+          )
+        }
+        .subscribe({
+          onReleased()
+        }, {
+          Timber.e(it)
+          onFailedToRelease()
+        })
+    )
   }
 
   private fun setupReleaseButtonEnabledStateListener() {

@@ -193,7 +193,7 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
    * Determine the city of the location of the book
    */
   fun resolveCity(coordinates: Coordinates): Single<String> {
-    return systemServicesWrapper.locationRepository.resolveUserCity(
+    return systemServicesWrapper.locationRepository.resolveCity(
       coordinates.lat,
       coordinates.lng
     )

@@ -27,6 +27,7 @@ import com.bookcrossing.mobile.util.ignoreElement
 import com.google.android.gms.maps.model.LatLng
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
 
@@ -38,6 +39,7 @@ import moxy.InjectViewState
 class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
 
   private lateinit var book: Book
+  private lateinit var key: String
 
   private val validator =
     InputValidator(NotEmptyRule(), LengthRule(maxLength = 100))
@@ -49,6 +51,7 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
         RxFirebaseDatabase.observeSingleValueEvent(books().child(key), Book::class.java)
           .subscribe {
             book = it
+            this.key = key
             viewState.showBookDetails(it, resolveCover(key))
           }
       )
@@ -67,14 +70,21 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
 
 
   /** Release acquired book */
-  fun releaseBook(key: String, newCity: String, newPositionName: String): Completable {
-    book.apply {
-      isFree = true
-      city = newCity
-      positionName = newPositionName
-    }
-
-    return books().child(key).setValue(book).ignoreElement()
+  fun releaseBook(newPositionName: String): Completable {
+    return systemServicesWrapper.locationRepository.resolveCity(
+      book.position.lat,
+      book.position.lng
+    )
+      .doOnSuccess { newCity ->
+        book.apply {
+          isFree = true
+          city = newCity
+          positionName = newPositionName
+        }
+      }
+      .flatMapCompletable {
+        books().child(key).setValue(book).ignoreElement()
+      }
       .andThen(places(key).setValue(book.position).ignoreElement())
       .andThen(
         placesHistory(key).child("${book.city}, ${book.positionName}")
@@ -85,5 +95,6 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
         acquiredBooks().child(key).removeValue().ignoreElement()
       )
       .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
   }
 }
