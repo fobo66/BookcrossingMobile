@@ -144,6 +144,7 @@
   <string name="release_acquired_book">Release book</string>
   <string name="acquired_books_empty_indicator">No acquired books</string>
   <string name="profile_picture_description">Profile picture</string>
+  <string name="book_released_book_message">Successfully released book</string>
   <string-array name="cover_chooser_dialog_items">
     <item>From gallery</item>
     <item>From camera</item>

@@ -147,7 +147,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     registerCoverClickSubscription()
     registerInputProcessingSubscription()
     registerPublishButtonEnableSubscription()
-    registerPublishButtonClickSubscription()
+    registerReleaseButtonClickSubscription()
     registerPickLocationButtonClickSubscription()
   }
 
@@ -171,13 +171,13 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     )
   }
 
-  private fun registerPublishButtonClickSubscription() {
-    val publishSubscription = releaseButton.clicks()
+  private fun registerReleaseButtonClickSubscription() {
+    val releaseSubscription = releaseButton.clicks()
       .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
       .flatMap { presenter.releaseBook() }
       .retry()
       .subscribe()
-    subscriptions.add(publishSubscription)
+    subscriptions.add(releaseSubscription)
   }
 
   private fun registerPublishButtonEnableSubscription() {

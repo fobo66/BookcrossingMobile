@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.fragment.findNavController
 import butterknife.BindView
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.drawable
@@ -48,12 +49,15 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.storage.StorageReference
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.afterTextChangeEvents
 import com.jakewharton.rxbinding3.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.withLatestFrom
+import io.reactivex.schedulers.Schedulers
 import moxy.presenter.InjectPresenter
 import timber.log.Timber
 import java.util.concurrent.TimeUnit.MILLISECONDS
@@ -117,18 +121,16 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView, OnM
     subscriptions.add(
       releaseButton.clicks()
         .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
-        .flatMap { bookPositionNameInput.textChanges() }
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnNext { releaseButton.isEnabled = false }
+        .withLatestFrom(bookPositionNameInput.textChanges()) { _, positionName -> positionName }
+        .observeOn(Schedulers.io())
         .flatMapCompletable { positionName ->
           presenter.releaseBook(
             positionName.toString()
           )
         }
-        .subscribe({
-          onReleased()
-        }, {
-          Timber.e(it)
-          onFailedToRelease()
-        })
+        .subscribe()
     )
   }
 
@@ -187,11 +189,15 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView, OnM
   }
 
   override fun onReleased() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    Snackbar.make(bookNameTextView, R.string.book_released_book_message, Snackbar.LENGTH_SHORT)
+      .show()
+    findNavController().popBackStack()
   }
 
   override fun onFailedToRelease() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    releaseButton.isEnabled = true
+    Snackbar.make(bookNameTextView, R.string.failed_to_release_book_message, Snackbar.LENGTH_SHORT)
+      .show()
   }
 
   override fun onMapReady(map: GoogleMap) {

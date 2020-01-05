@@ -30,6 +30,7 @@ import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
+import timber.log.Timber
 
 
 /**
@@ -87,7 +88,7 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
       }
       .andThen(places(key).setValue(book.position).ignoreElement())
       .andThen(
-        placesHistory(key).child("${book.city}, ${book.positionName}")
+        placesHistory(key).child("${book.city}, $newPositionName")
           .setValue(book.position)
           .ignoreElement()
       )
@@ -96,5 +97,10 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
       )
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
+      .doOnComplete { viewState.onReleased() }
+      .doOnError {
+        Timber.e(it, "Failed to release book")
+        viewState.onFailedToRelease()
+      }
   }
 }

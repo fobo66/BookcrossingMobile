@@ -137,9 +137,9 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
       .andThen(uploadCover(key))
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
-      .doOnNext {
+      .doOnNext { newKey ->
         book.clear()
-        viewState.onReleased(it)
+        viewState.onReleased(newKey)
       }
       .doOnError {
         Crashlytics.logException(it)
