@@ -19,6 +19,7 @@ package com.bookcrossing.mobile.ui.acquire;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import butterknife.BindView;
@@ -39,7 +40,6 @@ import java.util.concurrent.TimeUnit;
 import kotlin.Unit;
 import moxy.MvpAppCompatActivity;
 import moxy.presenter.InjectPresenter;
-import org.jetbrains.annotations.NotNull;
 
 public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcquireView {
 
@@ -112,12 +112,11 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
     finish();
   }
 
-  @NotNull private Observable<Unit> onAcquireButtonClicked() {
-    return RxView.clicks(acquireButton)
-        .throttleFirst(300, TimeUnit.MILLISECONDS);
+  @NonNull private Observable<Unit> onAcquireButtonClicked() {
+    return RxView.clicks(acquireButton).throttleFirst(300, TimeUnit.MILLISECONDS);
   }
 
-  @NotNull private Observable<CharSequence> onCodeValueChanged() {
+  @NonNull private Observable<CharSequence> onCodeValueChanged() {
     return RxTextView.textChanges(codeInput);
   }
 }
