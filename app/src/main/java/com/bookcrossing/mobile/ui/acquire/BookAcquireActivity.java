@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -64,7 +65,7 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_book_acquire);
     ButterKnife.bind(this);
-    setSupportActionBar(toolbar);
+    toolbar.setNavigationOnClickListener(view -> onBackPressed());
 
     if (getIntent() != null) {
       keyToAcquire = getIntent().getData().getQueryParameter(ConstantsKt.EXTRA_KEY);
@@ -108,6 +109,7 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
     Intent intent = new Intent(this, BookActivity.class);
     intent.putExtra(ConstantsKt.EXTRA_KEY, keyToAcquire);
     startActivity(intent);
+    finish();
   }
 
   @NotNull private Observable<Unit> onAcquireButtonClicked() {
