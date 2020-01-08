@@ -55,6 +55,11 @@ import java.util.UUID
 @InjectViewState
 class BookReleasePresenter : BasePresenter<BookReleaseView>() {
 
+  /**
+   * Indicate that location was picked by the user, so we can proceed with release
+   */
+  var isLocationPicked: Boolean = false
+
   private val book: BookBuilder = BookBuilder()
   private lateinit var tempCoverUri: Uri
   private val validator =
@@ -117,6 +122,7 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   /** Save picked location of the book */
   fun locationPicked(coordinates: Coordinates) {
     book.setPosition(coordinates)
+    isLocationPicked = true
   }
 
   /** Release book */
@@ -162,12 +168,10 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
     return try {
       QrCodeEncoder().encode(buildBookUri(key).toString())
     } catch (e: WriterException) {
-      Timber.e("Failed to encode book key to QR code")
-      Crashlytics.logException(e)
+      Timber.e(e, "Failed to encode book key to QR code")
       null
     } catch (e: IllegalArgumentException) {
-      Timber.e("Failed to save QR code in bitmap")
-      Crashlytics.logException(e)
+      Timber.e(e, "Failed to save QR code in bitmap")
       null
     }
   }

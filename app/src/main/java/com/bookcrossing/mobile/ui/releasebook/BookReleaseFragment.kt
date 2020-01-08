@@ -154,7 +154,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
   private fun registerPickLocationButtonClickSubscription() {
     subscriptions.add(
       pickBookPositionButton.clicks()
-        .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
+        .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         .flatMap {
           val locationPicker = LocationPicker()
           locationPicker.show(
@@ -173,7 +173,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
 
   private fun registerReleaseButtonClickSubscription() {
     val releaseSubscription = releaseButton.clicks()
-      .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
+      .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
       .flatMap { presenter.releaseBook() }
       .retry()
       .subscribe()
@@ -191,7 +191,8 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
         name.isNotBlank() &&
           author.isNotBlank() &&
           position.isNotBlank() &&
-          description.isNotBlank()
+          description.isNotBlank() &&
+          presenter.isLocationPicked
       }
         .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         .observeOn(AndroidSchedulers.mainThread())
