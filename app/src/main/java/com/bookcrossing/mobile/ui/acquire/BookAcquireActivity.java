@@ -56,7 +56,6 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
   @BindView(R.id.coord_layout) public CoordinatorLayout coordinatorLayout;
 
   private String keyToAcquire;
-  private boolean isInnerAppRequest;
 
   private Disposable acquisitionDisposable;
   private Disposable scanDisposable;
@@ -69,21 +68,21 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
 
     if (getIntent() != null) {
       keyToAcquire = getIntent().getData().getQueryParameter(ConstantsKt.EXTRA_KEY);
-      isInnerAppRequest =
-          getIntent().getBooleanExtra(getString(R.string.extra_insideAppRequest), false);
+      boolean isInnerAppRequest =
+        getIntent().getBooleanExtra(getString(R.string.extra_insideAppRequest), false);
       if (!isInnerAppRequest) {
         codeInput.setText(keyToAcquire);
         codeInput.setEnabled(false);
       }
     }
 
-    acquisitionDisposable = onAcquireButtonClicked()
-        .withLatestFrom(onCodeValueChanged(), (o, code) -> code.toString())
+    acquisitionDisposable =
+      onAcquireButtonClicked().withLatestFrom(onCodeValueChanged(), (o, code) -> code.toString())
         .flatMapMaybe(code -> presenter.validateCode(code))
         .flatMap(code -> {
           if (code instanceof BookCode.CorrectCode) {
             return presenter.processBookAcquisition(((BookCode.CorrectCode) code).getCode())
-                .andThen(Observable.just(code));
+              .andThen(Observable.just(code));
           }
 
           return Observable.just(code);
@@ -91,8 +90,8 @@ public class BookAcquireActivity extends MvpAppCompatActivity implements BookAcq
         .subscribe(code -> presenter.handleAcquisitionResult(code));
 
     scanDisposable = RxView.clicks(scanCodeButton)
-        .throttleFirst(300, TimeUnit.MILLISECONDS)
-        .subscribe(o -> startActivity(new Intent(BookAcquireActivity.this, ScanActivity.class)));
+      .throttleFirst(300, TimeUnit.MILLISECONDS)
+      .subscribe(o -> startActivity(new Intent(BookAcquireActivity.this, ScanActivity.class)));
   }
 
   @Override protected void onDestroy() {
