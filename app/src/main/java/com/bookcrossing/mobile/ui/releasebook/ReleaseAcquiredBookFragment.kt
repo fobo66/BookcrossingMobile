@@ -120,14 +120,17 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView, OnM
   private fun setupReleaseButtonClickSubscription() {
     subscriptions.add(
       releaseButton.clicks()
-        .throttleLast(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
+        .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .doOnNext { releaseButton.isEnabled = false }
-        .withLatestFrom(bookPositionNameInput.textChanges()) { _, positionName -> positionName }
+        .withLatestFrom(bookPositionNameInput.textChanges()
+          .map { it.trim() }
+          .map { it.replace("\n".toRegex(), " ") }
+        ) { _, positionName -> positionName }
         .observeOn(Schedulers.io())
         .flatMapCompletable { positionName ->
           presenter.releaseBook(
-            positionName.toString()
+            positionName
           )
         }
         .subscribe()
