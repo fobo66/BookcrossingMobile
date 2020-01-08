@@ -42,6 +42,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
 import moxy.InjectViewState
 import timber.log.Timber
 import java.io.File
@@ -58,7 +59,7 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   /**
    * Indicate that location was picked by the user, so we can proceed with release
    */
-  var isLocationPicked: Boolean = false
+  val isLocationPicked = BehaviorSubject.createDefault(false)
 
   private val book: BookBuilder = BookBuilder()
   private lateinit var tempCoverUri: Uri
@@ -122,7 +123,7 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   /** Save picked location of the book */
   fun locationPicked(coordinates: Coordinates) {
     book.setPosition(coordinates)
-    isLocationPicked = true
+    isLocationPicked.onNext(true)
   }
 
   /** Release book */

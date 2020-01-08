@@ -186,13 +186,15 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
         bookNameInput.textChanges(),
         bookAuthorInput.textChanges(),
         bookPositionInput.textChanges(),
-        bookDescriptionInput.textChanges()
-      ) { name: CharSequence, author: CharSequence, position: CharSequence, description: CharSequence ->
+        bookDescriptionInput.textChanges(),
+        presenter.isLocationPicked.hide()
+      ) { name: CharSequence, author: CharSequence, position: CharSequence, description: CharSequence, isLocationPicked: Boolean ->
         name.isNotBlank() &&
           author.isNotBlank() &&
           position.isNotBlank() &&
           description.isNotBlank() &&
-          presenter.isLocationPicked
+          isLocationPicked
+
       }
         .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         .observeOn(AndroidSchedulers.mainThread())
