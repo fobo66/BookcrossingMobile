@@ -196,7 +196,7 @@ dependencies {
   implementation "com.google.zxing:core:3.4.0"
   implementation "com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.3"
 
-  def mapboxSdkVersion = "4.9.0"
+  def mapboxSdkVersion = "5.0.0"
   implementation "com.mapbox.mapboxsdk:mapbox-sdk-core:$mapboxSdkVersion"
   implementation "com.mapbox.mapboxsdk:mapbox-sdk-services:$mapboxSdkVersion"
 
