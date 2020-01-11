@@ -187,7 +187,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
         bookAuthorInput.textChanges(),
         bookPositionInput.textChanges(),
         bookDescriptionInput.textChanges(),
-        presenter.isLocationPicked.hide()
+        presenter.onLocationPicked()
       ) { name: CharSequence, author: CharSequence, position: CharSequence, description: CharSequence, isLocationPicked: Boolean ->
         name.isNotBlank() &&
           author.isNotBlank() &&

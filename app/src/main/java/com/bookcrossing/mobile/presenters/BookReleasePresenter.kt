@@ -59,7 +59,7 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   /**
    * Indicate that location was picked by the user, so we can proceed with release
    */
-  val isLocationPicked = BehaviorSubject.createDefault(false)
+  private val isLocationPicked = BehaviorSubject.createDefault(false)
 
   private val book: BookBuilder = BookBuilder()
   private lateinit var tempCoverUri: Uri
@@ -78,6 +78,11 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
       }
       .onErrorReturn { key }
   }
+
+  /**
+   * Indicate that location was picked by the user, so we can proceed with release
+   */
+  fun onLocationPicked(): Observable<Boolean> = isLocationPicked.hide()
 
   /** Save chosen cover image URI and display it on UI */
   fun saveCoverTemporarily(coverUri: Uri?) {
