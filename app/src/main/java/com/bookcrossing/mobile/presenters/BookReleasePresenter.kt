@@ -56,9 +56,6 @@ import java.util.UUID
 @InjectViewState
 class BookReleasePresenter : BasePresenter<BookReleaseView>() {
 
-  /**
-   * Indicate that location was picked by the user, so we can proceed with release
-   */
   private val isLocationPicked = BehaviorSubject.createDefault(false)
 
   private val book: BookBuilder = BookBuilder()
