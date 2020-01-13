@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import io.reactivex.disposables.CompositeDisposable
 import moxy.MvpAppCompatActivity
 
+/** Base class for holding subscriptions in activities*/
 @SuppressLint("Registered")
 open class BaseActivity : MvpAppCompatActivity() {
 

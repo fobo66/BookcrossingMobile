@@ -41,6 +41,9 @@ import io.reactivex.rxkotlin.withLatestFrom
 import moxy.presenter.InjectPresenter
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
+/**
+ * Screen for acquiring book
+ */
 class BookAcquireActivity : BaseActivity(), BookAcquireView {
 
   @InjectPresenter
@@ -79,16 +82,18 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
     }
 
     subscriptions.add(
-      onAcquireButtonClicked().withLatestFrom(
-        codeInput.textChanges()
-      ) { _, code: CharSequence -> code.toString() }
+      onAcquireButtonClicked()
+        .withLatestFrom(
+          codeInput.textChanges()
+        ) { _, code: CharSequence -> code.toString() }
         .flatMapMaybe { code: String -> presenter.validateCode(code) }
         .flatMap { code: BookCode ->
           if (code is CorrectCode) {
-            return@flatMap presenter.processBookAcquisition(code.code)
+            presenter.processBookAcquisition(code.code)
               .andThen(Observable.just<BookCode>(code))
+          } else {
+            Observable.just(code)
           }
-          Observable.just(code)
         }
         .subscribe { code: BookCode ->
           presenter.handleAcquisitionResult(
@@ -110,6 +115,9 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
 
   override fun onIncorrectKey() {
     Snackbar.make(coordinatorLayout, string.incorrect_key_message, Snackbar.LENGTH_SHORT).show()
+
+    acquireButton.isEnabled = true
+    scanCodeButton.isEnabled = true
   }
 
   override fun onAcquired() {
@@ -120,6 +128,11 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
   }
 
   private fun onAcquireButtonClicked(): Observable<Unit> {
-    return acquireButton.clicks().throttleFirst(300, MILLISECONDS)
+    return acquireButton.clicks()
+      .doOnNext {
+        acquireButton.isEnabled = false
+        scanCodeButton.isEnabled = false
+      }
+      .throttleFirst(300, MILLISECONDS)
   }
 }
