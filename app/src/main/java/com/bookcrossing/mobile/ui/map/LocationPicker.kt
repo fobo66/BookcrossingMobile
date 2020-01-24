@@ -123,15 +123,20 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
 
     mapView.getMapAsync(this)
 
-    subscriptions.add(toolbar.navigationClicks()
-      .subscribe { dismiss() })
+    subscriptions.add(
+      toolbar.navigationClicks()
+        .subscribe {
+          dismiss()
+        }
+    )
 
     subscriptions.add(
       pickLocationButton.clicks()
         .subscribe {
           bookLocationPicked.onNext(Coordinates(bookLocation?.position))
           dismiss()
-      })
+        }
+    )
   }
 
   override fun onMapReady(googleMap: GoogleMap) {
@@ -162,7 +167,8 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
           mapDelegate.setupCurrentLocation(it)
         }, { error ->
           Timber.e(error)
-          showExplanation()
+          Snackbar.make(mapView, string.location_permission_denied_prompt, Snackbar.LENGTH_LONG)
+            .show()
           dismiss()
         })
     )
@@ -194,9 +200,5 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
   override fun onDismiss(dialog: DialogInterface) {
     super.onDismiss(dialog)
     onCancel(dialog)
-  }
-
-  private fun showExplanation() {
-    Snackbar.make(mapView, string.location_permission_denied_prompt, Snackbar.LENGTH_LONG).show()
   }
 }
