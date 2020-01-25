@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -15,15 +16,17 @@
 
 package com.bookcrossing.mobile.location
 
+import android.Manifest
 import android.location.Location
+import androidx.annotation.RequiresPermission
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.util.LocaleProvider
 import com.bookcrossing.mobile.util.ResourceProvider
+import com.bookcrossing.mobile.util.observe
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.mapbox.api.geocoding.v5.GeocodingCriteria
 import com.mapbox.api.geocoding.v5.MapboxGeocoding
 import com.mapbox.geojson.Point.fromLngLat
-import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -34,31 +37,34 @@ class LocationRepository @Inject constructor(
   private val localeProvider: LocaleProvider
 ) {
 
-  fun getLastKnownUserLocation(): Single<Location?> {
-    return Single.create { emitter ->
-      fusedLocationProviderClient.lastLocation
-        .addOnSuccessListener { emitter.onSuccess(it) }
-        .addOnFailureListener { emitter.onError(it) }
-    }
+  /** Load last location of the device. Throws error if location is null */
+  @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
+  fun getLastKnownUserLocation(): Single<Location> {
+    return fusedLocationProviderClient.lastLocation.observe()
   }
 
-  fun resolveUserCity(location: Location): Maybe<String?> {
+  /** Geocode city from coordinates */
+  fun resolveCity(latitude: Double, longitude: Double): Single<String> {
     val reverseGeocodeRequest = MapboxGeocoding.builder()
       .accessToken(resourceProvider.getString(R.string.mapbox_access_token))
       .languages(localeProvider.currentLocale.language)
       .limit(1)
-      .query(fromLngLat(location.longitude, location.latitude))
+      .query(fromLngLat(longitude, latitude))
       .geocodingTypes(GeocodingCriteria.TYPE_PLACE)
       .build()
+
+    val defaultCity = resourceProvider.getString(R.string.default_city)
 
     return Single.fromCallable { reverseGeocodeRequest.executeCall() }
       .map { response ->
         response.body()
-          ?.features()
+          ?.features() ?: emptyList()
       }
       .filter { features -> features.isNotEmpty() }
       .map { features -> features[0] }
-      .map { feature -> feature.text() }
+      .map { feature -> feature.text() ?: defaultCity }
+      .switchIfEmpty(Single.just(defaultCity))
+      .onErrorReturnItem(defaultCity)
       .subscribeOn(Schedulers.io())
   }
 }

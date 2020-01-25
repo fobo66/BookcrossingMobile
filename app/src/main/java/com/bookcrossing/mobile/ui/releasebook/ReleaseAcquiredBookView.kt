@@ -14,41 +14,32 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.ui.create
+package com.bookcrossing.mobile.ui.releasebook
 
-import android.net.Uri
-
+import com.bookcrossing.mobile.models.Book
+import com.google.firebase.storage.StorageReference
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
 /**
- * View for release new book screen
+ * View for release acquired book screen
  */
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface BookReleaseView : MvpView {
-  /**
-   * User has selected cover for the book
-   */
-  fun onCoverChosen(coverUri: Uri?)
+interface ReleaseAcquiredBookView : MvpView {
 
   /**
-   * Show cover after user has typed a name of the book
+   * Show book info after it has been loaded
    */
-  fun showCover()
+  fun showBookDetails(book: Book, coverUri: StorageReference)
 
   /**
    * Book was successfully released
    */
-  fun onReleased(newKey: String)
+  fun onReleased()
 
   /**
    * Error happened during releasing the book
    */
   fun onFailedToRelease()
-
-  /**
-   * Show prompt to user about the need to provide default city
-   */
-  fun askUserToProvideDefaultCity()
 }

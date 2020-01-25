@@ -19,8 +19,6 @@ package com.bookcrossing.mobile.util
 const val RC_SIGN_IN = 1236
 
 const val EXTRA_KEY = "key"
-const val EXTRA_CITY = "city"
-const val EXTRA_DEFAULT_CITY = "defaultCity"
 const val PACKAGE_NAME = "com.bookcrossing.mobile"
 const val DEFAULT_USER = "user"
 const val EXTRA_COORDINATES = "coordinates"

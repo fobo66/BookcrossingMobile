@@ -20,4 +20,6 @@
   <dimen name="default_padding">16dp</dimen>
   <dimen name="text_input_padding">8dp</dimen>
   <dimen name="sticker_padding">10dp</dimen>
+  <dimen name="list_item_spacing">16dp</dimen>
+  <dimen name="list_item_spacing_half">8dp</dimen>
 </resources>

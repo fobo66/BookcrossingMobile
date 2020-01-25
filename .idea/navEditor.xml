@@ -44,7 +44,7 @@
                         <option name="myPosition">
                           <Point>
                             <option name="x" value="276" />
-                            <option name="y" value="1436" />
+                            <option name="y" value="368" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -55,8 +55,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="12" />
-                            <option name="y" value="12" />
+                            <option name="x" value="276" />
+                            <option name="y" value="724" />
                           </Point>
                         </option>
                         <option name="myPositions">
@@ -76,8 +76,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-65" />
-                            <option name="y" value="121" />
+                            <option name="x" value="-942" />
+                            <option name="y" value="177" />
                           </Point>
                         </option>
                         <option name="myPositions">
@@ -150,7 +150,28 @@
                         <option name="myPosition">
                           <Point>
                             <option name="x" value="276" />
-                            <option name="y" value="724" />
+                            <option name="y" value="1792" />
+                          </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_profileFragment_to_releaseAcquiredBookFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="releaseAcquiredBookFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="520" />
+                            <option name="y" value="1792" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -161,8 +182,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="256" />
-                            <option name="y" value="12" />
+                            <option name="x" value="276" />
+                            <option name="y" value="1436" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -173,8 +194,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="304" />
-                            <option name="y" value="340" />
+                            <option name="x" value="276" />
+                            <option name="y" value="2148" />
                           </Point>
                         </option>
                       </LayoutPositions>

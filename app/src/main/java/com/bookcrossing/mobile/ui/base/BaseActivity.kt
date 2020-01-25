@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -13,23 +14,20 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.ui.profile
+package com.bookcrossing.mobile.ui.base
 
-import com.bookcrossing.mobile.models.Book
-import moxy.MvpView
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.StateStrategyType
+import android.annotation.SuppressLint
+import io.reactivex.disposables.CompositeDisposable
+import moxy.MvpAppCompatActivity
 
-/**
- * View for acquired books list item
- */
-@StateStrategyType(AddToEndSingleStrategy::class)
-interface AcquiredBookItemView : MvpView {
-  /**
-   * Fill view with book content
-   */
-  fun bind(
-    book: Book,
-    key: String?
-  )
+/** Base class for holding subscriptions in activities*/
+@SuppressLint("Registered")
+open class BaseActivity : MvpAppCompatActivity() {
+
+  protected val subscriptions = CompositeDisposable()
+
+  override fun onDestroy() {
+    super.onDestroy()
+    subscriptions.clear()
+  }
 }

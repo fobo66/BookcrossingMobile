@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -34,13 +35,13 @@ class BookAcquirePresenter : BasePresenter<BookAcquireView>() {
   }
 
   fun processBookAcquisition(key: String): Completable {
-    return RxFirebaseDatabase.setValue(books().child(key).child("free"), java.lang.Boolean.FALSE)
-        .andThen(RxFirebaseDatabase.observeSingleValueEvent(books().child(key), Book::class.java))
-        .flatMapCompletable { book ->
-          RxFirebaseDatabase.setValue(
-              acquiredBooks().child(key), book
-          )
-        }
+    return RxFirebaseDatabase.setValue(books().child(key).child("free"), false)
+      .andThen(RxFirebaseDatabase.observeSingleValueEvent(books().child(key), Book::class.java))
+      .flatMapCompletable { book ->
+        RxFirebaseDatabase.setValue(
+          acquiredBooks().child(key), book
+        )
+      }
   }
 
   fun validateCode(key: String): Maybe<BookCode> {

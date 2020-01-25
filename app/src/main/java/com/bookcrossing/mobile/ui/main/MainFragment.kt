@@ -15,26 +15,36 @@
 
 package com.bookcrossing.mobile.ui.main
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import com.bookcrossing.mobile.R
+import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.presenters.MainPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
+import com.bookcrossing.mobile.util.RC_SIGN_IN
+import com.bookcrossing.mobile.util.adapters.BooksAdapter
 import com.bookcrossing.mobile.util.adapters.BooksViewHolder
+import com.firebase.ui.auth.ErrorCodes
+import com.firebase.ui.auth.IdpResponse
 import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.firebase.ui.database.FirebaseRecyclerOptions.Builder
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding3.view.clicks
 import moxy.presenter.InjectPresenter
+import timber.log.Timber
 
 class MainFragment : BaseFragment(), MainView {
 
@@ -57,12 +67,7 @@ class MainFragment : BaseFragment(), MainView {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    return inflater.inflate(R.layout.fragment_main, container, false)
-  }
-
-  override fun onDestroyView() {
-    super.onDestroyView()
-    adapter.stopListening()
+    return inflater.inflate(layout.fragment_main, container, false)
   }
 
   override fun onViewCreated(
@@ -71,11 +76,56 @@ class MainFragment : BaseFragment(), MainView {
   ) {
     super.onViewCreated(view, savedInstanceState)
 
+    if (!presenter.isAuthenticated) {
+      fab.visibility = GONE
+      authenticate()
+    }
+
     setupBookList()
 
     subscriptions.add(fab.clicks().subscribe { listener.onBookAdd() })
 
     loadAds()
+  }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    if (requestCode == RC_SIGN_IN) {
+      val signInResult = IdpResponse.fromResultIntent(data)
+
+      if (resultCode == RESULT_OK) {
+        fab.visibility = VISIBLE
+        Snackbar.make(rv, R.string.sign_in_success, Snackbar.LENGTH_LONG).show()
+      } else {
+        if (signInResult == null) {
+          Snackbar.make(
+            rv, resources.getString(R.string.sign_in_cancelled),
+            Snackbar.LENGTH_LONG
+          ).show()
+          return
+        }
+
+        val error = signInResult.error
+
+        Timber.e(error, "Sign in failed")
+
+        when (error?.errorCode) {
+          ErrorCodes.NO_NETWORK -> {
+            Snackbar.make(
+              rv,
+              resources.getString(R.string.no_internet_connection), Snackbar.LENGTH_LONG
+            )
+              .show()
+          }
+          ErrorCodes.UNKNOWN_ERROR -> {
+            Snackbar.make(
+              rv,
+              resources.getString(R.string.unknown_signin_error), Snackbar.LENGTH_LONG
+            )
+              .show()
+          }
+        }
+      }
+    }
   }
 
   private fun loadAds() {
@@ -87,32 +137,13 @@ class MainFragment : BaseFragment(), MainView {
 
   private fun setupBookList() {
     rv.layoutManager = LinearLayoutManager(activity)
-    adapter = object : FirebaseRecyclerAdapter<Book, BooksViewHolder>(
-      FirebaseRecyclerOptions.Builder<Book>().setQuery(presenter.books, Book::class.java)
+    adapter = BooksAdapter(
+      Builder<Book>().setQuery(presenter.books, Book::class.java)
         .setLifecycleOwner(viewLifecycleOwner)
         .build()
-    ) {
-      override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-      ): BooksViewHolder {
-        val view = LayoutInflater.from(parent.context)
-          .inflate(R.layout.book_list_item_main, parent, false)
-        return BooksViewHolder(view)
-      }
-
-      override fun onBindViewHolder(
-        holder: BooksViewHolder,
-        position: Int,
-        model: Book
-      ) {
-        holder.setKey(this.getRef(position).key)
-        holder.bind(model)
-      }
-    }
+    )
 
     rv.adapter = adapter
-    LinearSnapHelper().attachToRecyclerView(rv)
-    adapter.startListening()
   }
 }
+

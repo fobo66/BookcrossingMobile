@@ -14,9 +14,8 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.ui.create
+package com.bookcrossing.mobile.ui.releasebook
 
-import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Bitmap
@@ -40,13 +39,13 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onCancel
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
-import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.list.listItems
 import com.bookcrossing.mobile.BuildConfig
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.presenters.BookReleasePresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
+import com.bookcrossing.mobile.ui.map.LocationPicker
 import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
 import com.bookcrossing.mobile.util.ValidationResult.Invalid
 import com.bookcrossing.mobile.util.ValidationResult.OK
@@ -61,7 +60,7 @@ import io.reactivex.rxkotlin.Observables
 import moxy.presenter.InjectPresenter
 import java.io.File
 import java.io.IOException
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
  * Screen for release new book
@@ -86,7 +85,10 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
   @BindView(R.id.input_description)
   lateinit var bookDescriptionInput: TextView
 
-  @BindView(R.id.publish_book)
+  @BindView(R.id.pick_book_position_button)
+  lateinit var pickBookPositionButton: Button
+
+  @BindView(R.id.release_book)
   lateinit var releaseButton: Button
 
   @BindString(R.string.rendered_sticker_name)
@@ -145,16 +147,37 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     registerCoverClickSubscription()
     registerInputProcessingSubscription()
     registerPublishButtonEnableSubscription()
-    registerPublishButtonClickSubscription()
+    registerReleaseButtonClickSubscription()
+    registerPickLocationButtonClickSubscription()
   }
 
-  private fun registerPublishButtonClickSubscription() {
-    val publishSubscription = releaseButton.clicks()
-      .flatMap { resolveUserCity() }
-      .flatMap { presenter.releaseBook(it) }
+  private fun registerPickLocationButtonClickSubscription() {
+    subscriptions.add(
+      pickBookPositionButton.clicks()
+        .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
+        .flatMap {
+          val locationPicker = LocationPicker()
+          locationPicker.show(
+            requireActivity().supportFragmentManager,
+            "com.bookcrossing.mobile.ui.create.LocationPicker"
+          )
+          locationPicker.onBookLocationPicked()
+        }
+        .doOnNext { presenter.locationPicked(it) }
+        .flatMapSingle { presenter.resolveCity(it) }
+        .subscribe {
+          presenter.saveCity(it)
+        }
+    )
+  }
+
+  private fun registerReleaseButtonClickSubscription() {
+    val releaseSubscription = releaseButton.clicks()
+      .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
+      .flatMap { presenter.releaseBook() }
       .retry()
       .subscribe()
-    subscriptions.add(publishSubscription)
+    subscriptions.add(releaseSubscription)
   }
 
   private fun registerPublishButtonEnableSubscription() {
@@ -163,14 +186,17 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
         bookNameInput.textChanges(),
         bookAuthorInput.textChanges(),
         bookPositionInput.textChanges(),
-        bookDescriptionInput.textChanges()
-      ) { name: CharSequence, author: CharSequence, position: CharSequence, description: CharSequence ->
+        bookDescriptionInput.textChanges(),
+        presenter.onLocationPicked()
+      ) { name: CharSequence, author: CharSequence, position: CharSequence, description: CharSequence, isLocationPicked: Boolean ->
         name.isNotBlank() &&
           author.isNotBlank() &&
           position.isNotBlank() &&
-          description.isNotBlank()
+          description.isNotBlank() &&
+          isLocationPicked
+
       }
-        .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+        .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { enabled: Boolean -> releaseButton.isEnabled = enabled }
     subscriptions.add(publishSubscription)
@@ -187,7 +213,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
       .doOnNext {
         clearTextViewError(it.view)
       }
-      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+      .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe { event ->
         val input = event.view.text.toString()
@@ -208,7 +234,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
 
   private fun registerCoverClickSubscription() {
     val coverSubscription = cover.clicks()
-      .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+      .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe { showCoverChooserDialog() }
     subscriptions.add(coverSubscription)
@@ -269,15 +295,6 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     }
   }
 
-  override fun askUserToProvideDefaultCity() {
-    MaterialDialog(requireContext())
-      .title(R.string.enter_city_title)
-      .message(R.string.error_enter_city_content)
-      .input(hintRes = R.string.city_hint, callback =
-      { _, input -> presenter.saveCity(input.toString()) })
-      .show()
-  }
-
   override fun onReleased(newKey: String) {
     val dialog = MaterialDialog(requireContext())
       .title(R.string.book_saved_dialog_title)
@@ -306,9 +323,9 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
 
   override fun onFailedToRelease() {
     MaterialDialog(requireContext())
-      .message(R.string.failed_to_release_book_message, null, null)
-      .title(R.string.error_dialog_title, null)
-      .positiveButton(R.string.ok, null) { dialog ->
+      .message(R.string.failed_to_release_book_message)
+      .title(R.string.error_dialog_title)
+      .positiveButton(R.string.ok) { dialog ->
         dialog.dismiss()
       }
       .show()
@@ -330,13 +347,6 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     val canvas = Canvas(stickerBitmap)
     sticker.draw(canvas)
     presenter.saveSticker(stickerBitmap, stickerName, stickerDescription)
-  }
-
-  private fun resolveUserCity(): Observable<String> {
-    return permissions.request(
-      Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
-    )
-      .flatMapMaybe { presenter.resolveUserCity() }
   }
 
   companion object {

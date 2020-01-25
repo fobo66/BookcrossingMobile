@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~    Copyright 2019 Andrey Mukamolov
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
@@ -103,6 +102,7 @@
   <string name="author_icon_description">Автор</string>
   <string name="place_icon_description">Текущее местоположение</string>
   <string name="camera_permission_denied_prompt">Разрешение для камеры нужно для сканирования QR кода книги</string>
+  <string name="location_permission_denied_prompt">Разрешение для геолокации нужно для отображения вашего местоположения на карте</string>
   <string name="retry_permission_request_action">Повторить</string>
   <string name="go_to_settings_permission_request_action">Настройки</string>
   <string name="error_book_name_malformed">Название книги содержит неправильные символы</string>
@@ -113,6 +113,14 @@
   <string name="error_input_empty">Поле не должно быть пустым</string>
   <string name="error_too_long">Текст слишком длинный</string>
   <string name="error_too_short">Текст слишком короткий</string>
+  <string name="pick_location_on_map">Выбрать местоположение книги на карте</string>
+  <string name="pick_location_button_text">Выбрать местоположение</string>
+  <string name="sign_in_success">Добро пожаловать в Bookcrossing!</string>
+  <string name="release_acquired_book_title">Вы собираетесь освободить эту книгу. Пожалуйста, укажите новое местоположение, где вы оставили эту книгу, чтобы другие смогли найти её</string>
+  <string name="release_acquired_book">Освободить книгу</string>
+  <string name="acquired_books_empty_indicator">No acquired books</string>
+  <string name="profile_picture_description">Profile picture</string>
+  <string name="book_released_book_message">Successfully released book</string>
   <string-array name="cover_chooser_dialog_items">
     <item>Из галереи</item>
     <item>Сделать фото</item>

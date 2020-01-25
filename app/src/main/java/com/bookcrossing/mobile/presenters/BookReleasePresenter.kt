@@ -21,15 +21,13 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.annotation.IdRes
-import androidx.core.content.edit
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.code.BookStickerSaver
 import com.bookcrossing.mobile.code.QrCodeEncoder
 import com.bookcrossing.mobile.models.BookBuilder
+import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.models.Date
-import com.bookcrossing.mobile.ui.create.BookReleaseView
-import com.bookcrossing.mobile.util.EXTRA_CITY
-import com.bookcrossing.mobile.util.EXTRA_DEFAULT_CITY
+import com.bookcrossing.mobile.ui.releasebook.BookReleaseView
 import com.bookcrossing.mobile.util.InputValidator
 import com.bookcrossing.mobile.util.LengthRule
 import com.bookcrossing.mobile.util.NotEmptyRule
@@ -40,10 +38,11 @@ import com.google.zxing.WriterException
 import durdinapps.rxfirebase2.RxFirebaseAuth
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import durdinapps.rxfirebase2.RxFirebaseStorage
-import io.reactivex.Maybe
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
 import moxy.InjectViewState
 import timber.log.Timber
 import java.io.File
@@ -56,6 +55,8 @@ import java.util.UUID
  */
 @InjectViewState
 class BookReleasePresenter : BasePresenter<BookReleaseView>() {
+
+  private val isLocationPicked = BehaviorSubject.createDefault(false)
 
   private val book: BookBuilder = BookBuilder()
   private lateinit var tempCoverUri: Uri
@@ -74,6 +75,11 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
       }
       .onErrorReturn { key }
   }
+
+  /**
+   * Indicate that location was picked by the user, so we can proceed with release
+   */
+  fun onLocationPicked(): Observable<Boolean> = isLocationPicked.hide()
 
   /** Save chosen cover image URI and display it on UI */
   fun saveCoverTemporarily(coverUri: Uri?) {
@@ -116,20 +122,33 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   /** Validate user input */
   fun validateInput(input: String): ValidationResult = validator.validate(input)
 
+  /** Save picked location of the book */
+  fun locationPicked(coordinates: Coordinates) {
+    book.setPosition(coordinates)
+    isLocationPicked.onNext(true)
+  }
+
   /** Release book */
-  fun releaseBook(city: String): Observable<String> {
+  fun releaseBook(): Observable<String> {
     setPublicationDate()
     val newBook = book.createBook()
-    newBook.city = city
     val newBookReference = books().push()
     val key = newBookReference.key.orEmpty()
 
     return RxFirebaseDatabase.setValue(newBookReference, newBook)
+      .andThen(RxFirebaseDatabase.setValue(places(key), newBook.position))
+      .andThen(
+        RxFirebaseDatabase.setValue(
+          placesHistory(key).child("${newBook.city}, ${newBook.positionName}"),
+          newBook.position
+        )
+      )
       .andThen(uploadCover(key))
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
-      .doOnNext {
-        viewState.onReleased(it)
+      .doOnNext { newKey ->
+        book.clear()
+        viewState.onReleased(newKey)
       }
       .doOnError {
         Crashlytics.logException(it)
@@ -152,12 +171,10 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
     return try {
       QrCodeEncoder().encode(buildBookUri(key).toString())
     } catch (e: WriterException) {
-      Timber.e("Failed to encode book key to QR code")
-      Crashlytics.logException(e)
+      Timber.e(e, "Failed to encode book key to QR code")
       null
     } catch (e: IllegalArgumentException) {
-      Timber.e("Failed to save QR code in bitmap")
-      Crashlytics.logException(e)
+      Timber.e(e, "Failed to save QR code in bitmap")
       null
     }
   }
@@ -180,30 +197,21 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   }
 
   /**
-   * Determine the city in which the user currently resides to set location of the released book
+   * Determine the city of the location of the book
    */
-  fun resolveUserCity(): Maybe<String> {
-    return systemServicesWrapper.locationRepository.getLastKnownUserLocation()
-      .flatMapMaybe<String> { location ->
-        systemServicesWrapper.locationRepository.resolveUserCity(
-          location
-        )
-      }
-      .doOnSuccess { city -> saveCity(city) }
-      .doOnError {
-        Timber.e(it, "Failed to resolve city")
-        viewState.askUserToProvideDefaultCity()
-      }
+  fun resolveCity(coordinates: Coordinates): Single<String> {
+    return systemServicesWrapper.locationRepository.resolveCity(
+      coordinates.lat,
+      coordinates.lng
+    )
+      .doOnError(Timber::e)
   }
 
   /**
    * Save city to preferences
    */
   fun saveCity(city: String) {
-    systemServicesWrapper.preferences.edit {
-      putString(EXTRA_CITY, city)
-      putString(EXTRA_DEFAULT_CITY, city)
-    }
+    book.setCity(city)
   }
 
   /**

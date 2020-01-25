@@ -6,7 +6,6 @@ apply plugin: "kotlin-kapt"
 apply plugin: "kotlinx-serialization"
 apply plugin: "io.fabric"
 apply plugin: "io.gitlab.arturbosch.detekt"
-apply plugin: "io.github.fobo66.propertiesloader"
 
 /*
  *    Copyright 2019 Andrey Mukamolov
@@ -24,12 +23,9 @@ apply plugin: "io.github.fobo66.propertiesloader"
  *    limitations under the License.
  */
 
-//loadProperties
-apply from: "https://gist.githubusercontent.com/fobo66/17d5116b5c7bccf5f28036f401f3c09d/raw/ad621696be25a46919f7556207a104d1fe82b993/propertiesLoader.gradle"
+def keystoreProperties = PropertiesLoaderKt.loadProperties(rootProject.file("keystore.properties"))
 
-def keystoreProperties = loadProperties("keystore.properties")
-
-def apiProperties = loadProperties("api.properties")
+def apiProperties = PropertiesLoaderKt.loadProperties(rootProject.file("api.properties"))
 
 android {
   compileSdkVersion 29
@@ -57,8 +53,8 @@ android {
     resValue "string", "admob_publisher_id", apiProperties["admob_publisher_id"]
 
     vectorDrawables.useSupportLibrary = true
-
   }
+
   buildTypes {
     release {
       minifyEnabled true
@@ -127,7 +123,7 @@ dependencies {
   implementation "com.google.android.gms:play-services-auth:17.0.0"
   implementation "com.google.android.gms:play-services-oss-licenses:17.0.0"
 
-  implementation "com.google.android.material:material:1.0.0"
+  implementation "com.google.android.material:material:1.2.0-alpha04"
   implementation "androidx.cardview:cardview:1.0.0"
   implementation "androidx.preference:preference-ktx:1.1.0"
 
@@ -135,7 +131,7 @@ dependencies {
   implementation "androidx.core:core:$androidxCoreVersion"
   implementation "androidx.core:core-ktx:$androidxCoreVersion"
 
-  implementation "androidx.fragment:fragment-ktx:1.1.0"
+  implementation "androidx.fragment:fragment-ktx:1.2.0-rc05"
   implementation "androidx.vectordrawable:vectordrawable:1.1.0"
   implementation "androidx.appcompat:appcompat:1.1.0"
   implementation "androidx.recyclerview:recyclerview:1.1.0"
@@ -203,6 +199,8 @@ dependencies {
   implementation "com.algolia:instantsearch-android:2.2.1"
 
   implementation "com.crashlytics.sdk.android:crashlytics:2.10.1"
+
+  debugImplementation "com.squareup.leakcanary:leakcanary-android:2.1"
 
   kapt "com.google.dagger:dagger-compiler:$daggerVersion"
   kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"

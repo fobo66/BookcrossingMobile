@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -83,13 +84,15 @@ import com.google.firebase.database.IgnoreExtraProperties;
     this.wentFreeAt = wentFreeAt;
   }
 
-  public Book(String author, String name, String description, boolean free, String positionName,
-      Date wentFreeAt) {
+  public Book(String author, String name, String description, boolean free, Coordinates position,
+    String positionName, String city, Date wentFreeAt) {
     this.author = author;
     this.name = name;
     this.description = description;
     this.free = free;
+    this.position = position;
     this.positionName = positionName;
+    this.city = city;
     this.wentFreeAt = wentFreeAt;
   }
 
