@@ -20,6 +20,6 @@ Check our [contribution guide](CONTRIBUTING.md) for more information.
 Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
 By participating in this project you agree to abide by its terms.
 
-
 ## License
+
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ffobo66%2FBookcrossingMobile.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ffobo66%2FBookcrossingMobile?ref=badge_large)
