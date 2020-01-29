@@ -20,7 +20,7 @@ public class PointsOverlayView extends View {
 
   private static final float DEFAULT_POINT_SIZE = 10;
 
-  PointF[] points;
+  private PointF[] points;
   private Paint paint;
   private float pointSize = DEFAULT_POINT_SIZE;
 
