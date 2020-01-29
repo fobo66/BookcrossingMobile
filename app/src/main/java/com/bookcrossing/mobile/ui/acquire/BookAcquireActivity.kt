@@ -17,9 +17,12 @@ package com.bookcrossing.mobile.ui.acquire
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 import android.widget.Button
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.updatePadding
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bookcrossing.mobile.R.id
@@ -36,6 +39,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
+import dev.chrisbanes.insetter.doOnApplyWindowInsets
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.withLatestFrom
 import moxy.presenter.InjectPresenter
@@ -79,6 +83,13 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
         codeInput.setText(keyToAcquire)
         codeInput.isEnabled = false
       }
+    }
+
+    coordinatorLayout.systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_STABLE or
+      SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+
+    toolbar.doOnApplyWindowInsets { view, insets, initialState ->
+      view.updatePadding(top = initialState.paddings.top + insets.systemWindowInsetTop)
     }
 
     subscriptions.add(
