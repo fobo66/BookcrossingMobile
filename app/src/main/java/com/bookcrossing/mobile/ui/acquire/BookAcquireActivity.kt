@@ -19,9 +19,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -35,6 +37,7 @@ import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity
 import com.bookcrossing.mobile.ui.scan.ScanActivity
 import com.bookcrossing.mobile.util.EXTRA_KEY
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.jakewharton.rxbinding3.view.clicks
@@ -55,6 +58,9 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
 
   @BindView(id.toolbar)
   lateinit var toolbar: Toolbar
+
+  @BindView(id.book_acquire_toolbar_container)
+  lateinit var toolbarContainer: AppBarLayout
 
   @BindView(id.acquireButton)
   lateinit var acquireButton: Button
@@ -88,8 +94,14 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
     coordinatorLayout.systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_STABLE or
       SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
-    toolbar.doOnApplyWindowInsets { view, insets, initialState ->
+    toolbarContainer.doOnApplyWindowInsets { view, insets, initialState ->
       view.updatePadding(top = initialState.paddings.top + insets.systemWindowInsetTop)
+    }
+
+    acquireButton.doOnApplyWindowInsets { view, insets, initialState ->
+      view.updateLayoutParams<MarginLayoutParams> {
+        bottomMargin = initialState.margins.bottom + insets.systemWindowInsetBottom
+      }
     }
 
     subscriptions.add(
