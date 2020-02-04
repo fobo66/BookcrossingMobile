@@ -19,9 +19,15 @@ package com.bookcrossing.mobile.modules
 import android.app.Activity
 import com.bookcrossing.mobile.components.AppComponent
 
+/**
+ * Convenience interface for neat access to dependency tree
+ */
 interface DaggerComponentProvider {
 
   val component: AppComponent
 }
 
+/**
+ * Convenience accessor to dependency tree
+ */
 val Activity.injector get() = (application as DaggerComponentProvider).component
