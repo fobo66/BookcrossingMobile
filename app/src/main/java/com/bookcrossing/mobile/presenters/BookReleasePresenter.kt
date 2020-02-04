@@ -191,7 +191,7 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
     stickerName: String,
     stickerDescription: String
   ) {
-    BookStickerSaver(systemServicesWrapper.app.contentResolver).saveSticker(
+    BookStickerSaver(systemServicesWrapper.context.contentResolver).saveSticker(
       stickerName, stickerDescription, sticker
     )
   }

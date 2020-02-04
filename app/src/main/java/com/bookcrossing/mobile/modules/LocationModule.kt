@@ -1,5 +1,6 @@
 package com.bookcrossing.mobile.modules
 
+import android.content.Context
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.Module
@@ -13,9 +14,9 @@ import javax.inject.Singleton
 
 @Module
 class LocationModule {
-    @Provides
-    @Singleton
-    fun provideFusedLocationProviderClient(app: App): FusedLocationProviderClient {
-        return LocationServices.getFusedLocationProviderClient(app.applicationContext)
-    }
+  @Provides
+  @Singleton
+  fun provideFusedLocationProviderClient(context: Context): FusedLocationProviderClient {
+    return LocationServices.getFusedLocationProviderClient(context)
+  }
 }

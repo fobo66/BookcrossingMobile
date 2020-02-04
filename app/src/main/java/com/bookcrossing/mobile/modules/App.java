@@ -59,12 +59,6 @@ public class App extends MultiDexApplication {
 
     Fabric.with(this, crashlyticsKit);
 
-    component = DaggerAppComponent.builder()
-        .application(this)
-        .prefModule(new PrefModule())
-        .apiModule(new ApiModule())
-        .locationModule(new LocationModule())
-        .build();
-    component.inject(this);
+    component = DaggerAppComponent.factory().create(this);
   }
 }

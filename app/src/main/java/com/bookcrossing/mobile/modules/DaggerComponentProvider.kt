@@ -16,23 +16,12 @@
 
 package com.bookcrossing.mobile.modules
 
-import android.content.Context
-import com.bookcrossing.mobile.util.LocaleProvider
-import com.bookcrossing.mobile.util.LocaleProviderImpl
-import com.bookcrossing.mobile.util.ResourceProvider
-import com.bookcrossing.mobile.util.ResourceProviderImpl
-import dagger.Module
-import dagger.Provides
-import javax.inject.Singleton
+import android.app.Activity
+import com.bookcrossing.mobile.components.AppComponent
 
-@Module
-class ProvidersModule {
-  @Provides
-  @Singleton
-  fun provideResourceProvider(context: Context): ResourceProvider = ResourceProviderImpl(context)
+interface DaggerComponentProvider {
 
-  @Provides
-  @Singleton
-  fun provideLocaleProvider(context: Context): LocaleProvider =
-    LocaleProviderImpl(context.resources)
+  val component: AppComponent
 }
+
+val Activity.injector get() = (application as DaggerComponentProvider).component

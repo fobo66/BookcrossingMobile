@@ -16,8 +16,8 @@
 
 package com.bookcrossing.mobile.components
 
+import android.content.Context
 import com.bookcrossing.mobile.modules.ApiModule
-import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.modules.LocationModule
 import com.bookcrossing.mobile.modules.PrefModule
 import com.bookcrossing.mobile.modules.ProvidersModule
@@ -36,21 +36,10 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [PrefModule::class, LocationModule::class, ApiModule::class, ProvidersModule::class])
 interface AppComponent {
-  @Component.Builder
-  interface Builder {
-    @BindsInstance
-    fun application(application: App): Builder
-
-    fun prefModule(prefModule: PrefModule): Builder
-
-    fun apiModule(apiModule: ApiModule): Builder
-
-    fun locationModule(locationModule: LocationModule): Builder
-
-    fun build(): AppComponent
+  @Component.Factory
+  interface Factory {
+    fun create(@BindsInstance context: Context): AppComponent
   }
-
-  fun inject(app: App)
 
   fun inject(firebaseWrapper: FirebaseWrapper)
 

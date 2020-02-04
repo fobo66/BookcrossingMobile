@@ -1,5 +1,6 @@
 package com.bookcrossing.mobile.modules
 
+import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import dagger.Module
@@ -11,6 +12,6 @@ import dagger.Provides
 @Module
 class PrefModule {
   @Provides
-  fun provideSharedPreferences(app: App): SharedPreferences =
-    PreferenceManager.getDefaultSharedPreferences(app.applicationContext)
+  fun provideSharedPreferences(context: Context): SharedPreferences =
+    PreferenceManager.getDefaultSharedPreferences(context)
 }
