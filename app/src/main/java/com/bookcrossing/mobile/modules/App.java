@@ -53,9 +53,8 @@ public class App extends MultiDexApplication {
       Timber.plant(new CrashlyticsTree());
     }
 
-    Crashlytics crashlyticsKit = new Crashlytics.Builder()
-      .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-      .build();
+    Crashlytics crashlyticsKit = new Crashlytics.Builder().core(
+      new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build();
 
     Fabric.with(this, crashlyticsKit);
 
