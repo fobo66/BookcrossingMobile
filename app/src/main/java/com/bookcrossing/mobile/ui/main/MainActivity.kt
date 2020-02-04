@@ -26,7 +26,9 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
@@ -64,6 +66,12 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
   @BindView(R.id.drawer_layout)
   lateinit var drawer: DrawerLayout
 
+  private val navController: NavController by lazy {
+    val navHostFragment =
+      supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+    navHostFragment.navController
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
@@ -83,7 +91,6 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
   }
 
   private fun setupToolbar() {
-    val navController = findNavController(R.id.nav_host_fragment)
     val appBarConfiguration = AppBarConfiguration(navController.graph, drawer)
     toolbar.setupWithNavController(navController, appBarConfiguration)
     navigationView.setupWithNavController(navController)
@@ -151,7 +158,6 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
   }
 
   private fun resolveNavigationToFragment(savedInstanceState: Bundle?) {
-    val navController = findNavController(R.id.nav_host_fragment)
     if (intent != null) {
       val whereToGo = intent.getStringExtra(EXTRA_TARGET_FRAGMENT)
       when {
