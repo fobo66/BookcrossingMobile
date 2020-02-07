@@ -55,7 +55,7 @@ class SearchFragment : BaseFragment(), SearchView {
 
     val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
 
-    presenter.searchableBooks.observe(this, Observer { hits ->
+    presenter.searchableBooks.observe(viewLifecycleOwner, Observer { hits ->
       presenter.adapter.submitList(hits)
     })
 
