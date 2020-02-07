@@ -107,11 +107,12 @@ dependencies {
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-  def moxyVersion = "2.0.2"
+  def moxyVersion = "2.1.1"
 
   implementation "com.github.moxy-community:moxy:$moxyVersion"
   implementation "com.github.moxy-community:moxy-android:$moxyVersion"
   implementation "com.github.moxy-community:moxy-androidx:$moxyVersion"
+  implementation "com.github.moxy-community:moxy-ktx:$moxyVersion"
 
   implementation "com.google.firebase:firebase-auth:19.2.0"
   implementation "com.google.firebase:firebase-messaging:20.1.0"
@@ -131,7 +132,7 @@ dependencies {
   implementation "androidx.core:core:$androidxCoreVersion"
   implementation "androidx.core:core-ktx:$androidxCoreVersion"
 
-  implementation "androidx.fragment:fragment-ktx:1.2.0"
+  implementation "androidx.fragment:fragment-ktx:1.2.1"
   implementation "androidx.vectordrawable:vectordrawable:1.1.0"
   implementation "androidx.appcompat:appcompat:1.1.0"
   implementation "androidx.recyclerview:recyclerview:1.1.0"
