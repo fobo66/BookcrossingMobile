@@ -17,13 +17,13 @@ package com.bookcrossing.mobile.presenters
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.ui.main.MainView
 import com.bookcrossing.mobile.util.KEY_CONSENT_STATUS
 import com.google.ads.consent.ConsentStatus
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.AdRequest
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import moxy.InjectViewState
 import javax.inject.Inject
 
@@ -32,17 +32,13 @@ import javax.inject.Inject
  */
 
 @InjectViewState
-class MainPresenter : BasePresenter<MainView>() {
-
-  @Inject
-  lateinit var preferences: SharedPreferences
+class MainPresenter @Inject constructor(
+  private val preferences: SharedPreferences,
+  private val database: FirebaseDatabase
+) : BasePresenter<MainView>() {
 
   val books: DatabaseReference
-    get() = books()
-
-  init {
-    App.getComponent().inject(this)
-  }
+    get() = database.getReference("books")
 
   fun checkForConsent(adBuilder: AdRequest.Builder) {
     val consentStatus = loadConsentStatus()

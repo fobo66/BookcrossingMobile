@@ -29,6 +29,7 @@ import butterknife.BindView
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.presenters.MainPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.RC_SIGN_IN
@@ -43,8 +44,10 @@ import com.google.android.gms.ads.AdView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding3.view.clicks
-import moxy.presenter.InjectPresenter
+import moxy.ktx.moxyPresenter
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Provider
 
 class MainFragment : BaseFragment(), MainView {
 
@@ -57,10 +60,17 @@ class MainFragment : BaseFragment(), MainView {
   @BindView(R.id.adView)
   lateinit var ad: AdView
 
-  @InjectPresenter
-  lateinit var presenter: MainPresenter
+  @Inject
+  lateinit var presenterProvider: Provider<MainPresenter>
+
+  private val presenter: MainPresenter by moxyPresenter { presenterProvider.get() }
 
   private lateinit var adapter: FirebaseRecyclerAdapter<Book, BooksViewHolder>
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    App.getComponent().inject(this)
+    super.onCreate(savedInstanceState)
+  }
 
   override fun onCreateView(
     inflater: LayoutInflater,
