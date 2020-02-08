@@ -16,6 +16,7 @@
 package com.bookcrossing.mobile.ui.main
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -67,9 +68,9 @@ class MainFragment : BaseFragment(), MainView {
 
   private lateinit var adapter: FirebaseRecyclerAdapter<Book, BooksViewHolder>
 
-  override fun onCreate(savedInstanceState: Bundle?) {
+  override fun onAttach(context: Context) {
     App.getComponent().inject(this)
-    super.onCreate(savedInstanceState)
+    super.onAttach(context)
   }
 
   override fun onCreateView(

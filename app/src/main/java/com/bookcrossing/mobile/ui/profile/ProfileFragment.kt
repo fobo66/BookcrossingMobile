@@ -16,6 +16,7 @@
 package com.bookcrossing.mobile.ui.profile
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -63,9 +64,9 @@ class ProfileFragment : BaseFragment(), ProfileView {
 
   private lateinit var adapter: FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder>
 
-  override fun onCreate(savedInstanceState: Bundle?) {
+  override fun onAttach(context: Context) {
     App.getComponent().inject(this)
-    super.onCreate(savedInstanceState)
+    super.onAttach(context)
   }
 
   override fun onCreateView(
