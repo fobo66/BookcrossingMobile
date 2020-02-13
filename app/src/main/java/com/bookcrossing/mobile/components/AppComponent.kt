@@ -25,6 +25,7 @@ import com.bookcrossing.mobile.presenters.MainPresenter
 import com.bookcrossing.mobile.presenters.SearchPresenter
 import com.bookcrossing.mobile.ui.main.MainFragment
 import com.bookcrossing.mobile.ui.profile.ProfileFragment
+import com.bookcrossing.mobile.ui.scan.ScanActivity
 import com.bookcrossing.mobile.util.FirebaseWrapper
 import com.bookcrossing.mobile.util.SystemServicesWrapper
 import dagger.BindsInstance
@@ -47,11 +48,12 @@ interface AppComponent {
 
   fun inject(systemServicesWrapper: SystemServicesWrapper)
 
+  fun inject(scanActivity: ScanActivity)
+
   fun inject(mainFragment: MainFragment)
 
   fun inject(profileFragment: ProfileFragment)
 
   fun inject(presenter: MainPresenter)
-
   fun inject(presenter: SearchPresenter)
 }
