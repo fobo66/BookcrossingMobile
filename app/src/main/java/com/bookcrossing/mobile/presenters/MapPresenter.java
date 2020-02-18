@@ -35,10 +35,6 @@ import timber.log.Timber;
   private Map<String, Book> bookMap;
   private Map<Coordinates, String> coordinatesMap;
 
-  public MapPresenter() {
-    super();
-  }
-
   public void getBooksPositions() {
     unsubscribeOnDestroy(
         RxFirebaseDatabase.observeValueEvent(places(), DataSnapshotMapper.mapOf(Coordinates.class))
