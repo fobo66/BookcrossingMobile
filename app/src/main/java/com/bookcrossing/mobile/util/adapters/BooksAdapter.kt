@@ -20,11 +20,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.util.BookCoverResolver
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 
 /** Adapter for books on main screen */
-class BooksAdapter(options: FirebaseRecyclerOptions<Book>) :
+class BooksAdapter(
+  private val bookCoverResolver: BookCoverResolver,
+  options: FirebaseRecyclerOptions<Book>
+) :
   FirebaseRecyclerAdapter<Book, BooksViewHolder>(options) {
   override fun onCreateViewHolder(
     parent: ViewGroup,
@@ -40,7 +44,9 @@ class BooksAdapter(options: FirebaseRecyclerOptions<Book>) :
     position: Int,
     model: Book
   ) {
-    holder.key = getRef(position).key.orEmpty()
+    val key = getRef(position).key.orEmpty()
+    holder.key = key
+    holder.loadCover(bookCoverResolver.resolveCover(key))
     holder.bind(model)
   }
 }

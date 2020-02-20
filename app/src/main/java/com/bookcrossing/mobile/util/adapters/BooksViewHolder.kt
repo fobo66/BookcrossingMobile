@@ -24,16 +24,12 @@ import com.bookcrossing.mobile.R.drawable
 import com.bookcrossing.mobile.R.id
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.modules.GlideApp
-import com.bookcrossing.mobile.presenters.BookItemPresenter
 import com.bookcrossing.mobile.ui.bookpreview.BookItemView
 import com.bookcrossing.mobile.util.listeners.BookListener
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenterTag
+import com.google.firebase.storage.StorageReference
 
-class BooksViewHolder(view: View) : MvpBaseViewHolder(view), BookItemView {
-  @InjectPresenter
-  lateinit var itemPresenter: BookItemPresenter
+class BooksViewHolder(view: View) : BaseViewHolder(view), BookItemView {
 
   @BindView(id.cover)
   lateinit var cover: ImageView
@@ -49,21 +45,16 @@ class BooksViewHolder(view: View) : MvpBaseViewHolder(view), BookItemView {
 
   var key: String = ""
 
-  @ProvidePresenterTag(presenterClass = BookItemPresenter::class)
-  fun provideBookItemPresenterTag(): String {
-    return BookItemPresenter.TAG
-  }
-
   override fun bind(book: Book) {
-    loadCover()
     bookName.text = book.name
     bookPlace.text = book.positionName
     author.text = book.author
   }
 
-  fun loadCover() {
+  /** Load cover for the current book*/
+  fun loadCover(coverReference: StorageReference) {
     GlideApp.with(itemView.context)
-      .load(itemPresenter.resolveCover(key))
+      .load(coverReference)
       .placeholder(drawable.ic_book_cover_placeholder)
       .transition(DrawableTransitionOptions.withCrossFade())
       .thumbnail(0.6f)

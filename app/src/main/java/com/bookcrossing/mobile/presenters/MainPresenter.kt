@@ -20,6 +20,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.ui.main.MainView
+import com.bookcrossing.mobile.util.BookCoverResolver
 import com.bookcrossing.mobile.util.KEY_CONSENT_STATUS
 import com.bookcrossing.mobile.util.UNKNOWN_CONSENT_STATUS
 import com.google.ads.consent.ConsentStatus
@@ -35,7 +36,8 @@ import javax.inject.Inject
 @InjectViewState
 class MainPresenter @Inject constructor(
   private val preferences: SharedPreferences,
-  private val booksRepository: BooksRepository
+  private val booksRepository: BooksRepository,
+  val bookCoverResolver: BookCoverResolver
 ) : BasePresenter<MainView>() {
 
   val books: DatabaseReference

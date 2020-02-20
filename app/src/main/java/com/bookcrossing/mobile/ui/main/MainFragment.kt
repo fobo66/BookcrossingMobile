@@ -149,6 +149,7 @@ class MainFragment : BaseFragment(), MainView {
   private fun setupBookList() {
     rv.layoutManager = LinearLayoutManager(requireContext())
     adapter = BooksAdapter(
+      presenter.bookCoverResolver,
       Builder<Book>().setQuery(presenter.books, Book::class.java)
         .setLifecycleOwner(viewLifecycleOwner)
         .build()
