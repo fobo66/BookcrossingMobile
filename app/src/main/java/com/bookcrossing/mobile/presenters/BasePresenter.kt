@@ -42,9 +42,6 @@ open class BasePresenter<V : MvpView> : MvpPresenter<V>() {
   private val userId: String
     get() = firebaseWrapper.auth.currentUser?.uid ?: DEFAULT_USER
 
-  val isAuthenticated: Boolean
-    get() = firebaseWrapper.auth.currentUser != null
-
   init {
     App.getComponent()
       .inject(firebaseWrapper)

@@ -25,7 +25,7 @@ import moxy.InjectViewState
 import javax.inject.Inject
 
 /**
- * Presenter fo stash screen
+ * Presenter for stash screen
  */
 @InjectViewState
 class StashPresenter @Inject constructor(
@@ -36,4 +36,7 @@ class StashPresenter @Inject constructor(
 
   val stashedBooks: DatabaseReference
     get() = booksRepository.stash(authRepository.userId)
+
+  val isAuthenticated: Boolean
+    get() = authRepository.isAuthenticated
 }

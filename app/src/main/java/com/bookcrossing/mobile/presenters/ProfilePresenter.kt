@@ -39,4 +39,7 @@ class ProfilePresenter @Inject constructor(
 
   val photoUrl: Uri?
     get() = authRepository.photoUrl
+
+  val isAuthenticated: Boolean
+    get() = authRepository.isAuthenticated
 }

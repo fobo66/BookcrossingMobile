@@ -18,6 +18,7 @@ package com.bookcrossing.mobile.presenters
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import com.bookcrossing.mobile.data.AuthRepository
 import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.ui.main.MainView
 import com.bookcrossing.mobile.util.BookCoverResolver
@@ -37,11 +38,16 @@ import javax.inject.Inject
 class MainPresenter @Inject constructor(
   private val preferences: SharedPreferences,
   private val booksRepository: BooksRepository,
+  private val authRepository: AuthRepository,
   val bookCoverResolver: BookCoverResolver
 ) : BasePresenter<MainView>() {
 
   val books: DatabaseReference
     get() = booksRepository.books()
+
+  val isAuthenticated: Boolean
+    get() = authRepository.isAuthenticated
+
 
   fun checkForConsent(adBuilder: AdRequest.Builder) {
     val consentStatus = loadConsentStatus()
