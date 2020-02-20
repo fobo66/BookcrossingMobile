@@ -40,7 +40,7 @@ class BooksAdapter(options: FirebaseRecyclerOptions<Book>) :
     position: Int,
     model: Book
   ) {
-    holder.setKey(this.getRef(position).key)
+    holder.key = getRef(position).key.orEmpty()
     holder.bind(model)
   }
 }

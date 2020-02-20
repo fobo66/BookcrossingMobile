@@ -1,0 +1,77 @@
+/*
+ *    Copyright 2019 Andrey Mukamolov
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+package com.bookcrossing.mobile.util.adapters
+
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
+import butterknife.BindView
+import butterknife.OnClick
+import com.bookcrossing.mobile.R.drawable
+import com.bookcrossing.mobile.R.id
+import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.modules.GlideApp
+import com.bookcrossing.mobile.presenters.BookItemPresenter
+import com.bookcrossing.mobile.ui.bookpreview.BookItemView
+import com.bookcrossing.mobile.util.listeners.BookListener
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenterTag
+
+class BooksViewHolder(view: View) : MvpBaseViewHolder(view), BookItemView {
+  @InjectPresenter
+  lateinit var itemPresenter: BookItemPresenter
+
+  @BindView(id.cover)
+  lateinit var cover: ImageView
+
+  @BindView(id.book_name)
+  lateinit var bookName: TextView
+
+  @BindView(id.author)
+  lateinit var author: TextView
+
+  @BindView(id.current_place)
+  lateinit var bookPlace: TextView
+
+  var key: String = ""
+
+  @ProvidePresenterTag(presenterClass = BookItemPresenter::class)
+  fun provideBookItemPresenterTag(): String {
+    return BookItemPresenter.TAG
+  }
+
+  override fun bind(book: Book) {
+    loadCover()
+    bookName.text = book.name
+    bookPlace.text = book.positionName
+    author.text = book.author
+  }
+
+  fun loadCover() {
+    GlideApp.with(itemView.context)
+      .load(itemPresenter.resolveCover(key))
+      .placeholder(drawable.ic_book_cover_placeholder)
+      .transition(DrawableTransitionOptions.withCrossFade())
+      .thumbnail(0.6f)
+      .into(cover)
+  }
+
+  @OnClick(id.card)
+  fun onClick() {
+    (itemView.context as BookListener).onBookSelected(key)
+  }
+}
