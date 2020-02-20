@@ -104,7 +104,6 @@ class MainFragment : BaseFragment(), MainView {
       val signInResult = IdpResponse.fromResultIntent(data)
 
       if (resultCode == RESULT_OK) {
-        fab.visibility = VISIBLE
         Snackbar.make(rv, R.string.sign_in_success, Snackbar.LENGTH_LONG).show()
       } else {
         if (signInResult == null) {
@@ -156,6 +155,10 @@ class MainFragment : BaseFragment(), MainView {
     )
 
     rv.adapter = adapter
+  }
+
+  override fun showReleaseBookButton() {
+    fab.visibility = VISIBLE
   }
 }
 

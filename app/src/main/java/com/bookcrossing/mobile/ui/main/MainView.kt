@@ -26,4 +26,7 @@ import moxy.viewstate.strategy.StateStrategyType
  * Created by fobo66 on 21.12.2016.
  */
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface MainView : MvpView
+interface MainView : MvpView {
+  /** Show button to release new book */
+  fun showReleaseBookButton()
+}

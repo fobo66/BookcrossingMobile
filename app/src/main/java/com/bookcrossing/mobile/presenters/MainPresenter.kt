@@ -48,6 +48,14 @@ class MainPresenter @Inject constructor(
   val isAuthenticated: Boolean
     get() = authRepository.isAuthenticated
 
+  override fun onFirstViewAttach() {
+    unsubscribeOnDestroy(authRepository.onAuthenticated()
+      .filter { it.currentUser != null }
+      .subscribe {
+        viewState.showReleaseBookButton()
+      }
+    )
+  }
 
   fun checkForConsent(adBuilder: AdRequest.Builder) {
     val consentStatus = loadConsentStatus()
