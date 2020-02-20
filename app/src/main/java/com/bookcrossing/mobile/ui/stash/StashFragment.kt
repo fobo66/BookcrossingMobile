@@ -29,9 +29,10 @@ import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.presenters.StashPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
+import com.bookcrossing.mobile.util.adapters.StashAdapter
 import com.bookcrossing.mobile.util.adapters.StashedBookViewHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.firebase.ui.database.FirebaseRecyclerOptions.Builder
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
@@ -80,29 +81,13 @@ class StashFragment : BaseFragment(), StashView {
     val gridLayoutManager: LayoutManager =
       GridLayoutManager(activity, STASH_COLUMNS)
     rv.layoutManager = gridLayoutManager
-    adapter = object : FirebaseRecyclerAdapter<Boolean, StashedBookViewHolder>(
-      Builder<Boolean>().setQuery(
+    adapter = StashAdapter(
+      presenter.bookCoverResolver,
+      FirebaseRecyclerOptions.Builder<Boolean>().setQuery(
         presenter.stashedBooks,
         Boolean::class.java
       ).setLifecycleOwner(viewLifecycleOwner).build()
-    ) {
-      override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-      ): StashedBookViewHolder {
-        val view =
-          LayoutInflater.from(parent.context).inflate(layout.stash_item, parent, false)
-        return StashedBookViewHolder(view)
-      }
-
-      override fun onBindViewHolder(
-        holder: StashedBookViewHolder, position: Int,
-        model: Boolean
-      ) {
-        holder.setKey(getRef(position).key.orEmpty())
-        holder.loadCover()
-      }
-    }
+    )
     rv.adapter = adapter
     adapter.startListening()
   }

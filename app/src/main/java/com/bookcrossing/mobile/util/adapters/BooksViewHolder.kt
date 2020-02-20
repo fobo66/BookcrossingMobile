@@ -25,11 +25,13 @@ import com.bookcrossing.mobile.R.id
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.ui.bookpreview.BookItemView
+import com.bookcrossing.mobile.ui.stash.BookCoverView
 import com.bookcrossing.mobile.util.listeners.BookListener
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.firebase.storage.StorageReference
 
-class BooksViewHolder(view: View) : BaseViewHolder(view), BookItemView {
+/** Viewholder for the books list item */
+class BooksViewHolder(view: View) : BaseViewHolder(view), BookItemView, BookCoverView {
 
   @BindView(id.cover)
   lateinit var cover: ImageView
@@ -52,7 +54,7 @@ class BooksViewHolder(view: View) : BaseViewHolder(view), BookItemView {
   }
 
   /** Load cover for the current book*/
-  fun loadCover(coverReference: StorageReference) {
+  override fun loadCover(coverReference: StorageReference) {
     GlideApp.with(itemView.context)
       .load(coverReference)
       .placeholder(drawable.ic_book_cover_placeholder)

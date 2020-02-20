@@ -20,29 +20,24 @@ import android.view.View
 import android.widget.ImageView
 import butterknife.BindView
 import butterknife.OnClick
-import butterknife.OnLongClick
-import com.afollestad.materialdialogs.MaterialDialog
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.modules.GlideApp
-import com.bookcrossing.mobile.presenters.StashedBookItemPresenter
 import com.bookcrossing.mobile.ui.stash.BookCoverView
 import com.bookcrossing.mobile.util.listeners.BookListener
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
-import moxy.presenter.InjectPresenter
+import com.google.firebase.storage.StorageReference
 
-class StashedBookViewHolder(view: View) : MvpBaseViewHolder(view), BookCoverView {
+/** Viewholder for the stashed books list item */
+class StashedBookViewHolder(view: View) : BaseViewHolder(view), BookCoverView {
 
-  @InjectPresenter(tag = StashedBookItemPresenter.TAG)
-  lateinit var presenter: StashedBookItemPresenter
-
-  private lateinit var key: String
+  lateinit var key: String
 
   @BindView(R.id.cover)
   lateinit var cover: ImageView
 
-  override fun loadCover() {
+  override fun loadCover(coverReference: StorageReference) {
     GlideApp.with(itemView.context)
-      .load(presenter.resolveCover(key))
+      .load(coverReference)
       .placeholder(R.drawable.ic_book_cover_placeholder)
       .transition(withCrossFade())
       .thumbnail(0.6f)
@@ -52,20 +47,5 @@ class StashedBookViewHolder(view: View) : MvpBaseViewHolder(view), BookCoverView
   @OnClick(R.id.cover)
   fun onCoverClick() {
     (itemView.context as BookListener).onBookSelected(key)
-  }
-
-  @OnLongClick(R.id.cover)
-  fun onLongClick(): Boolean {
-    MaterialDialog(itemView.context).show {
-      title(R.string.unstash_book_confirmation_title)
-      positiveButton {
-        presenter.unstashCurrentBook(key)
-      }
-    }
-    return true
-  }
-
-  fun setKey(key: String) {
-    this.key = key
   }
 }
