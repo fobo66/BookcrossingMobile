@@ -16,15 +16,12 @@
 package com.bookcrossing.mobile.util
 
 import android.content.Context
-import android.content.SharedPreferences
 import com.bookcrossing.mobile.location.LocationRepository
 import dagger.Lazy
 import javax.inject.Inject
 
 class SystemServicesWrapper {
 
-  @Inject
-  lateinit var preferencesLazy: Lazy<SharedPreferences>
   @Inject
   lateinit var appLazy: Lazy<Context>
   @Inject
