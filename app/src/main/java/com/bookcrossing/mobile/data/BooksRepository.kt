@@ -19,8 +19,10 @@ package com.bookcrossing.mobile.data
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /** Wrapper around Firebase database references */
+@Singleton
 class BooksRepository @Inject constructor(
   private val database: FirebaseDatabase
 ) {
