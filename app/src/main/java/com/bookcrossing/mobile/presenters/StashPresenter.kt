@@ -16,12 +16,10 @@
 
 package com.bookcrossing.mobile.presenters
 
+import com.bookcrossing.mobile.data.AuthRepository
+import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.ui.stash.StashView
-import com.bookcrossing.mobile.util.DEFAULT_USER
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-
 import moxy.InjectViewState
 import javax.inject.Inject
 
@@ -30,11 +28,10 @@ import javax.inject.Inject
  */
 @InjectViewState
 class StashPresenter @Inject constructor(
-  private val database: FirebaseDatabase,
-  private val auth: FirebaseAuth
+  private val booksRepository: BooksRepository,
+  private val authRepository: AuthRepository
 ) : BasePresenter<StashView>() {
 
   val stashedBooks: DatabaseReference
-    get() = database.getReference("stash")
-      .child(auth.currentUser?.uid ?: DEFAULT_USER)
+    get() = booksRepository.stash(authRepository.userId)
 }
