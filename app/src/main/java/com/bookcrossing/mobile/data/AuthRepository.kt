@@ -16,13 +16,16 @@
 
 package com.bookcrossing.mobile.data
 
+import android.net.Uri
 import com.bookcrossing.mobile.util.DEFAULT_USER
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 import io.reactivex.Observable
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /** Repository to handle auth */
+@Singleton
 class AuthRepository @Inject constructor(
   private val auth: FirebaseAuth
 ) {
@@ -30,6 +33,10 @@ class AuthRepository @Inject constructor(
   /** Id of the currently signed in user */
   val userId: String
     get() = auth.currentUser?.uid ?: DEFAULT_USER
+
+  /** Profile photo URI of the currently signed in user */
+  val photoUrl: Uri?
+    get() = auth.currentUser?.photoUrl
 
   /** Check if user is authenticated */
   val isAuthenticated: Boolean

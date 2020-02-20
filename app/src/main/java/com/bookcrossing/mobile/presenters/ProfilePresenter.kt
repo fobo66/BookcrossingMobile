@@ -17,13 +17,10 @@
 package com.bookcrossing.mobile.presenters
 
 import android.net.Uri
-
+import com.bookcrossing.mobile.data.AuthRepository
+import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.ui.profile.ProfileView
-import com.bookcrossing.mobile.util.DEFAULT_USER
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-
 import moxy.InjectViewState
 import javax.inject.Inject
 
@@ -33,14 +30,13 @@ import javax.inject.Inject
 
 @InjectViewState
 class ProfilePresenter @Inject constructor(
-  private val database: FirebaseDatabase,
-  private val auth: FirebaseAuth
+  private val booksRepository: BooksRepository,
+  private val authRepository: AuthRepository
 ) : BasePresenter<ProfileView>() {
 
   val acquiredBooks: DatabaseReference
-    get() = database.getReference("acquiredBooks")
-      .child(auth.currentUser?.uid ?: DEFAULT_USER)
+    get() = booksRepository.acquiredBooks(authRepository.userId)
 
   val photoUrl: Uri?
-    get() = auth.currentUser?.photoUrl
+    get() = authRepository.photoUrl
 }
