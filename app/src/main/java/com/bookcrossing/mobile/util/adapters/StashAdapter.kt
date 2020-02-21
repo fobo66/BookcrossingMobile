@@ -22,7 +22,7 @@ import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.util.BookCoverResolver
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
-
+/** Adapter for the list of the user's stashed books */
 class StashAdapter(
   private val bookCoverResolver: BookCoverResolver,
   options: FirebaseRecyclerOptions<Boolean>

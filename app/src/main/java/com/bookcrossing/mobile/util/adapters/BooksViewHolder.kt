@@ -53,7 +53,6 @@ class BooksViewHolder(view: View) : BaseViewHolder(view), BookItemView, BookCove
     author.text = book.author
   }
 
-  /** Load cover for the current book*/
   override fun loadCover(coverReference: StorageReference) {
     GlideApp.with(itemView.context)
       .load(coverReference)
@@ -63,8 +62,9 @@ class BooksViewHolder(view: View) : BaseViewHolder(view), BookItemView, BookCove
       .into(cover)
   }
 
+  /** Show detailed screen for the selected book */
   @OnClick(id.card)
-  fun onClick() {
+  fun selectBook() {
     (itemView.context as BookListener).onBookSelected(key)
   }
 }
