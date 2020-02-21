@@ -40,6 +40,7 @@ import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.modules.GlideApp;
 import com.bookcrossing.mobile.presenters.BookPresenter;
+import com.bookcrossing.mobile.ui.base.BaseActivity;
 import com.bookcrossing.mobile.ui.main.MainActivity;
 import com.bookcrossing.mobile.ui.map.MapActivity;
 import com.bookcrossing.mobile.util.ConstantsKt;
@@ -52,13 +53,13 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jakewharton.rxbinding3.view.RxView;
 import dev.chrisbanes.insetter.Insetter;
-import io.reactivex.disposables.Disposable;
-import moxy.MvpAppCompatActivity;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import moxy.presenter.InjectPresenter;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
-public class BookActivity extends MvpAppCompatActivity
+public class BookActivity extends BaseActivity
   implements BookView, Toolbar.OnMenuItemClickListener {
 
   @InjectPresenter public BookPresenter presenter;
@@ -91,9 +92,6 @@ public class BookActivity extends MvpAppCompatActivity
   @BindView(R.id.fab_like) public FloatingActionButton favorite;
 
   private String key;
-  private Disposable fabSubscription;
-  private Disposable acquireSubscription;
-  private Disposable positionNameSubscription;
   private FirebaseRecyclerAdapter<Coordinates, PlacesHistoryViewHolder> adapter;
   private Coordinates currentBookPosition;
 
@@ -110,19 +108,25 @@ public class BookActivity extends MvpAppCompatActivity
     setupInsets();
 
     if (getIntent() != null) {
-      key = getIntent().getStringExtra(ConstantsKt.EXTRA_KEY);
+      key = Objects.requireNonNull(getIntent().getStringExtra(ConstantsKt.EXTRA_KEY));
       presenter.subscribeToBookReference(key);
       presenter.checkStashingState(key);
     }
 
     setupPlacesHistory();
 
-    fabSubscription = RxView.clicks(favorite).subscribe(o -> presenter.handleBookStashing(key));
+    getSubscriptions().add(RxView.clicks(favorite)
+      .throttleFirst(ConstantsKt.DEFAULT_DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+      .flatMap(o -> presenter.handleBookStashing(key))
+      .subscribe());
 
-    acquireSubscription = RxView.clicks(acquireButton).subscribe(o -> handleAcquiring());
+    getSubscriptions().add(RxView.clicks(acquireButton)
+      .throttleFirst(ConstantsKt.DEFAULT_DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+      .subscribe(o -> handleAcquiring()));
 
-    positionNameSubscription =
-      RxView.clicks(position).subscribe(o -> goToPosition(currentBookPosition));
+    getSubscriptions().add(RxView.clicks(position)
+      .throttleFirst(ConstantsKt.DEFAULT_DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+      .subscribe(o -> goToPosition(currentBookPosition)));
   }
 
   private void setupToolbar() {
@@ -133,11 +137,10 @@ public class BookActivity extends MvpAppCompatActivity
   }
 
   private void setupInsets() {
-    Insetter.setOnApplyInsetsListener(toolbarContainer, (view, windowInsets, initial) -> {
-      view.setPadding(initial.getPaddings().getLeft(),
+    Insetter.setOnApplyInsetsListener(toolbarContainer,
+      (view, windowInsets, initial) -> view.setPadding(initial.getPaddings().getLeft(),
         windowInsets.getSystemWindowInsetTop() + initial.getPaddings().getTop(),
-        initial.getPaddings().getRight(), initial.getPaddings().getBottom());
-    });
+        initial.getPaddings().getRight(), initial.getPaddings().getBottom()));
 
     Insetter.setOnApplyInsetsListener(cover, (view, windowInsets, initial) -> {
       ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
@@ -145,17 +148,16 @@ public class BookActivity extends MvpAppCompatActivity
       view.setLayoutParams(params);
     });
 
-    Insetter.setOnApplyInsetsListener(nestedScrollView, (view, windowInsets, initial) -> {
-      view.setPadding(initial.getPaddings().getLeft(), initial.getPaddings().getTop(),
-        initial.getPaddings().getRight(),
-        windowInsets.getSystemWindowInsetBottom() + initial.getPaddings().getBottom());
-    });
+    Insetter.setOnApplyInsetsListener(nestedScrollView,
+      (view, windowInsets, initial) -> view.setPadding(initial.getPaddings().getLeft(),
+        initial.getPaddings().getTop(), initial.getPaddings().getRight(),
+        windowInsets.getSystemWindowInsetBottom() + initial.getPaddings().getBottom()));
 
-    Insetter.setOnApplyInsetsListener(favorite, (view, windowInsets, initialPadding) -> {
-      view.setPadding(initialPadding.getPaddings().getLeft(), initialPadding.getPaddings().getTop(),
+    Insetter.setOnApplyInsetsListener(favorite,
+      (view, windowInsets, initialPadding) -> view.setPadding(
+        initialPadding.getPaddings().getLeft(), initialPadding.getPaddings().getTop(),
         windowInsets.getSystemWindowInsetRight() + initialPadding.getPaddings().getRight(),
-        initialPadding.getPaddings().getBottom());
-    });
+        initialPadding.getPaddings().getBottom()));
   }
 
   public void goToPosition(Coordinates coordinates) {
@@ -189,15 +191,12 @@ public class BookActivity extends MvpAppCompatActivity
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    fabSubscription.dispose();
-    acquireSubscription.dispose();
-    positionNameSubscription.dispose();
     if (adapter != null) {
       adapter.stopListening();
     }
   }
 
-  @Override public boolean onMenuItemClick(MenuItem item) {
+  @Override public boolean onMenuItemClick(@NonNull MenuItem item) {
     if (item.getItemId() == R.id.menu_action_report) {
       presenter.reportAbuse(key);
       return true;
@@ -211,7 +210,7 @@ public class BookActivity extends MvpAppCompatActivity
     startActivity(acquireIntent);
   }
 
-  @Override public void onBookLoaded(Book book) {
+  @Override public void onBookLoaded(@NonNull Book book) {
     collapsingToolbarContainer.setTitle(book.getName());
     GlideApp.with(this)
       .load(presenter.resolveCover(key))
