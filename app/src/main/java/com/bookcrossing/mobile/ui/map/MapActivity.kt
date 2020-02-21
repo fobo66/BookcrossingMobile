@@ -16,7 +16,6 @@
 package com.bookcrossing.mobile.ui.map
 
 import android.Manifest.permission
-import android.content.DialogInterface
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
@@ -70,8 +69,8 @@ class MapActivity : BaseActivity(), MvpMapView,
       requestLocationPermission().subscribe(
         {
           map.isMyLocationEnabled = true
-        }
-      ) { t: Throwable -> Timber.e(t) }
+        }, Timber::e
+      )
     )
     map.setOnInfoWindowClickListener(this)
     presenter.getBooksPositions()
@@ -136,7 +135,7 @@ class MapActivity : BaseActivity(), MvpMapView,
       title(string.error_dialog_title)
       positiveButton(
         string.ok
-      ) { dialogInterface: DialogInterface -> dialogInterface.dismiss() }
+      ) { it.dismiss() }
     }
   }
 
