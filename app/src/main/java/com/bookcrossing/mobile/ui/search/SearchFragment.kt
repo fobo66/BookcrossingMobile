@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -15,6 +16,7 @@
 
 package com.bookcrossing.mobile.ui.search
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,19 +31,28 @@ import com.algolia.instantsearch.helper.android.list.autoScrollToStart
 import com.algolia.instantsearch.helper.android.searchbox.SearchBoxViewAppCompat
 import com.algolia.instantsearch.helper.android.searchbox.connectView
 import com.bookcrossing.mobile.R
+import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.presenters.SearchPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
-import moxy.presenter.InjectPresenter
+import moxy.ktx.moxyPresenter
+import javax.inject.Inject
+import javax.inject.Provider
 
 class SearchFragment : BaseFragment(), SearchView {
+  @Inject
+  lateinit var presenterProvider: Provider<SearchPresenter>
 
-  @InjectPresenter
-  lateinit var presenter: SearchPresenter
+  private val presenter: SearchPresenter by moxyPresenter { presenterProvider.get() }
 
   @BindView(R.id.search_hits)
   lateinit var searchHits: RecyclerView
 
   private val connection = ConnectionHandler()
+
+  override fun onAttach(context: Context) {
+    App.getComponent().inject(this)
+    super.onAttach(context)
+  }
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,

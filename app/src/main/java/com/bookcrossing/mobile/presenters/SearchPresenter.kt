@@ -32,7 +32,6 @@ import com.algolia.search.model.IndexName
 import com.algolia.search.model.response.ResponseSearch
 import com.bookcrossing.mobile.R.string
 import com.bookcrossing.mobile.models.SearchHitBook
-import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.ui.search.SearchHitBooksAdapter
 import com.bookcrossing.mobile.ui.search.SearchView
 import com.bookcrossing.mobile.util.ResourceProvider
@@ -40,31 +39,27 @@ import moxy.InjectViewState
 import javax.inject.Inject
 
 /**
- * (c) 2019 Andrey Mukamolow <fobo66@protonmail.com>
+ * (c) 2019 Andrey Mukamolov <fobo66@protonmail.com>
  * Created 2019-09-15.
  */
 @InjectViewState
-class SearchPresenter : BasePresenter<SearchView>() {
+class SearchPresenter @Inject constructor(
+  resourceProvider: ResourceProvider
+) : BasePresenter<SearchView>() {
 
   val searchableBooks: LiveData<PagedList<SearchHitBook>>
   val adapter: SearchHitBooksAdapter
   val searchBox: SearchBoxConnectorPagedList<ResponseSearch>
 
-  private val client: ClientSearch
+  private val client: ClientSearch = ClientSearch(
+    ApplicationID(resourceProvider.getString(string.algolia_app_id)),
+    APIKey(resourceProvider.getString(string.algolia_api_key))
+  )
   private val index: Index
   private val searcher: Searcher<ResponseSearch>
   private val connection = ConnectionHandler()
 
-  @Inject
-  lateinit var resourceProvider: ResourceProvider
-
   init {
-    App.getComponent().inject(this)
-
-    client = ClientSearch(
-      ApplicationID(resourceProvider.getString(string.algolia_app_id)),
-      APIKey(resourceProvider.getString(string.algolia_api_key))
-    )
     index = client.initIndex(IndexName(resourceProvider.getString(string.algolia_index_name)))
     searcher = SearcherSingleIndex(index)
 

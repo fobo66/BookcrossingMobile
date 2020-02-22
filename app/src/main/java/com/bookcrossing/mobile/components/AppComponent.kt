@@ -21,11 +21,11 @@ import com.bookcrossing.mobile.modules.ApiModule
 import com.bookcrossing.mobile.modules.LocationModule
 import com.bookcrossing.mobile.modules.PrefModule
 import com.bookcrossing.mobile.modules.ProvidersModule
-import com.bookcrossing.mobile.presenters.SearchPresenter
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity
 import com.bookcrossing.mobile.ui.main.MainFragment
 import com.bookcrossing.mobile.ui.profile.ProfileFragment
 import com.bookcrossing.mobile.ui.scan.ScanActivity
+import com.bookcrossing.mobile.ui.search.SearchFragment
 import com.bookcrossing.mobile.ui.stash.StashFragment
 import com.bookcrossing.mobile.util.FirebaseWrapper
 import com.bookcrossing.mobile.util.SystemServicesWrapper
@@ -59,5 +59,5 @@ interface AppComponent {
 
   fun inject(stashFragment: StashFragment)
 
-  fun inject(presenter: SearchPresenter)
+  fun inject(searchFragment: SearchFragment)
 }
