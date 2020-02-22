@@ -125,6 +125,7 @@
   <string name="unstash_book_confirmation_title">Unstash this book?</string>
   <string name="author_icon_description">Author</string>
   <string name="place_icon_description">Current position</string>
+  <string name="book_place_template">$1%s, $2%s</string>
   <string name="camera_permission_denied_prompt">We need camera permission to be able to scan QR code of the book</string>
   <string name="location_permission_denied_prompt">We need location permission to be able to display your location on the map</string>
   <string name="retry_permission_request_action">Retry</string>

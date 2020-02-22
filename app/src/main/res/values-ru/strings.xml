@@ -101,6 +101,7 @@
   <string name="unstash_book_confirmation_title">Убрать эту книгу из отложенных?</string>
   <string name="author_icon_description">Автор</string>
   <string name="place_icon_description">Текущее местоположение</string>
+  <string name="book_place_template">$1%s, $2%s</string>
   <string name="camera_permission_denied_prompt">Разрешение для камеры нужно для сканирования QR кода книги</string>
   <string name="location_permission_denied_prompt">Разрешение для геолокации нужно для отображения вашего местоположения на карте</string>
   <string name="retry_permission_request_action">Повторить</string>
