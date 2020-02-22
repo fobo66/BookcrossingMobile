@@ -22,6 +22,7 @@ import com.bookcrossing.mobile.modules.LocationModule
 import com.bookcrossing.mobile.modules.PrefModule
 import com.bookcrossing.mobile.modules.ProvidersModule
 import com.bookcrossing.mobile.presenters.SearchPresenter
+import com.bookcrossing.mobile.ui.bookpreview.BookActivity
 import com.bookcrossing.mobile.ui.main.MainFragment
 import com.bookcrossing.mobile.ui.profile.ProfileFragment
 import com.bookcrossing.mobile.ui.scan.ScanActivity
@@ -49,6 +50,8 @@ interface AppComponent {
   fun inject(systemServicesWrapper: SystemServicesWrapper)
 
   fun inject(scanActivity: ScanActivity)
+
+  fun inject(bookActivity: BookActivity)
 
   fun inject(mainFragment: MainFragment)
 

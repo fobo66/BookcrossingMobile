@@ -16,6 +16,7 @@
 
 package com.bookcrossing.mobile.presenters
 
+import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.ui.bookpreview.BookView
 import com.bookcrossing.mobile.util.ignoreElement
@@ -24,14 +25,17 @@ import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Observable
 import moxy.InjectViewState
 import timber.log.Timber
+import javax.inject.Inject
 
 @InjectViewState
-class BookPresenter : BasePresenter<BookView>() {
+class BookPresenter @Inject constructor(
+  private val booksRepository: BooksRepository
+) : BasePresenter<BookView>() {
 
   fun subscribeToBookReference(key: String) {
     unsubscribeOnDestroy(
       RxFirebaseDatabase.observeSingleValueEvent(
-        books().child(key),
+        booksRepository.books().child(key),
         Book::class.java
       )
         .subscribe({ book -> viewState.onBookLoaded(book) }, { throwable ->
@@ -42,29 +46,30 @@ class BookPresenter : BasePresenter<BookView>() {
   }
 
   fun checkStashingState(key: String) {
-    unsubscribeOnDestroy(RxFirebaseDatabase.observeSingleValueEvent(stash().child(key))
+    unsubscribeOnDestroy(RxFirebaseDatabase.observeSingleValueEvent(booksRepository.stash(key))
       .filter { it.exists() }
       .map { it.value as Boolean }
+      .onErrorReturnItem(false)
       .subscribe { stashed ->
         updateStashButtonState(stashed)
       })
   }
 
   fun handleBookStashing(key: String): Observable<Unit> {
-    return RxFirebaseDatabase.observeValueEvent(stash().child(key), Boolean::class.java)
+    return RxFirebaseDatabase.observeValueEvent(booksRepository.stash(key), Boolean::class.java)
       .onErrorReturnItem(false)
       .take(1)
       .doOnNext { stashed -> updateStashButtonState(!stashed) }
       .flatMapCompletable { isStashed ->
         if (isStashed) {
-          stash().child(key).removeValue().ignoreElement()
+          booksRepository.stash(key).removeValue().ignoreElement()
             .andThen(firebaseWrapper.fcm.unsubscribeFromTopic(key).ignoreElement())
             .doOnError {
               Timber.e(it)
               updateStashButtonState(isStashed)
             }
         } else {
-          stash().child(key).setValue(!isStashed).ignoreElement()
+          booksRepository.stash(key).setValue(!isStashed).ignoreElement()
             .andThen(firebaseWrapper.fcm.subscribeToTopic(key).ignoreElement())
             .doOnError {
               Timber.e(it)
@@ -74,20 +79,18 @@ class BookPresenter : BasePresenter<BookView>() {
       }.toObservable<Unit>()
   }
 
+  fun getPlacesHistory(key: String): DatabaseReference = booksRepository.placesHistory(key)
+
+  fun reportAbuse(key: String) {
+    Timber.e("Users complaining to book %s. Consider to check it", key)
+    viewState.onAbuseReported()
+  }
+
   private fun updateStashButtonState(stashed: Boolean) {
     if (stashed) {
       viewState.onBookStashed()
     } else {
       viewState.onBookUnstashed()
     }
-  }
-
-  fun getPlacesHistory(key: String): DatabaseReference {
-    return placesHistory(key)
-  }
-
-  fun reportAbuse(key: String) {
-    Timber.e("Users complaining to book %s. Consider to check it", key)
-    viewState.onAbuseReported()
   }
 }

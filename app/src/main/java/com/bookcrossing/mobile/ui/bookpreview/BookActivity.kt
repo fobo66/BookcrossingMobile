@@ -44,6 +44,7 @@ import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.R.string
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
+import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.presenters.BookPresenter
 import com.bookcrossing.mobile.ui.base.BaseActivity
@@ -62,15 +63,19 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.jakewharton.rxbinding3.view.clicks
 import dev.chrisbanes.insetter.ViewState
 import dev.chrisbanes.insetter.doOnApplyWindowInsets
-import moxy.presenter.InjectPresenter
+import moxy.ktx.moxyPresenter
 import java.util.concurrent.TimeUnit.MILLISECONDS
+import javax.inject.Inject
+import javax.inject.Provider
 
 /** Book details screen */
 class BookActivity : BaseActivity(), BookView,
   OnMenuItemClickListener {
 
-  @InjectPresenter
-  lateinit var presenter: BookPresenter
+  @Inject
+  lateinit var presenterProvider: Provider<BookPresenter>
+
+  private val presenter: BookPresenter by moxyPresenter { presenterProvider.get() }
 
   @BindView(id.book_activity_root)
   lateinit var root: CoordinatorLayout
@@ -117,6 +122,7 @@ class BookActivity : BaseActivity(), BookView,
   private var currentBookPosition: Coordinates? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    App.getComponent().inject(this)
     super.onCreate(savedInstanceState)
     setContentView(layout.activity_book)
     ButterKnife.bind(this)
