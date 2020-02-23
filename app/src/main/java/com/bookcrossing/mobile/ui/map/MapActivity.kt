@@ -93,7 +93,8 @@ class MapActivity : BaseActivity(), MvpMapView,
 
   private fun requestUserLocation() {
     subscriptions.add(
-      requestLocationPermission().flatMapSingle { presenter.requestUserLocation() }
+      requestLocationPermission()
+        .flatMapSingle { presenter.requestUserLocation() }
         .subscribe(
           { location: Location ->
             onUserLocationReceived(

@@ -17,6 +17,7 @@
 package com.bookcrossing.mobile.presenters;
 
 import android.location.Location;
+import androidx.annotation.Nullable;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.ui.map.MvpMapView;
@@ -63,11 +64,11 @@ import timber.log.Timber;
     return coordinatesMap.get(coordinates);
   }
 
-  public String getKey(LatLng coordinates) {
+  @Nullable public String getKey(LatLng coordinates) {
     return coordinatesMap.get(new Coordinates(coordinates));
   }
 
-  public String getSnippet(Coordinates coordinates) {
+  @Nullable public String getSnippet(Coordinates coordinates) {
     return bookMap.get(getKey(coordinates)).getDescription();
   }
 
