@@ -48,6 +48,7 @@ import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.presenters.BookPresenter
+import com.bookcrossing.mobile.ui.acquire.BookAcquireActivity
 import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.bookcrossing.mobile.ui.main.MainActivity
 import com.bookcrossing.mobile.ui.map.MapActivity
@@ -240,7 +241,7 @@ class BookActivity : BaseActivity(), BookView,
   }
 
   private fun handleAcquiring() {
-    val acquireIntent = Intent(Intent.ACTION_VIEW, presenter.buildBookUri(key))
+    val acquireIntent = Intent(this, BookAcquireActivity::class.java)
     acquireIntent.putExtra(getString(string.extra_insideAppRequest), true)
     startActivity(acquireIntent)
   }
@@ -248,7 +249,7 @@ class BookActivity : BaseActivity(), BookView,
   override fun onBookLoaded(book: Book) {
     collapsingToolbarContainer.title = book.name
     GlideApp.with(this)
-      .load(presenter.resolveCover(key))
+      .load(presenter.bookCoverResolver.resolveCover(key))
       .transition(DrawableTransitionOptions.withCrossFade())
       .thumbnail(0.6f)
       .into(cover)

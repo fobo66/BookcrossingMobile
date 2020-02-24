@@ -16,12 +16,9 @@
 
 package com.bookcrossing.mobile.presenters
 
-import android.net.Uri
 import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.util.DEFAULT_USER
-import com.bookcrossing.mobile.util.EXTRA_KEY
 import com.bookcrossing.mobile.util.FirebaseWrapper
-import com.bookcrossing.mobile.util.PACKAGE_NAME
 import com.bookcrossing.mobile.util.SystemServicesWrapper
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.storage.StorageReference
@@ -93,19 +90,5 @@ open class BasePresenter<V : MvpView> : MvpPresenter<V>() {
    */
   fun resolveCover(key: String): StorageReference {
     return firebaseWrapper.storage.getReference("$key.jpg")
-  }
-
-  /**
-   * Construct URI for book
-   *
-   * @param key Book key
-   */
-  fun buildBookUri(key: String): Uri {
-    return Uri.Builder()
-      .scheme("bookcrossing")
-      .authority(PACKAGE_NAME)
-      .path("book")
-      .appendQueryParameter(EXTRA_KEY, key)
-      .build()
   }
 }

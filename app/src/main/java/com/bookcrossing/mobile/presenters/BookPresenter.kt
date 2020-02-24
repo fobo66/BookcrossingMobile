@@ -19,6 +19,7 @@ package com.bookcrossing.mobile.presenters
 import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.ui.bookpreview.BookView
+import com.bookcrossing.mobile.util.BookCoverResolver
 import com.bookcrossing.mobile.util.ignoreElement
 import com.google.firebase.database.DatabaseReference
 import durdinapps.rxfirebase2.RxFirebaseDatabase
@@ -29,7 +30,8 @@ import javax.inject.Inject
 
 @InjectViewState
 class BookPresenter @Inject constructor(
-  private val booksRepository: BooksRepository
+  private val booksRepository: BooksRepository,
+  val bookCoverResolver: BookCoverResolver
 ) : BasePresenter<BookView>() {
 
   fun subscribeToBookReference(key: String) {

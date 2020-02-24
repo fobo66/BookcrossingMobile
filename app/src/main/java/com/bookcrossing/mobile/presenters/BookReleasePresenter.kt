@@ -28,9 +28,11 @@ import com.bookcrossing.mobile.models.BookBuilder
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.models.Date
 import com.bookcrossing.mobile.ui.releasebook.BookReleaseView
+import com.bookcrossing.mobile.util.EXTRA_KEY
 import com.bookcrossing.mobile.util.InputValidator
 import com.bookcrossing.mobile.util.LengthRule
 import com.bookcrossing.mobile.util.NotEmptyRule
+import com.bookcrossing.mobile.util.PACKAGE_NAME
 import com.bookcrossing.mobile.util.ValidationResult
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.storage.StorageMetadata
@@ -224,6 +226,15 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
       R.id.input_position -> book.setPositionName(input)
       R.id.input_description -> book.setDescription(input)
     }
+  }
+
+  private fun buildBookUri(key: String): Uri {
+    return Uri.Builder()
+      .scheme("bookcrossing")
+      .authority(PACKAGE_NAME)
+      .path("book")
+      .appendQueryParameter(EXTRA_KEY, key)
+      .build()
   }
 
   companion object {
