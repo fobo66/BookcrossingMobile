@@ -15,55 +15,53 @@
  */
 package com.bookcrossing.mobile.presenters
 
-import android.location.Location
+import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.ui.map.MvpMapView
 import durdinapps.rxfirebase2.DataSnapshotMapper
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Maybe
-import io.reactivex.Single
 import moxy.InjectViewState
 import timber.log.Timber
 import java.util.LinkedHashMap
+import javax.inject.Inject
 import kotlin.collections.Map.Entry
 
 /**
  * Presenter for map screen
  */
 @InjectViewState
-class MapPresenter : BasePresenter<MvpMapView>() {
+class MapPresenter @Inject constructor(
+  private val booksRepository: BooksRepository
+) : BasePresenter<MvpMapView>() {
   fun loadBooksPositions() {
     unsubscribeOnDestroy(
       RxFirebaseDatabase.observeValueEvent(
-        places(), DataSnapshotMapper.mapOf(
+        booksRepository.places(), DataSnapshotMapper.mapOf(
           Coordinates::class.java
         )
       )
-        .flatMapIterable<Entry<String?, Coordinates>> { placesMap: LinkedHashMap<String?, Coordinates> -> placesMap.entries }
+        .flatMapIterable<Entry<String, Coordinates>> { placesMap: LinkedHashMap<String, Coordinates> -> placesMap.entries }
         .subscribe(
-          { place: Entry<String?, Coordinates> ->
-            viewState!!.onBookMarkerLoaded(
-              place.key!!,
+          { place: Entry<String, Coordinates> ->
+            viewState.onBookMarkerLoaded(
+              place.key,
               place.value
             )
           }
         ) { throwable: Throwable? ->
           Timber.e(throwable, "Failed to load marker")
-          viewState!!.onErrorToLoadMarker()
+          viewState.onErrorToLoadMarker()
         }
     )
   }
 
   fun loadBookDetails(key: String): Maybe<Book> {
     return RxFirebaseDatabase.observeSingleValueEvent(
-      books().child(
+      booksRepository.books().child(
         key
       ), Book::class.java
     )
-  }
-
-  fun requestUserLocation(): Single<Location> {
-    return systemServicesWrapper.locationRepository.getLastKnownUserLocation()
   }
 }

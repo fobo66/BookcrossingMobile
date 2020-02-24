@@ -16,6 +16,7 @@
 package com.bookcrossing.mobile.ui.map
 
 import android.Manifest.permission
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.location.Location
@@ -25,13 +26,17 @@ import com.bookcrossing.mobile.R.id
 import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.R.string
 import com.bookcrossing.mobile.models.Coordinates
+import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.presenters.MapPresenter
 import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity
 import com.bookcrossing.mobile.util.EXTRA_COORDINATES
+import com.bookcrossing.mobile.util.observe
 import com.bookcrossing.mobile.util.onMarkerClicked
 import com.github.florent37.runtimepermission.PermissionResult
 import com.github.florent37.runtimepermission.rx.RxPermissions
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
@@ -41,8 +46,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import io.reactivex.Observable
-import moxy.presenter.InjectPresenter
+import moxy.ktx.moxyPresenter
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Provider
 
 /**
  * Screen with all the free books on the map
@@ -50,15 +57,24 @@ import timber.log.Timber
 class MapActivity : BaseActivity(), MvpMapView,
   OnMapReadyCallback, OnInfoWindowClickListener {
 
-  @InjectPresenter
-  lateinit var presenter: MapPresenter
+  @Inject
+  lateinit var presenterProvider: Provider<MapPresenter>
+
+  private val presenter: MapPresenter by moxyPresenter { presenterProvider.get() }
+
   private lateinit var map: GoogleMap
   private lateinit var permissions: RxPermissions
+  private lateinit var locationProvider: FusedLocationProviderClient
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    App.getComponent().inject(this)
     super.onCreate(savedInstanceState)
     setContentView(layout.activity_map)
+
     permissions = RxPermissions(this)
+    locationProvider =
+      LocationServices.getFusedLocationProviderClient(this)
+
     val mapFragment =
       supportFragmentManager.findFragmentById(id.map) as SupportMapFragment?
     mapFragment?.getMapAsync(this)
@@ -112,10 +128,11 @@ class MapActivity : BaseActivity(), MvpMapView,
     }
   }
 
+  @SuppressLint("MissingPermission") // handled via RxPermission
   private fun requestUserLocation() {
     subscriptions.add(
       requestLocationPermission()
-        .flatMapSingle { presenter.requestUserLocation() }
+        .flatMapSingle { locationProvider.lastLocation.observe() }
         .subscribe(
           { location: Location ->
             onUserLocationReceived(

@@ -18,11 +18,11 @@ package com.bookcrossing.mobile.components
 
 import android.content.Context
 import com.bookcrossing.mobile.modules.ApiModule
-import com.bookcrossing.mobile.modules.LocationModule
 import com.bookcrossing.mobile.modules.PrefModule
 import com.bookcrossing.mobile.modules.ProvidersModule
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity
 import com.bookcrossing.mobile.ui.main.MainFragment
+import com.bookcrossing.mobile.ui.map.MapActivity
 import com.bookcrossing.mobile.ui.profile.ProfileFragment
 import com.bookcrossing.mobile.ui.scan.ScanActivity
 import com.bookcrossing.mobile.ui.search.SearchFragment
@@ -38,7 +38,7 @@ import javax.inject.Singleton
  * Created by fobo66 on 15.11.2016.
  */
 @Singleton
-@Component(modules = [PrefModule::class, LocationModule::class, ApiModule::class, ProvidersModule::class])
+@Component(modules = [PrefModule::class, ApiModule::class, ProvidersModule::class])
 interface AppComponent {
   @Component.Factory
   interface Factory {
@@ -52,6 +52,8 @@ interface AppComponent {
   fun inject(scanActivity: ScanActivity)
 
   fun inject(bookActivity: BookActivity)
+
+  fun inject(mapActivity: MapActivity)
 
   fun inject(mainFragment: MainFragment)
 
