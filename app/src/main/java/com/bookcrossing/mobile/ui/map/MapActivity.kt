@@ -95,7 +95,7 @@ class MapActivity : BaseActivity(), MvpMapView,
         }
     )
 
-    presenter.getBooksPositions()
+    presenter.loadBooksPositions()
 
     val requestedZoomPosition: Coordinates? = intent?.getParcelableExtra(EXTRA_COORDINATES)
     if (requestedZoomPosition != null) {
