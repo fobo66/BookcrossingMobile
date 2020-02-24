@@ -16,16 +16,23 @@
 
 package com.bookcrossing.mobile.presenters
 
+import com.bookcrossing.mobile.data.AuthRepository
+import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.BookCode
 import com.bookcrossing.mobile.ui.acquire.BookAcquireView
+import com.bookcrossing.mobile.util.ignoreElement
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import moxy.InjectViewState
+import javax.inject.Inject
 
 @InjectViewState
-class BookAcquirePresenter : BasePresenter<BookAcquireView>() {
+class BookAcquirePresenter @Inject constructor(
+  private val booksRepository: BooksRepository,
+  private val authRepository: AuthRepository
+) : BasePresenter<BookAcquireView>() {
 
   fun handleAcquisitionResult(code: BookCode) {
     when (code) {
@@ -35,23 +42,27 @@ class BookAcquirePresenter : BasePresenter<BookAcquireView>() {
   }
 
   fun processBookAcquisition(key: String): Completable {
-    return RxFirebaseDatabase.setValue(books().child(key).child("free"), false)
-      .andThen(RxFirebaseDatabase.observeSingleValueEvent(books().child(key), Book::class.java))
-      .flatMapCompletable { book ->
-        RxFirebaseDatabase.setValue(
-          acquiredBooks().child(key), book
+    return booksRepository.books().child(key).child("free").setValue(false).ignoreElement()
+      .andThen(
+        RxFirebaseDatabase.observeSingleValueEvent(
+          booksRepository.books().child(key),
+          Book::class.java
         )
+      )
+      .flatMapCompletable { book ->
+        booksRepository.acquiredBooks(authRepository.userId).child(key).setValue(book)
+          .ignoreElement()
       }
   }
 
   fun validateCode(key: String): Maybe<BookCode> {
-    return RxFirebaseDatabase.observeSingleValueEvent(books())
-        .flatMap { dataSnapshot ->
-          if (!key.isBlank() && dataSnapshot.hasChild(key)) {
-            return@flatMap Maybe.just(BookCode.CorrectCode(key))
-          }
-
-          return@flatMap Maybe.just(BookCode.IncorrectCode)
+    return RxFirebaseDatabase.observeSingleValueEvent(booksRepository.books())
+      .flatMap { dataSnapshot ->
+        if (!key.isBlank() && dataSnapshot.hasChild(key)) {
+          return@flatMap Maybe.just(BookCode.CorrectCode(key))
         }
+
+        return@flatMap Maybe.just(BookCode.IncorrectCode)
+      }
   }
 }

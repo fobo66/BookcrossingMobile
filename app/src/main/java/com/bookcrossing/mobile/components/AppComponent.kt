@@ -20,6 +20,7 @@ import android.content.Context
 import com.bookcrossing.mobile.modules.ApiModule
 import com.bookcrossing.mobile.modules.PrefModule
 import com.bookcrossing.mobile.modules.ProvidersModule
+import com.bookcrossing.mobile.ui.acquire.BookAcquireActivity
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity
 import com.bookcrossing.mobile.ui.main.MainFragment
 import com.bookcrossing.mobile.ui.map.MapActivity
@@ -54,6 +55,8 @@ interface AppComponent {
   fun inject(bookActivity: BookActivity)
 
   fun inject(mapActivity: MapActivity)
+
+  fun inject(bookAcquireActivity: BookAcquireActivity)
 
   fun inject(mainFragment: MainFragment)
 
