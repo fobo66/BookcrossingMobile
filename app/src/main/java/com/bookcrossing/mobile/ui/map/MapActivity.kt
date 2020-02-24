@@ -126,9 +126,9 @@ class MapActivity : BaseActivity(), MvpMapView,
           coordinates.lng
         )
       )
-        .title(key)
-        .snippet(presenter.getSnippet(coordinates))
-    )
+    ).apply {
+      tag = key
+    }
   }
 
   override fun onErrorToLoadMarker() {

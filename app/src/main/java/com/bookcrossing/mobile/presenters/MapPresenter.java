@@ -25,8 +25,6 @@ import com.google.android.gms.maps.model.LatLng;
 import durdinapps.rxfirebase2.DataSnapshotMapper;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import io.reactivex.Single;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import moxy.InjectViewState;
 import timber.log.Timber;
@@ -38,26 +36,13 @@ import timber.log.Timber;
 
   public void getBooksPositions() {
     unsubscribeOnDestroy(
-        RxFirebaseDatabase.observeValueEvent(places(), DataSnapshotMapper.mapOf(Coordinates.class))
-            .zipWith(
-                RxFirebaseDatabase.observeValueEvent(books(), DataSnapshotMapper.mapOf(Book.class)),
-                (places, books) -> {
-                  bookMap = books;
-                  coordinatesMap = new HashMap<>();
-                  Map<String, Coordinates> coordinatesWithBookTitlesMap = new LinkedHashMap<>();
-                  for (String key : places.keySet()) {
-                    coordinatesMap.put(places.get(key), key);
-                    coordinatesWithBookTitlesMap.put(books.get(key).getName(), places.get(key));
-                  }
-                  return coordinatesWithBookTitlesMap;
-                }).subscribe(places -> {
-          for (String key : places.keySet()) {
-            getViewState().onBookMarkerLoaded(key, places.get(key));
-          }
-        }, throwable -> {
-          Timber.e(throwable, "Failed to load marker");
-          getViewState().onErrorToLoadMarker();
-        }));
+      RxFirebaseDatabase.observeValueEvent(places(), DataSnapshotMapper.mapOf(Coordinates.class))
+        .flatMapIterable(placesMap -> placesMap.entrySet())
+        .subscribe(place -> getViewState().onBookMarkerLoaded(place.getKey(), place.getValue()),
+          throwable -> {
+            Timber.e(throwable, "Failed to load marker");
+            getViewState().onErrorToLoadMarker();
+          }));
   }
 
   private String getKey(Coordinates coordinates) {
