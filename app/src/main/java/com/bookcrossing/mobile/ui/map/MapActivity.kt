@@ -29,7 +29,7 @@ import com.bookcrossing.mobile.presenters.MapPresenter
 import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity
 import com.bookcrossing.mobile.util.EXTRA_COORDINATES
-import com.bookcrossing.mobile.util.EXTRA_KEY
+import com.bookcrossing.mobile.util.onMarkerClicked
 import com.github.florent37.runtimepermission.PermissionResult
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -69,11 +69,32 @@ class MapActivity : BaseActivity(), MvpMapView,
     subscriptions.add(
       requestLocationPermission().subscribe(
         {
-          map.isMyLocationEnabled = true
+          if (it.isAccepted) {
+            map.isMyLocationEnabled = true
+          }
         }, Timber::e
       )
     )
     map.setOnInfoWindowClickListener(this)
+
+    subscriptions.add(
+      map.onMarkerClicked()
+        .flatMapMaybe { marker ->
+          val key = marker.tag as String
+          presenter.loadBookDetails(key)
+            .doOnSuccess { book ->
+              marker.apply {
+                title = book.name
+                snippet = book.description
+              }
+            }
+            .map { marker }
+        }
+        .subscribe { marker ->
+          marker.showInfoWindow()
+        }
+    )
+
     presenter.getBooksPositions()
 
     val requestedZoomPosition: Coordinates? = intent?.getParcelableExtra(EXTRA_COORDINATES)
@@ -103,8 +124,8 @@ class MapActivity : BaseActivity(), MvpMapView,
                 location.longitude
               )
             )
-          }
-        ) { t: Throwable? -> Timber.e(t) }
+          }, Timber::e
+        )
     )
   }
 
@@ -151,9 +172,8 @@ class MapActivity : BaseActivity(), MvpMapView,
   }
 
   override fun onInfoWindowClick(marker: Marker) {
-    val intent = Intent(this, BookActivity::class.java)
-    intent.putExtra(EXTRA_KEY, presenter.getKey(marker.position))
-    startActivity(intent)
+    val key = marker.tag as String
+    startActivity(BookActivity.getStartIntent(this, key))
   }
 
   companion object {

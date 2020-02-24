@@ -15,6 +15,7 @@
  */
 package com.bookcrossing.mobile.ui.bookpreview
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -285,5 +286,11 @@ class BookActivity : BaseActivity(), BookView,
 
   override fun onAbuseReported() {
     Toast.makeText(this, string.report_abuse_success, Toast.LENGTH_SHORT).show()
+  }
+
+  companion object {
+    fun getStartIntent(context: Context, key: String): Intent =
+      Intent(context, BookActivity::class.java)
+        .putExtra(EXTRA_KEY, key)
   }
 }

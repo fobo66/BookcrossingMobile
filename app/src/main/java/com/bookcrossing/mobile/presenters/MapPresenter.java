@@ -17,23 +17,21 @@
 package com.bookcrossing.mobile.presenters;
 
 import android.location.Location;
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import com.bookcrossing.mobile.models.Book;
 import com.bookcrossing.mobile.models.Coordinates;
 import com.bookcrossing.mobile.ui.map.MvpMapView;
-import com.google.android.gms.maps.model.LatLng;
 import durdinapps.rxfirebase2.DataSnapshotMapper;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
+import io.reactivex.Maybe;
 import io.reactivex.Single;
-import java.util.Map;
 import moxy.InjectViewState;
 import timber.log.Timber;
 
+/**
+ * Presenter for map screen
+ */
 @InjectViewState public class MapPresenter extends BasePresenter<MvpMapView> {
-
-  private Map<String, Book> bookMap;
-  private Map<Coordinates, String> coordinatesMap;
-
   public void getBooksPositions() {
     unsubscribeOnDestroy(
       RxFirebaseDatabase.observeValueEvent(places(), DataSnapshotMapper.mapOf(Coordinates.class))
@@ -45,19 +43,11 @@ import timber.log.Timber;
           }));
   }
 
-  private String getKey(Coordinates coordinates) {
-    return coordinatesMap.get(coordinates);
+  @NonNull public Maybe<Book> loadBookDetails(@NonNull String key) {
+    return RxFirebaseDatabase.observeSingleValueEvent(books().child(key), Book.class);
   }
 
-  @Nullable public String getKey(LatLng coordinates) {
-    return coordinatesMap.get(new Coordinates(coordinates));
-  }
-
-  @Nullable public String getSnippet(Coordinates coordinates) {
-    return bookMap.get(getKey(coordinates)).getDescription();
-  }
-
-  public Single<Location> requestUserLocation() {
+  @NonNull public Single<Location> requestUserLocation() {
     return getSystemServicesWrapper().getLocationRepository().getLastKnownUserLocation();
   }
 }
