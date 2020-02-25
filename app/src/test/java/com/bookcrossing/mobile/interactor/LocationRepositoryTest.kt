@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.location
+package com.bookcrossing.mobile.interactor
 
 import io.reactivex.Single
 import org.junit.Test

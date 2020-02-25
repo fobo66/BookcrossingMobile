@@ -17,10 +17,10 @@
 package com.bookcrossing.mobile.presenters
 
 import com.bookcrossing.mobile.data.BooksRepository
+import com.bookcrossing.mobile.interactor.StashInteractor
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.ui.bookpreview.BookView
 import com.bookcrossing.mobile.util.BookCoverResolver
-import com.bookcrossing.mobile.util.ignoreElement
 import com.google.firebase.database.DatabaseReference
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Observable
@@ -31,6 +31,7 @@ import javax.inject.Inject
 @InjectViewState
 class BookPresenter @Inject constructor(
   private val booksRepository: BooksRepository,
+  private val stashInteractor: StashInteractor,
   val bookCoverResolver: BookCoverResolver
 ) : BasePresenter<BookView>() {
 
@@ -48,9 +49,7 @@ class BookPresenter @Inject constructor(
   }
 
   fun checkStashingState(key: String) {
-    unsubscribeOnDestroy(RxFirebaseDatabase.observeSingleValueEvent(booksRepository.stash(key))
-      .filter { it.exists() }
-      .map { it.value as Boolean }
+    unsubscribeOnDestroy(stashInteractor.checkStashedState(key)
       .onErrorReturnItem(false)
       .subscribe { stashed ->
         updateStashButtonState(stashed)
@@ -58,21 +57,18 @@ class BookPresenter @Inject constructor(
   }
 
   fun handleBookStashing(key: String): Observable<Unit> {
-    return RxFirebaseDatabase.observeValueEvent(booksRepository.stash(key), Boolean::class.java)
+    return stashInteractor.getStashedState(key)
       .onErrorReturnItem(false)
-      .take(1)
       .doOnNext { stashed -> updateStashButtonState(!stashed) }
       .flatMapCompletable { isStashed ->
         if (isStashed) {
-          booksRepository.stash(key).removeValue().ignoreElement()
-            .andThen(firebaseWrapper.fcm.unsubscribeFromTopic(key).ignoreElement())
+          stashInteractor.unstashBook(key)
             .doOnError {
               Timber.e(it)
               updateStashButtonState(isStashed)
             }
         } else {
-          booksRepository.stash(key).setValue(!isStashed).ignoreElement()
-            .andThen(firebaseWrapper.fcm.subscribeToTopic(key).ignoreElement())
+          stashInteractor.stashBook(key)
             .doOnError {
               Timber.e(it)
               updateStashButtonState(isStashed)

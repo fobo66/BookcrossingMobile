@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.location
+package com.bookcrossing.mobile.data
 
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.util.LocaleProvider

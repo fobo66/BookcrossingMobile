@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -16,7 +17,7 @@
 package com.bookcrossing.mobile.util
 
 import android.content.Context
-import com.bookcrossing.mobile.location.LocationRepository
+import com.bookcrossing.mobile.data.LocationRepository
 import dagger.Lazy
 import javax.inject.Inject
 
