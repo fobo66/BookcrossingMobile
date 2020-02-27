@@ -34,7 +34,6 @@ import com.bookcrossing.mobile.util.LengthRule
 import com.bookcrossing.mobile.util.NotEmptyRule
 import com.bookcrossing.mobile.util.PACKAGE_NAME
 import com.bookcrossing.mobile.util.ValidationResult
-import com.crashlytics.android.Crashlytics
 import com.google.firebase.storage.StorageMetadata
 import com.google.zxing.WriterException
 import durdinapps.rxfirebase2.RxFirebaseAuth
@@ -153,7 +152,6 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
         viewState.onReleased(newKey)
       }
       .doOnError {
-        Crashlytics.logException(it)
         Timber.e(it, "Failed to release book")
         viewState.onFailedToRelease()
       }
