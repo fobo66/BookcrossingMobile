@@ -16,8 +16,12 @@
 
 package com.bookcrossing.mobile.data
 
+import com.bookcrossing.mobile.models.Book
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.DatabaseReference.CompletionListener
 import com.google.firebase.database.FirebaseDatabase
+import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -59,5 +63,24 @@ class BooksRepository @Inject constructor(
   fun placesHistory(key: String): DatabaseReference {
     return database.getReference("placesHistory")
       .child(key)
+  }
+
+  /** Create new book reference in database */
+  fun newBook(book: Book): Single<String> = Single.create<String> { emitter ->
+    val listener: CompletionListener = object : CompletionListener {
+      override fun onComplete(error: DatabaseError?, reference: DatabaseReference) {
+        if (error != null) {
+          if (!emitter.isDisposed) {
+            emitter.onError(error.toException())
+          }
+        } else {
+          if (!emitter.isDisposed) {
+            emitter.onSuccess(reference.key!!)
+          }
+        }
+      }
+    }
+
+    books().push().setValue(book, listener)
   }
 }
