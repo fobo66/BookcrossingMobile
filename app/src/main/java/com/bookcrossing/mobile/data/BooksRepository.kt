@@ -17,10 +17,13 @@
 package com.bookcrossing.mobile.data
 
 import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.models.Coordinates
+import com.bookcrossing.mobile.util.ignoreElement
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.DatabaseReference.CompletionListener
 import com.google.firebase.database.FirebaseDatabase
+import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -83,4 +86,18 @@ class BooksRepository @Inject constructor(
 
     books().push().setValue(book, listener)
   }
+
+  /** Setup new book's position in database */
+  fun saveBookPosition(
+    key: String,
+    city: String,
+    positionName: String,
+    position: Coordinates
+  ): Completable =
+    place(key).setValue(position).ignoreElement()
+      .andThen(
+        placesHistory(key).child("$city, $positionName").setValue(
+          position
+        ).ignoreElement()
+      )
 }
