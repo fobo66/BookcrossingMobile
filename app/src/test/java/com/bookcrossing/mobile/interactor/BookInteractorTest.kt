@@ -20,7 +20,10 @@ import com.bookcrossing.mobile.data.AuthRepository
 import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
+import io.mockk.every
 import io.mockk.mockk
+import io.reactivex.Completable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.junit.Before
 import org.junit.Test
@@ -34,15 +37,35 @@ class BookInteractorTest {
     val authRepository = mockk<AuthRepository>()
     val booksRepository = mockk<BooksRepository>()
 
+    every {
+      authRepository.userId
+    } returns "test"
+
+    every {
+      booksRepository.saveBookPosition(any(), any(), any(), any())
+    } returns Completable.complete()
+
+    every {
+      booksRepository.updateBookFields(any(), any())
+    } returns Completable.complete()
+
+    every {
+      booksRepository.removeAcquiredBook(any(), any())
+    } returns Completable.complete()
+
+    every {
+      booksRepository.newBook(any())
+    } returns Single.just("test")
+
     bookInteractor = BookInteractor(booksRepository, authRepository)
   }
 
   @Test
-  fun releaseBook() {
+  fun `release book with empty fields`() {
     bookInteractor.releaseBook(Book())
       .subscribeOn(Schedulers.trampoline())
       .test()
-      .assertNoErrors()
+      .assertError(IllegalStateException::class.java)
   }
 
   @Test
