@@ -60,7 +60,7 @@ class BookInteractor @Inject constructor(
       "position" to newPosition
     )
 
-    return booksRepository.books().child(key).updateChildren(bookDataToUpdate).ignoreElement()
+    return booksRepository.updateBookFields(key, bookDataToUpdate)
       .andThen(booksRepository.saveBookPosition(key, newCity, newPositionName, newPosition))
       .andThen(
         booksRepository.acquiredBooks(authRepository.userId).child(key).removeValue()

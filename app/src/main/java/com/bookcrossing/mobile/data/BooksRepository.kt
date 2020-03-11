@@ -100,4 +100,8 @@ class BooksRepository @Inject constructor(
           position
         ).ignoreElement()
       )
+
+  /** Update book's fields in database */
+  fun updateBookFields(key: String, bookFields: Map<String, Any>): Completable =
+    books().child(key).updateChildren(bookFields).ignoreElement()
 }
