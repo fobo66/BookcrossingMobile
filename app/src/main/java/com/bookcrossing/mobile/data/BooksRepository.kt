@@ -104,4 +104,9 @@ class BooksRepository @Inject constructor(
   /** Update book's fields in database */
   fun updateBookFields(key: String, bookFields: Map<String, Any>): Completable =
     books().child(key).updateChildren(bookFields).ignoreElement()
+
+  /** Remove reference to the book from user's acquired books */
+  fun removeAcquiredBook(userId: String, key: String): Completable =
+    acquiredBooks(userId).child(key).removeValue()
+      .ignoreElement()
 }

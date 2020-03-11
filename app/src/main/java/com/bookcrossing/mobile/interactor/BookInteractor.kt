@@ -20,7 +20,6 @@ import com.bookcrossing.mobile.data.AuthRepository
 import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
-import com.bookcrossing.mobile.util.ignoreElement
 import io.reactivex.Completable
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -63,8 +62,7 @@ class BookInteractor @Inject constructor(
     return booksRepository.updateBookFields(key, bookDataToUpdate)
       .andThen(booksRepository.saveBookPosition(key, newCity, newPositionName, newPosition))
       .andThen(
-        booksRepository.acquiredBooks(authRepository.userId).child(key).removeValue()
-          .ignoreElement()
+        booksRepository.removeAcquiredBook(authRepository.userId, key)
       )
   }
 }
