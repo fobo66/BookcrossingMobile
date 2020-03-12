@@ -31,7 +31,7 @@ import com.algolia.instantsearch.helper.android.list.autoScrollToStart
 import com.algolia.instantsearch.helper.android.searchbox.SearchBoxViewAppCompat
 import com.algolia.instantsearch.helper.android.searchbox.connectView
 import com.bookcrossing.mobile.R
-import com.bookcrossing.mobile.modules.App
+import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.SearchPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import moxy.ktx.moxyPresenter
@@ -50,7 +50,7 @@ class SearchFragment : BaseFragment(), SearchView {
   private val connection = ConnectionHandler()
 
   override fun onAttach(context: Context) {
-    App.getComponent().inject(this)
+    injector.inject(this)
     super.onAttach(context)
   }
 

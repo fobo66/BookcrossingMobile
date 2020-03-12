@@ -25,7 +25,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bookcrossing.mobile.R
-import com.bookcrossing.mobile.modules.App
+import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.ScanPresenter
 import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView
@@ -58,7 +58,7 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
   private val retryPermissionAction: PublishSubject<Boolean> = PublishSubject.create()
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    App.getComponent().inject(this)
+    injector.inject(this)
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_scan)
     ButterKnife.bind(this)

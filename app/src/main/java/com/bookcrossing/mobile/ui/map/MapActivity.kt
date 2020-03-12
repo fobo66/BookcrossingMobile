@@ -26,7 +26,7 @@ import com.bookcrossing.mobile.R.id
 import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.R.string
 import com.bookcrossing.mobile.models.Coordinates
-import com.bookcrossing.mobile.modules.App
+import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.MapPresenter
 import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity
@@ -67,7 +67,7 @@ class MapActivity : BaseActivity(), MvpMapView,
   private lateinit var locationProvider: FusedLocationProviderClient
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    App.getComponent().inject(this)
+    injector.inject(this)
     super.onCreate(savedInstanceState)
     setContentView(layout.activity_map)
 

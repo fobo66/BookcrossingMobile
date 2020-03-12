@@ -45,8 +45,8 @@ import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.R.string
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
-import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.modules.GlideApp
+import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.BookPresenter
 import com.bookcrossing.mobile.ui.acquire.BookAcquireActivity
 import com.bookcrossing.mobile.ui.base.BaseActivity
@@ -124,7 +124,7 @@ class BookActivity : BaseActivity(), BookView,
   private var currentBookPosition: Coordinates? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    App.getComponent().inject(this)
+    injector.inject(this)
     super.onCreate(savedInstanceState)
     setContentView(layout.activity_book)
     ButterKnife.bind(this)

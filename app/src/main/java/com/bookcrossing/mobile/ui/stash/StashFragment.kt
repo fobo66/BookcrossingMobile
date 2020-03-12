@@ -26,7 +26,7 @@ import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import butterknife.BindView
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.layout
-import com.bookcrossing.mobile.modules.App
+import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.StashPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.adapters.StashAdapter
@@ -52,8 +52,9 @@ class StashFragment : BaseFragment(), StashView {
   lateinit var rv: RecyclerView
 
   private lateinit var adapter: FirebaseRecyclerAdapter<Boolean, StashedBookViewHolder>
+
   override fun onAttach(context: Context) {
-    App.getComponent().inject(this)
+    injector.inject(this)
     super.onAttach(context)
   }
 

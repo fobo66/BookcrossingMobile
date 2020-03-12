@@ -43,8 +43,8 @@ import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.list.listItems
 import com.bookcrossing.mobile.BuildConfig
 import com.bookcrossing.mobile.R
-import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.modules.GlideApp
+import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.BookReleasePresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.ui.map.LocationPicker
@@ -106,7 +106,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
   private lateinit var permissions: RxPermissions
 
   override fun onAttach(context: Context) {
-    App.getComponent().inject(this)
+    injector.inject(this)
     super.onAttach(context)
   }
 

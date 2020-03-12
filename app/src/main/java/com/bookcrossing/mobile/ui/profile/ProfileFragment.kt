@@ -31,8 +31,8 @@ import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.drawable
 import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.models.Book
-import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.modules.GlideApp
+import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.ProfilePresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.RC_SIGN_IN
@@ -65,7 +65,7 @@ class ProfileFragment : BaseFragment(), ProfileView {
   private lateinit var adapter: FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder>
 
   override fun onAttach(context: Context) {
-    App.getComponent().inject(this)
+    injector.inject(this)
     super.onAttach(context)
   }
 

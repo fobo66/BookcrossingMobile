@@ -30,7 +30,7 @@ import butterknife.BindView
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.models.Book
-import com.bookcrossing.mobile.modules.App
+import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.MainPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.RC_SIGN_IN
@@ -69,7 +69,7 @@ class MainFragment : BaseFragment(), MainView {
   private lateinit var adapter: FirebaseRecyclerAdapter<Book, BooksViewHolder>
 
   override fun onAttach(context: Context) {
-    App.getComponent().inject(this)
+    injector.inject(this)
     super.onAttach(context)
   }
 

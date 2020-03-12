@@ -17,6 +17,7 @@
 package com.bookcrossing.mobile.modules
 
 import android.app.Activity
+import androidx.fragment.app.Fragment
 import com.bookcrossing.mobile.components.AppComponent
 
 /**
@@ -31,3 +32,8 @@ interface DaggerComponentProvider {
  * Convenience accessor to dependency tree
  */
 val Activity.injector get() = (application as DaggerComponentProvider).component
+
+/**
+ * Convenience accessor to dependency tree
+ */
+val Fragment.injector get() = (requireActivity().application as DaggerComponentProvider).component

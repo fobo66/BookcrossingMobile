@@ -32,7 +32,7 @@ import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.R.string
 import com.bookcrossing.mobile.models.BookCode
 import com.bookcrossing.mobile.models.BookCode.CorrectCode
-import com.bookcrossing.mobile.modules.App
+import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.BookAcquirePresenter
 import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity
@@ -83,7 +83,7 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
   private var keyToAcquire: String? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    App.getComponent().inject(this)
+    injector.inject(this)
     super.onCreate(savedInstanceState)
     setContentView(layout.activity_book_acquire)
     ButterKnife.bind(this)
