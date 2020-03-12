@@ -24,10 +24,14 @@ import androidx.annotation.IdRes
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.code.BookStickerSaver
 import com.bookcrossing.mobile.code.QrCodeEncoder
+import com.bookcrossing.mobile.data.AuthRepository
+import com.bookcrossing.mobile.data.LocationRepository
+import com.bookcrossing.mobile.interactor.BookInteractor
 import com.bookcrossing.mobile.models.BookBuilder
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.models.Date
 import com.bookcrossing.mobile.ui.releasebook.BookReleaseView
+import com.bookcrossing.mobile.util.BookCoverResolver
 import com.bookcrossing.mobile.util.EXTRA_KEY
 import com.bookcrossing.mobile.util.InputValidator
 import com.bookcrossing.mobile.util.LengthRule
@@ -36,8 +40,6 @@ import com.bookcrossing.mobile.util.PACKAGE_NAME
 import com.bookcrossing.mobile.util.ValidationResult
 import com.google.firebase.storage.StorageMetadata
 import com.google.zxing.WriterException
-import durdinapps.rxfirebase2.RxFirebaseAuth
-import durdinapps.rxfirebase2.RxFirebaseDatabase
 import durdinapps.rxfirebase2.RxFirebaseStorage
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -50,12 +52,18 @@ import java.io.File
 import java.io.IOException
 import java.util.Calendar
 import java.util.UUID
+import javax.inject.Inject
 
 /**
  * Presenter for book release view
  */
 @InjectViewState
-class BookReleasePresenter : BasePresenter<BookReleaseView>() {
+class BookReleasePresenter @Inject constructor(
+  private val bookInteractor: BookInteractor,
+  private val authRepository: AuthRepository,
+  private val locationRepository: LocationRepository,
+  private val bookCoverResolver: BookCoverResolver
+) : BasePresenter<BookReleaseView>() {
 
   private val isLocationPicked = BehaviorSubject.createDefault(false)
 
@@ -68,10 +76,10 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
     val metadata = StorageMetadata.Builder()
       .setContentType("image/jpeg")
       .build()
-    return RxFirebaseAuth.observeAuthState(firebaseWrapper.auth)
+    return authRepository.onAuthenticated()
       .filter { auth -> auth.currentUser != null }
       .switchMapSingle {
-        RxFirebaseStorage.putFile(resolveCover(key), tempCoverUri, metadata)
+        RxFirebaseStorage.putFile(bookCoverResolver.resolveCover(key), tempCoverUri, metadata)
           .map { key }
       }
       .onErrorReturn { key }
@@ -133,18 +141,9 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   fun releaseBook(): Observable<String> {
     setPublicationDate()
     val newBook = book.createBook()
-    val newBookReference = books().push()
-    val key = newBookReference.key.orEmpty()
 
-    return RxFirebaseDatabase.setValue(newBookReference, newBook)
-      .andThen(RxFirebaseDatabase.setValue(places(key), newBook.position))
-      .andThen(
-        RxFirebaseDatabase.setValue(
-          placesHistory(key).child("${newBook.city}, ${newBook.positionName}"),
-          newBook.position
-        )
-      )
-      .andThen(uploadCover(key))
+    return bookInteractor.releaseBook(newBook)
+      .flatMapObservable { uploadCover(it) }
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .doOnNext { newKey ->
@@ -189,9 +188,10 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   fun saveSticker(
     sticker: Bitmap,
     stickerName: String,
-    stickerDescription: String
+    stickerDescription: String,
+    contentResolver: ContentResolver
   ) {
-    BookStickerSaver(systemServicesWrapper.context.contentResolver).saveSticker(
+    BookStickerSaver(contentResolver).saveSticker(
       stickerName, stickerDescription, sticker
     )
   }
@@ -200,10 +200,10 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
    * Determine the city of the location of the book
    */
   fun resolveCity(coordinates: Coordinates): Single<String> {
-    return systemServicesWrapper.locationRepository.resolveCity(
-      coordinates.lat,
-      coordinates.lng
-    )
+    return locationRepository.resolveCity(
+        coordinates.lat,
+        coordinates.lng
+      )
       .doOnError(Timber::e)
   }
 

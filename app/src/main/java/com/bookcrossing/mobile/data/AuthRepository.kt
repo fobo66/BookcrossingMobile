@@ -43,7 +43,7 @@ class AuthRepository @Inject constructor(
     get() = auth.currentUser != null
 
   /** Observe auth state changes */
-  fun onAuthenticated() = Observable.create<FirebaseAuth> { emitter ->
+  fun onAuthenticated(): Observable<FirebaseAuth> = Observable.create { emitter ->
     val authStateListener = AuthStateListener { firebaseAuth ->
       if (!emitter.isDisposed) {
         emitter.onNext(firebaseAuth)

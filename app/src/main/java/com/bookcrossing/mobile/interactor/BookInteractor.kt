@@ -21,6 +21,7 @@ import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
 import io.reactivex.Completable
+import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,9 +33,10 @@ class BookInteractor @Inject constructor(
 ) {
 
   /** Release new book */
-  fun releaseBook(book: Book): Completable = booksRepository.newBook(book)
-    .flatMapCompletable { key: String ->
+  fun releaseBook(book: Book): Single<String> = booksRepository.newBook(book)
+    .flatMap { key: String ->
       booksRepository.saveBookPosition(key, book.city, book.positionName, book.position)
+        .andThen(Single.just(key))
     }
 
   /**
