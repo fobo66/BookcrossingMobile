@@ -30,8 +30,6 @@ import com.bookcrossing.mobile.ui.releasebook.ReleaseAcquiredBookFragment
 import com.bookcrossing.mobile.ui.scan.ScanActivity
 import com.bookcrossing.mobile.ui.search.SearchFragment
 import com.bookcrossing.mobile.ui.stash.StashFragment
-import com.bookcrossing.mobile.util.FirebaseWrapper
-import com.bookcrossing.mobile.util.SystemServicesWrapper
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -47,10 +45,6 @@ interface AppComponent {
   interface Factory {
     fun create(@BindsInstance context: Context): AppComponent
   }
-
-  fun inject(firebaseWrapper: FirebaseWrapper)
-
-  fun inject(systemServicesWrapper: SystemServicesWrapper)
 
   fun inject(scanActivity: ScanActivity)
 
