@@ -20,6 +20,7 @@ import com.bookcrossing.mobile.data.AuthRepository
 import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
+import com.bookcrossing.mobile.models.Date
 import io.mockk.every
 import io.mockk.mockk
 import io.reactivex.Completable
@@ -66,6 +67,23 @@ class BookInteractorTest {
       .subscribeOn(Schedulers.trampoline())
       .test()
       .assertError(IllegalStateException::class.java)
+  }
+
+  @Test
+  fun `release correct book`() {
+    val book = Book().apply {
+      name = "test"
+      author = "test"
+      isFree = true
+      city = "test"
+      positionName = "test"
+      position = Coordinates()
+      wentFreeAt = Date()
+    }
+    bookInteractor.releaseBook(book)
+      .subscribeOn(Schedulers.trampoline())
+      .test()
+      .assertComplete()
   }
 
   @Test
