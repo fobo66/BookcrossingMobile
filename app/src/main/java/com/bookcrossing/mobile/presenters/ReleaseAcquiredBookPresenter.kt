@@ -16,14 +16,17 @@
 
 package com.bookcrossing.mobile.presenters
 
+import com.bookcrossing.mobile.data.BooksRepository
+import com.bookcrossing.mobile.data.LocationRepository
+import com.bookcrossing.mobile.interactor.BookInteractor
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.ui.releasebook.ReleaseAcquiredBookView
+import com.bookcrossing.mobile.util.BookCoverResolver
 import com.bookcrossing.mobile.util.InputValidator
 import com.bookcrossing.mobile.util.LengthRule
 import com.bookcrossing.mobile.util.NotEmptyRule
 import com.bookcrossing.mobile.util.ValidationResult
-import com.bookcrossing.mobile.util.ignoreElement
 import com.google.android.gms.maps.model.LatLng
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Completable
@@ -31,13 +34,19 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
 import timber.log.Timber
+import javax.inject.Inject
 
 
 /**
  * Presenter for release acquired book screen
  */
 @InjectViewState
-class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
+class ReleaseAcquiredBookPresenter @Inject constructor(
+  private val bookInteractor: BookInteractor,
+  private val booksRepository: BooksRepository,
+  private val locationRepository: LocationRepository,
+  private val bookCoverResolver: BookCoverResolver
+) : BasePresenter<ReleaseAcquiredBookView>() {
 
   private lateinit var book: Book
   private lateinit var key: String
@@ -49,11 +58,14 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
   fun loadBook(key: String?) {
     if (!key.isNullOrEmpty()) {
       unsubscribeOnDestroy(
-        RxFirebaseDatabase.observeSingleValueEvent(books().child(key), Book::class.java)
+        RxFirebaseDatabase.observeSingleValueEvent(
+            booksRepository.books().child(key),
+            Book::class.java
+          )
           .subscribe {
             book = it
             this.key = key
-            viewState.showBookDetails(it, resolveCover(key))
+            viewState.showBookDetails(it, bookCoverResolver.resolveCover(key))
           }
       )
     }
@@ -72,10 +84,10 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
 
   /** Release acquired book */
   fun releaseBook(newPositionName: String): Completable {
-    return systemServicesWrapper.locationRepository.resolveCity(
-      book.position.lat,
-      book.position.lng
-    )
+    return locationRepository.resolveCity(
+        book.position.lat,
+        book.position.lng
+      )
       .doOnSuccess { newCity ->
         book.apply {
           isFree = true
@@ -83,18 +95,9 @@ class ReleaseAcquiredBookPresenter : BasePresenter<ReleaseAcquiredBookView>() {
           positionName = newPositionName
         }
       }
-      .flatMapCompletable {
-        books().child(key).setValue(book).ignoreElement()
+      .flatMapCompletable { newCity ->
+        bookInteractor.releaseAcquiredBook(key, newPositionName, newCity, book.position)
       }
-      .andThen(places(key).setValue(book.position).ignoreElement())
-      .andThen(
-        placesHistory(key).child("${book.city}, $newPositionName")
-          .setValue(book.position)
-          .ignoreElement()
-      )
-      .andThen(
-        acquiredBooks().child(key).removeValue().ignoreElement()
-      )
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .doOnComplete { viewState.onReleased() }

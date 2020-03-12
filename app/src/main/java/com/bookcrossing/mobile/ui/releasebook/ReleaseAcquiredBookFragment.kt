@@ -18,6 +18,7 @@ package com.bookcrossing.mobile.ui.releasebook
 
 import android.Manifest.permission
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +31,7 @@ import butterknife.BindView
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.drawable
 import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.modules.App
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.presenters.ReleaseAcquiredBookPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
@@ -58,9 +60,11 @@ import com.jakewharton.rxbinding3.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.withLatestFrom
 import io.reactivex.schedulers.Schedulers
-import moxy.presenter.InjectPresenter
+import moxy.ktx.moxyPresenter
 import timber.log.Timber
 import java.util.concurrent.TimeUnit.MILLISECONDS
+import javax.inject.Inject
+import javax.inject.Provider
 
 /**
  * Screen for releasing acquired book. User can specify new book location here.
@@ -85,14 +89,21 @@ class ReleaseAcquiredBookFragment : BaseFragment(), ReleaseAcquiredBookView, OnM
   @BindView(R.id.release_acquired_book)
   lateinit var releaseButton: Button
 
-  @InjectPresenter
-  lateinit var presenter: ReleaseAcquiredBookPresenter
+  @Inject
+  lateinit var presenterProvider: Provider<ReleaseAcquiredBookPresenter>
+
+  private val presenter: ReleaseAcquiredBookPresenter by moxyPresenter { presenterProvider.get() }
 
   private var bookLocationMarker: Marker? = null
 
   private lateinit var permissions: RxPermissions
   private lateinit var mapDelegate: MapDelegate
   private lateinit var locationProvider: FusedLocationProviderClient
+
+  override fun onAttach(context: Context) {
+    App.getComponent().inject(this)
+    super.onAttach(context)
+  }
 
   override fun onCreateView(
     inflater: LayoutInflater,
