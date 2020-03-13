@@ -18,8 +18,8 @@ package com.bookcrossing.mobile.interactor
 
 import com.bookcrossing.mobile.data.AuthRepository
 import com.bookcrossing.mobile.data.BooksRepository
+import com.bookcrossing.mobile.data.NotificationRepository
 import com.bookcrossing.mobile.util.ignoreElement
-import com.google.firebase.messaging.FirebaseMessaging
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -32,7 +32,7 @@ import javax.inject.Singleton
 class StashInteractor @Inject constructor(
   private val booksRepository: BooksRepository,
   private val authRepository: AuthRepository,
-  private val firebaseMessaging: FirebaseMessaging
+  private val notificationRepository: NotificationRepository
 ) {
 
   /** Initial check for stash */
@@ -42,8 +42,7 @@ class StashInteractor @Inject constructor(
           key
         )
       )
-      .filter { it.exists() }
-      .map { it.value as Boolean }
+      .map { it.exists() }
 
   /** Observe stash */
   fun getStashedState(key: String): Flowable<Boolean> =
@@ -56,10 +55,10 @@ class StashInteractor @Inject constructor(
   /** Add book to stash */
   fun stashBook(key: String): Completable =
     booksRepository.stash(authRepository.userId).child(key).setValue(true).ignoreElement()
-      .andThen(firebaseMessaging.subscribeToTopic(key).ignoreElement())
+      .andThen(notificationRepository.subscribeToBookStashNotifications(key))
 
   /** Remove book from stash */
   fun unstashBook(key: String): Completable =
     booksRepository.stash(authRepository.userId).child(key).removeValue().ignoreElement()
-      .andThen(firebaseMessaging.unsubscribeFromTopic(key).ignoreElement())
+      .andThen(notificationRepository.unsubscribeFromBookStashNotifications(key))
 }

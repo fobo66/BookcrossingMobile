@@ -19,7 +19,6 @@ package com.bookcrossing.mobile.data
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.util.ignoreElement
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.DatabaseReference.CompletionListener
 import com.google.firebase.database.FirebaseDatabase
@@ -69,17 +68,15 @@ class BooksRepository @Inject constructor(
   }
 
   /** Create new book reference in database */
-  fun newBook(book: Book): Single<String> = Single.create<String> { emitter ->
-    val listener: CompletionListener = object : CompletionListener {
-      override fun onComplete(error: DatabaseError?, reference: DatabaseReference) {
-        if (error != null) {
-          if (!emitter.isDisposed) {
-            emitter.onError(error.toException())
-          }
-        } else {
-          if (!emitter.isDisposed) {
-            emitter.onSuccess(reference.key!!)
-          }
+  fun newBook(book: Book): Single<String> = Single.create { emitter ->
+    val listener = CompletionListener { error, reference ->
+      if (error != null) {
+        if (!emitter.isDisposed) {
+          emitter.onError(error.toException())
+        }
+      } else {
+        if (!emitter.isDisposed) {
+          emitter.onSuccess(reference.key!!)
         }
       }
     }
