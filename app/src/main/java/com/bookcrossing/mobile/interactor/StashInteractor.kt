@@ -19,7 +19,6 @@ package com.bookcrossing.mobile.interactor
 import com.bookcrossing.mobile.data.AuthRepository
 import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.data.NotificationRepository
-import com.bookcrossing.mobile.util.ignoreElement
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -54,11 +53,11 @@ class StashInteractor @Inject constructor(
 
   /** Add book to stash */
   fun stashBook(key: String): Completable =
-    booksRepository.stash(authRepository.userId).child(key).setValue(true).ignoreElement()
+    booksRepository.addBookToStash(authRepository.userId, key)
       .andThen(notificationRepository.subscribeToBookStashNotifications(key))
 
   /** Remove book from stash */
   fun unstashBook(key: String): Completable =
-    booksRepository.stash(authRepository.userId).child(key).removeValue().ignoreElement()
+    booksRepository.removeBookFromStash(authRepository.userId, key)
       .andThen(notificationRepository.unsubscribeFromBookStashNotifications(key))
 }

@@ -106,4 +106,12 @@ class BooksRepository @Inject constructor(
   fun removeAcquiredBook(userId: String, key: String): Completable =
     acquiredBooks(userId).child(key).removeValue()
       .ignoreElement()
+
+  /** Add reference to the book to user's stash */
+  fun addBookToStash(userId: String, key: String): Completable =
+    stash(userId).child(key).setValue(true).ignoreElement()
+
+  /** Remove reference to the book from user's stash */
+  fun removeBookFromStash(userId: String, key: String): Completable =
+    stash(userId).child(key).removeValue().ignoreElement()
 }

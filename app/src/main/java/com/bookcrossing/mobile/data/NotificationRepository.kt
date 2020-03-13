@@ -27,9 +27,11 @@ class NotificationRepository @Inject constructor(
   private val firebaseMessaging: FirebaseMessaging
 ) {
 
-  fun unsubscribeFromBookStashNotifications(key: String): Completable =
-    firebaseMessaging.unsubscribeFromTopic(key).ignoreElement()
-
+  /** Subscribe user to the notifications about book in stash was acquired or released */
   fun subscribeToBookStashNotifications(key: String): Completable =
     firebaseMessaging.subscribeToTopic(key).ignoreElement()
+
+  /** Unsubscribe user from the notifications about book in stash was acquired or released */
+  fun unsubscribeFromBookStashNotifications(key: String): Completable =
+    firebaseMessaging.unsubscribeFromTopic(key).ignoreElement()
 }
