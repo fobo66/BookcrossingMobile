@@ -157,8 +157,10 @@ class BookActivity : BaseActivity(), BookView,
       position.clicks()
         .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         .subscribe {
-          goToPosition(
-            currentBookPosition
+          startActivity(
+            MapActivity.getStartIntent(
+              this, currentBookPosition
+            )
           )
         }
     )
@@ -198,10 +200,6 @@ class BookActivity : BaseActivity(), BookView,
         initialPadding.paddings.bottom
       )
     }
-  }
-
-  private fun goToPosition(coordinates: Coordinates?) {
-    startActivity(MapActivity.getStartIntent(this, coordinates))
   }
 
   private fun setupPlacesHistory() {
@@ -290,6 +288,8 @@ class BookActivity : BaseActivity(), BookView,
   }
 
   companion object {
+
+    /** Create Intent to start BookActivity */
     fun getStartIntent(context: Context, key: String): Intent =
       Intent(context, BookActivity::class.java)
         .putExtra(EXTRA_KEY, key)

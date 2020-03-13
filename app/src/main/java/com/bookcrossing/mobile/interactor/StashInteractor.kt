@@ -35,26 +35,30 @@ class StashInteractor @Inject constructor(
   private val firebaseMessaging: FirebaseMessaging
 ) {
 
+  /** Initial check for stash */
   fun checkStashedState(key: String): Maybe<Boolean> =
     RxFirebaseDatabase.observeSingleValueEvent(
-      booksRepository.stash(authRepository.userId).child(
-        key
+        booksRepository.stash(authRepository.userId).child(
+          key
+        )
       )
-    )
       .filter { it.exists() }
       .map { it.value as Boolean }
 
+  /** Observe stash */
   fun getStashedState(key: String): Flowable<Boolean> =
     RxFirebaseDatabase.observeValueEvent(
-      booksRepository.stash(authRepository.userId).child(key),
-      Boolean::class.java
-    )
+        booksRepository.stash(authRepository.userId).child(key),
+        Boolean::class.java
+      )
       .take(1)
 
+  /** Add book to stash */
   fun stashBook(key: String): Completable =
     booksRepository.stash(authRepository.userId).child(key).setValue(true).ignoreElement()
       .andThen(firebaseMessaging.subscribeToTopic(key).ignoreElement())
 
+  /** Remove book from stash */
   fun unstashBook(key: String): Completable =
     booksRepository.stash(authRepository.userId).child(key).removeValue().ignoreElement()
       .andThen(firebaseMessaging.unsubscribeFromTopic(key).ignoreElement())

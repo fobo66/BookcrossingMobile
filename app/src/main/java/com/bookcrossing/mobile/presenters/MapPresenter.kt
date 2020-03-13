@@ -35,13 +35,15 @@ import kotlin.collections.Map.Entry
 class MapPresenter @Inject constructor(
   private val booksRepository: BooksRepository
 ) : BasePresenter<MvpMapView>() {
+
+  /** Load coordinates for pins */
   fun loadBooksPositions() {
     unsubscribeOnDestroy(
       RxFirebaseDatabase.observeValueEvent(
-        booksRepository.places(), DataSnapshotMapper.mapOf(
-          Coordinates::class.java
+          booksRepository.places(), DataSnapshotMapper.mapOf(
+            Coordinates::class.java
+          )
         )
-      )
         .flatMapIterable<Entry<String, Coordinates>> { placesMap: LinkedHashMap<String, Coordinates> -> placesMap.entries }
         .subscribe(
           { place: Entry<String, Coordinates> ->
@@ -57,6 +59,7 @@ class MapPresenter @Inject constructor(
     )
   }
 
+  /** Load details for the given book */
   fun loadBookDetails(key: String): Maybe<Book> {
     return RxFirebaseDatabase.observeSingleValueEvent(
       booksRepository.books().child(

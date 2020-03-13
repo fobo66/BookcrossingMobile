@@ -35,12 +35,13 @@ class BookPresenter @Inject constructor(
   val bookCoverResolver: BookCoverResolver
 ) : BasePresenter<BookView>() {
 
+  /** Load book details */
   fun subscribeToBookReference(key: String) {
     unsubscribeOnDestroy(
       RxFirebaseDatabase.observeSingleValueEvent(
-        booksRepository.books().child(key),
-        Book::class.java
-      )
+          booksRepository.books().child(key),
+          Book::class.java
+        )
         .subscribe({ book -> viewState.onBookLoaded(book) }, { throwable ->
           Timber.e(throwable, "Failed to load book")
           viewState.onErrorToLoadBook()
@@ -48,6 +49,7 @@ class BookPresenter @Inject constructor(
     )
   }
 
+  /** Initial check for stash */
   fun checkStashingState(key: String) {
     unsubscribeOnDestroy(stashInteractor.checkStashedState(key)
       .onErrorReturnItem(false)
@@ -74,11 +76,13 @@ class BookPresenter @Inject constructor(
               updateStashButtonState(isStashed)
             }
         }
-      }.toObservable<Unit>()
+      }.toObservable()
   }
 
+  /** Load book's travels */
   fun getPlacesHistory(key: String): DatabaseReference = booksRepository.placesHistory(key)
 
+  /** Send logs for abuse */
   fun reportAbuse(key: String) {
     Timber.e("Users complaining to book %s. Consider to check it", key)
     viewState.onAbuseReported()

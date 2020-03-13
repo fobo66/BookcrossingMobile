@@ -196,6 +196,7 @@ class MapActivity : BaseActivity(), MvpMapView,
   companion object {
     const val DEFAULT_ZOOM_LEVEL = 16.0f
 
+    /** Create Intent to start MapActivity */
     fun getStartIntent(context: Context, coordinates: Coordinates?): Intent =
       Intent(context, MapActivity::class.java)
         .putExtra(EXTRA_COORDINATES, coordinates)

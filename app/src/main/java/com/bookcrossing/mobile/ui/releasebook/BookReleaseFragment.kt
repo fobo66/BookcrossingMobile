@@ -43,6 +43,7 @@ import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.list.listItems
 import com.bookcrossing.mobile.BuildConfig
 import com.bookcrossing.mobile.R
+import com.bookcrossing.mobile.code.BookStickerSaver
 import com.bookcrossing.mobile.modules.GlideApp
 import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.BookReleasePresenter
@@ -357,11 +358,12 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     val stickerBitmap = Bitmap.createBitmap(sticker.width, sticker.height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(stickerBitmap)
     sticker.draw(canvas)
-    presenter.saveSticker(
-      stickerBitmap,
+    BookStickerSaver(
+      requireContext().contentResolver
+    ).saveSticker(
       stickerName,
       stickerDescription,
-      requireContext().contentResolver
+      stickerBitmap
     )
   }
 

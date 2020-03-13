@@ -22,7 +22,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.annotation.IdRes
 import com.bookcrossing.mobile.R
-import com.bookcrossing.mobile.code.BookStickerSaver
 import com.bookcrossing.mobile.code.QrCodeEncoder
 import com.bookcrossing.mobile.data.AuthRepository
 import com.bookcrossing.mobile.data.LocationRepository
@@ -176,24 +175,6 @@ class BookReleasePresenter @Inject constructor(
       Timber.e(e, "Failed to save QR code in bitmap")
       null
     }
-  }
-
-  /**
-   * Save generated sticker to device's default location for pictures
-   *
-   * @param stickerName Image name
-   * @param stickerDescription Image description saved to metadata
-   * @param sticker Generated image of the sticker
-   */
-  fun saveSticker(
-    sticker: Bitmap,
-    stickerName: String,
-    stickerDescription: String,
-    contentResolver: ContentResolver
-  ) {
-    BookStickerSaver(contentResolver).saveSticker(
-      stickerName, stickerDescription, sticker
-    )
   }
 
   /**

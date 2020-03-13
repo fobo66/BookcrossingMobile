@@ -26,6 +26,7 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+/** Perform operations related to location */
 class LocationRepository @Inject constructor(
   private val resourceProvider: ResourceProvider,
   private val localeProvider: LocaleProvider

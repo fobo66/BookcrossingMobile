@@ -27,10 +27,9 @@ fun GoogleMap.onMarkerClicked(): Observable<Marker> = Observable.create { emitte
   setOnMarkerClickListener {
     if (!emitter.isDisposed) {
       emitter.onNext(it)
-      return@setOnMarkerClickListener true
     }
 
-    false
+    true
   }
 
   emitter.setCancellable {
