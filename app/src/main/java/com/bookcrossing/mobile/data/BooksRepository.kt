@@ -60,7 +60,7 @@ class BooksRepository @Inject constructor(
 
   /** Load given book's current position */
   fun place(key: String): DatabaseReference {
-    return database.getReference("places")
+    return places()
       .child(key)
   }
 

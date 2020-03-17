@@ -137,8 +137,6 @@ class BookActivity : BaseActivity(), BookView,
 
     if (intent != null) {
       key = intent.getStringExtra(EXTRA_KEY).orEmpty()
-      presenter.subscribeToBookReference(key)
-      presenter.checkStashingState(key)
     }
     setupPlacesHistory()
 
@@ -164,6 +162,13 @@ class BookActivity : BaseActivity(), BookView,
           )
         }
     )
+  }
+
+  override fun onResume() {
+    super.onResume()
+
+    presenter.subscribeToBookReference(key)
+    presenter.checkStashingState(key)
   }
 
   private fun setupToolbar() = toolbar.apply {
@@ -255,8 +260,11 @@ class BookActivity : BaseActivity(), BookView,
     position.text = getString(string.book_place_template, book.city, book.positionName)
     wentFree.setReferenceTime(book.wentFreeAt.timestamp)
     description.text = book.description
-    if (book.isFree) {
-      acquireButton.visibility = View.VISIBLE
+
+    acquireButton.visibility = if (book.isFree) {
+      View.VISIBLE
+    } else {
+      View.GONE
     }
     currentBookPosition = book.position
   }

@@ -35,7 +35,6 @@ import com.bookcrossing.mobile.models.BookCode.CorrectCode
 import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.BookAcquirePresenter
 import com.bookcrossing.mobile.ui.base.BaseActivity
-import com.bookcrossing.mobile.ui.bookpreview.BookActivity
 import com.bookcrossing.mobile.ui.scan.ScanActivity
 import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
 import com.bookcrossing.mobile.util.EXTRA_KEY
@@ -152,10 +151,9 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
   }
 
   override fun onAcquired() {
-    val intent = Intent(this, BookActivity::class.java)
-    intent.putExtra(EXTRA_KEY, keyToAcquire)
-    startActivity(intent)
-    finish()
+    Snackbar.make(coordinatorLayout, string.book_acquired_success_message, Snackbar.LENGTH_SHORT)
+      .show()
+    onBackPressed()
   }
 
   private fun onAcquireButtonClicked(): Observable<Unit> {
