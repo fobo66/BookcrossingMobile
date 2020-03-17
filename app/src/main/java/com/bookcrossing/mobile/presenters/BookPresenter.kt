@@ -52,16 +52,14 @@ class BookPresenter @Inject constructor(
   /** Initial check for stash */
   fun checkStashingState(key: String) {
     unsubscribeOnDestroy(stashInteractor.checkStashedState(key)
-      .onErrorReturnItem(false)
       .subscribe { stashed ->
         updateStashButtonState(stashed)
       })
   }
 
   fun handleBookStashing(key: String): Observable<Unit> {
-    return stashInteractor.getStashedState(key)
-      .onErrorReturnItem(false)
-      .doOnNext { stashed -> updateStashButtonState(!stashed) }
+    return stashInteractor.checkStashedState(key)
+      .doOnSuccess { stashed -> updateStashButtonState(!stashed) }
       .flatMapCompletable { isStashed ->
         if (isStashed) {
           stashInteractor.unstashBook(key)

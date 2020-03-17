@@ -19,10 +19,8 @@ package com.bookcrossing.mobile.interactor
 import com.bookcrossing.mobile.data.AuthRepository
 import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.data.NotificationRepository
-import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Maybe
+import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,22 +32,10 @@ class StashInteractor @Inject constructor(
   private val notificationRepository: NotificationRepository
 ) {
 
-  /** Initial check for stash */
-  fun checkStashedState(key: String): Maybe<Boolean> =
-    RxFirebaseDatabase.observeSingleValueEvent(
-        booksRepository.stash(authRepository.userId).child(
-          key
-        )
-      )
-      .map { it.exists() }
-
-  /** Observe stash */
-  fun getStashedState(key: String): Flowable<Boolean> =
-    RxFirebaseDatabase.observeValueEvent(
-        booksRepository.stash(authRepository.userId).child(key),
-        Boolean::class.java
-      )
-      .take(1)
+  /** Check if book is in stash of the current user */
+  fun checkStashedState(key: String): Single<Boolean> =
+    booksRepository.onBookStashed(authRepository.userId, key)
+      .onErrorReturnItem(false)
 
   /** Add book to stash */
   fun stashBook(key: String): Completable =

@@ -22,6 +22,7 @@ import io.reactivex.Completable
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/** Manage notifications for the app*/
 @Singleton
 class NotificationRepository @Inject constructor(
   private val firebaseMessaging: FirebaseMessaging

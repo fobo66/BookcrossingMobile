@@ -19,9 +19,12 @@ package com.bookcrossing.mobile.data
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.util.ignoreElement
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.DatabaseReference.CompletionListener
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -114,4 +117,30 @@ class BooksRepository @Inject constructor(
   /** Remove reference to the book from user's stash */
   fun removeBookFromStash(userId: String, key: String): Completable =
     stash(userId).child(key).removeValue().ignoreElement()
+
+  /** Load book stash state */
+  fun onBookStashed(userId: String, key: String): Single<Boolean> =
+    Single.create { emitter ->
+      val listener = object : ValueEventListener {
+        override fun onCancelled(error: DatabaseError) {
+          if (!emitter.isDisposed) {
+            emitter.onError(error.toException())
+          }
+        }
+
+        override fun onDataChange(snapshot: DataSnapshot) {
+          if (!emitter.isDisposed) {
+            emitter.onSuccess(snapshot.exists())
+          }
+        }
+      }
+
+      emitter.setCancellable {
+        stash(userId).child(key)
+          .removeEventListener(listener)
+      }
+
+      stash(userId).child(key)
+        .addListenerForSingleValueEvent(listener)
+    }
 }
