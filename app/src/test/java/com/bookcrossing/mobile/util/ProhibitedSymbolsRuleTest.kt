@@ -19,9 +19,9 @@ package com.bookcrossing.mobile.util
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.util.ValidationResult.Invalid
 import com.bookcrossing.mobile.util.ValidationResult.OK
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThat
 import org.junit.Test
 
 class ProhibitedSymbolsRuleTest {
