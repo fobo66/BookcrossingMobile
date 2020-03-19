@@ -70,6 +70,7 @@ class StashInteractorTest {
       .test()
       .assertValue(true)
       .assertComplete()
+      .dispose()
   }
 
   @Test
@@ -82,6 +83,7 @@ class StashInteractorTest {
       .test()
       .assertValue(false)
       .assertComplete()
+      .dispose()
   }
 
   @Test
@@ -94,6 +96,7 @@ class StashInteractorTest {
       .test()
       .assertValue(false)
       .assertNoErrors()
+      .dispose()
   }
 
   @Test
@@ -101,6 +104,7 @@ class StashInteractorTest {
     stashInteractor.stashBook("test")
       .test()
       .assertComplete()
+      .dispose()
   }
 
   @Test
@@ -108,5 +112,6 @@ class StashInteractorTest {
     stashInteractor.unstashBook("test")
       .test()
       .assertComplete()
+      .dispose()
   }
 }
