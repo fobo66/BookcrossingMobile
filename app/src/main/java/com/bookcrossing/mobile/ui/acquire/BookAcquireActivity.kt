@@ -32,10 +32,11 @@ import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.R.string
 import com.bookcrossing.mobile.models.BookCode
 import com.bookcrossing.mobile.models.BookCode.CorrectCode
+import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.BookAcquirePresenter
 import com.bookcrossing.mobile.ui.base.BaseActivity
-import com.bookcrossing.mobile.ui.bookpreview.BookActivity
 import com.bookcrossing.mobile.ui.scan.ScanActivity
+import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
 import com.bookcrossing.mobile.util.EXTRA_KEY
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
@@ -45,16 +46,20 @@ import com.jakewharton.rxbinding3.widget.textChanges
 import dev.chrisbanes.insetter.doOnApplyWindowInsets
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.withLatestFrom
-import moxy.presenter.InjectPresenter
+import moxy.ktx.moxyPresenter
 import java.util.concurrent.TimeUnit.MILLISECONDS
+import javax.inject.Inject
+import javax.inject.Provider
 
 /**
  * Screen for acquiring book
  */
 class BookAcquireActivity : BaseActivity(), BookAcquireView {
 
-  @InjectPresenter
-  lateinit var presenter: BookAcquirePresenter
+  @Inject
+  lateinit var presenterProvider: Provider<BookAcquirePresenter>
+
+  private val presenter: BookAcquirePresenter by moxyPresenter { presenterProvider.get() }
 
   @BindView(id.toolbar)
   lateinit var toolbar: Toolbar
@@ -77,6 +82,7 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
   private var keyToAcquire: String? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    injector.inject(this)
     super.onCreate(savedInstanceState)
     setContentView(layout.activity_book_acquire)
     ButterKnife.bind(this)
@@ -108,8 +114,9 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
       onAcquireButtonClicked()
         .withLatestFrom(
           codeInput.textChanges()
+            .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         ) { _, code: CharSequence -> code.toString() }
-        .flatMapMaybe { code: String -> presenter.validateCode(code) }
+        .flatMapSingle { code: String -> presenter.validateCode(code) }
         .flatMap { code: BookCode ->
           if (code is CorrectCode) {
             presenter.processBookAcquisition(code.code)
@@ -127,7 +134,7 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
 
     subscriptions.add(
       scanCodeButton.clicks()
-        .throttleFirst(300, MILLISECONDS)
+        .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         .subscribe {
           startActivity(
             Intent(this@BookAcquireActivity, ScanActivity::class.java)
@@ -144,10 +151,9 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
   }
 
   override fun onAcquired() {
-    val intent = Intent(this, BookActivity::class.java)
-    intent.putExtra(EXTRA_KEY, keyToAcquire)
-    startActivity(intent)
-    finish()
+    Snackbar.make(coordinatorLayout, string.book_acquired_success_message, Snackbar.LENGTH_SHORT)
+      .show()
+    onBackPressed()
   }
 
   private fun onAcquireButtonClicked(): Observable<Unit> {
@@ -156,6 +162,6 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
         acquireButton.isEnabled = false
         scanCodeButton.isEnabled = false
       }
-      .throttleFirst(300, MILLISECONDS)
+      .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
   }
 }

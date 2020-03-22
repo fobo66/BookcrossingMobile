@@ -24,6 +24,7 @@ const val DEFAULT_USER = "user"
 const val EXTRA_COORDINATES = "coordinates"
 const val EXTRA_TARGET_FRAGMENT = "targetFragment"
 const val KEY_CONSENT_STATUS = "consent_status"
+const val UNKNOWN_CONSENT_STATUS = "UNKNOWN"
 const val PRIVACY_POLICY_URL = "https://fobo66.github.io/BookcrossingMobile/privacy_policy.html"
 const val DEFAULT_DEBOUNCE_TIMEOUT = 300
 

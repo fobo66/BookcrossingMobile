@@ -19,34 +19,30 @@ package com.bookcrossing.mobile.util.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bookcrossing.mobile.R.layout
-import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.util.BookCoverResolver
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
-
-/** Adapter for books on main screen */
-class BooksAdapter(
+/** Adapter for the list of the user's stashed books */
+class StashAdapter(
   private val bookCoverResolver: BookCoverResolver,
-  options: FirebaseRecyclerOptions<Book>
-) :
-  FirebaseRecyclerAdapter<Book, BooksViewHolder>(options) {
+  options: FirebaseRecyclerOptions<Boolean>
+) : FirebaseRecyclerAdapter<Boolean, StashedBookViewHolder>(options) {
   override fun onCreateViewHolder(
     parent: ViewGroup,
     viewType: Int
-  ): BooksViewHolder {
-    val view = LayoutInflater.from(parent.context)
-      .inflate(layout.book_list_item_main, parent, false)
-    return BooksViewHolder(view)
+  ): StashedBookViewHolder {
+    val view =
+      LayoutInflater.from(parent.context)
+        .inflate(layout.stash_item, parent, false)
+    return StashedBookViewHolder(view)
   }
 
   override fun onBindViewHolder(
-    holder: BooksViewHolder,
-    position: Int,
-    model: Book
+    holder: StashedBookViewHolder, position: Int,
+    model: Boolean
   ) {
     val key = getRef(position).key.orEmpty()
     holder.key = key
     holder.loadCover(bookCoverResolver.resolveCover(key))
-    holder.bind(model)
   }
 }

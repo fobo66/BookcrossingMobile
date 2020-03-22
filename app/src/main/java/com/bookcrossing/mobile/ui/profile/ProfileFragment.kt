@@ -16,6 +16,7 @@
 package com.bookcrossing.mobile.ui.profile
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -31,6 +32,7 @@ import com.bookcrossing.mobile.R.drawable
 import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.modules.GlideApp
+import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.ProfilePresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.RC_SIGN_IN
@@ -39,14 +41,20 @@ import com.bookcrossing.mobile.util.adapters.AcquiredBooksViewHolder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions.Builder
-import moxy.presenter.InjectPresenter
+import moxy.ktx.moxyPresenter
+import javax.inject.Inject
+import javax.inject.Provider
 
 /**
  * Screen where user can manage all his/her acquired books
  */
 class ProfileFragment : BaseFragment(), ProfileView {
-  @InjectPresenter
-  lateinit var presenter: ProfilePresenter
+
+  @Inject
+  lateinit var presenterProvider: Provider<ProfilePresenter>
+
+  private val presenter: ProfilePresenter by moxyPresenter { presenterProvider.get() }
+
   @BindView(R.id.profile_image)
   lateinit var profileImage: ImageView
   @BindView(R.id.acquiredBooksList)
@@ -55,6 +63,11 @@ class ProfileFragment : BaseFragment(), ProfileView {
   lateinit var acquiredBooksListEmptyIndicator: AppCompatTextView
 
   private lateinit var adapter: FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder>
+
+  override fun onAttach(context: Context) {
+    injector.inject(this)
+    super.onAttach(context)
+  }
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,

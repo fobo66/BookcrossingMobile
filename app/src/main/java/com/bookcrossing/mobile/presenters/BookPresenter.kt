@@ -16,61 +16,80 @@
 
 package com.bookcrossing.mobile.presenters
 
-import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.data.BooksReferencesRepository
+import com.bookcrossing.mobile.data.BooksRepository
+import com.bookcrossing.mobile.interactor.StashInteractor
 import com.bookcrossing.mobile.ui.bookpreview.BookView
+import com.bookcrossing.mobile.util.BookCoverResolver
 import com.google.firebase.database.DatabaseReference
-import durdinapps.rxfirebase2.RxFirebaseDatabase
+import io.reactivex.Observable
 import moxy.InjectViewState
 import timber.log.Timber
+import javax.inject.Inject
 
 @InjectViewState
-class BookPresenter : BasePresenter<BookView>() {
+class BookPresenter @Inject constructor(
+  private val booksRepository: BooksRepository,
+  private val stashInteractor: StashInteractor,
+  private val booksReferencesRepository: BooksReferencesRepository,
+  val bookCoverResolver: BookCoverResolver
+) : BasePresenter<BookView>() {
 
-  private var stashed = false
-
-  fun subscribeToBookReference(key: String) {
-    unsubscribeOnDestroy(RxFirebaseDatabase.observeSingleValueEvent(books().child(key), Book::class.java)
-      .subscribe({ book -> viewState.onBookLoaded(book) }, { throwable ->
-        Timber.e(throwable, "Failed to load book")
-        viewState.onErrorToLoadBook()
-      }))
+  /** Load book details */
+  fun loadBook(key: String) {
+    unsubscribeOnDestroy(
+      booksRepository.loadBook(key)
+        .subscribe({ book -> viewState.onBookLoaded(book) }, { throwable ->
+          Timber.e(throwable, "Failed to load book")
+          viewState.onErrorToLoadBook()
+        })
+    )
   }
 
+  /** Initial check for stash */
   fun checkStashingState(key: String) {
-    unsubscribeOnDestroy(RxFirebaseDatabase.observeSingleValueEvent(stash().child(key))
-      .filter { it.exists() }
-      .subscribe { data ->
-        stashed = data.value as Boolean
-        updateStashButtonState()
+    unsubscribeOnDestroy(stashInteractor.checkStashedState(key)
+      .subscribe { stashed ->
+        updateStashButtonState(stashed)
       })
   }
 
-  fun handleBookStashing(key: String) {
-    stashed = !stashed
-    if (stashed) {
-      stash().child(key).setValue(stashed)
-      firebaseWrapper.fcm.subscribeToTopic(key)
-    } else {
-      stash().child(key).removeValue()
-      firebaseWrapper.fcm.unsubscribeFromTopic(key)
-    }
-    updateStashButtonState()
+  /** Add or remove book from user's stash */
+  fun handleBookStashing(key: String): Observable<Unit> {
+    return stashInteractor.checkStashedState(key)
+      .doOnSuccess { stashed -> updateStashButtonState(!stashed) }
+      .flatMapCompletable { isStashed ->
+        if (isStashed) {
+          stashInteractor.unstashBook(key)
+            .doOnError {
+              Timber.e(it)
+              updateStashButtonState(isStashed)
+            }
+        } else {
+          stashInteractor.stashBook(key)
+            .doOnError {
+              Timber.e(it)
+              updateStashButtonState(isStashed)
+            }
+        }
+      }.toObservable()
   }
 
-  private fun updateStashButtonState() {
+  /** Load book's travels */
+  fun getPlacesHistory(key: String): DatabaseReference =
+    booksReferencesRepository.placesHistory(key)
+
+  /** Send logs for abuse */
+  fun reportAbuse(key: String) {
+    Timber.e("Users complaining to book %s. Consider to check it", key)
+    viewState.onAbuseReported()
+  }
+
+  private fun updateStashButtonState(stashed: Boolean) {
     if (stashed) {
       viewState.onBookStashed()
     } else {
       viewState.onBookUnstashed()
     }
-  }
-
-  fun getPlacesHistory(key: String): DatabaseReference {
-    return placesHistory(key)
-  }
-
-  fun reportAbuse(key: String) {
-    Timber.e("Users complaining to book %s. Consider to check it", key)
-    viewState.onAbuseReported()
   }
 }

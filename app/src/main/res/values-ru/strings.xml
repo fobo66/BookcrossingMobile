@@ -101,6 +101,7 @@
   <string name="unstash_book_confirmation_title">Убрать эту книгу из отложенных?</string>
   <string name="author_icon_description">Автор</string>
   <string name="place_icon_description">Текущее местоположение</string>
+  <string name="book_place_template">%1$s, %2$s</string>
   <string name="camera_permission_denied_prompt">Разрешение для камеры нужно для сканирования QR кода книги</string>
   <string name="location_permission_denied_prompt">Разрешение для геолокации нужно для отображения вашего местоположения на карте</string>
   <string name="retry_permission_request_action">Повторить</string>
@@ -118,9 +119,10 @@
   <string name="sign_in_success">Добро пожаловать в Bookcrossing!</string>
   <string name="release_acquired_book_title">Вы собираетесь освободить эту книгу. Пожалуйста, укажите новое местоположение, где вы оставили эту книгу, чтобы другие смогли найти её</string>
   <string name="release_acquired_book">Освободить книгу</string>
-  <string name="acquired_books_empty_indicator">No acquired books</string>
-  <string name="profile_picture_description">Profile picture</string>
-  <string name="book_released_book_message">Successfully released book</string>
+  <string name="acquired_books_empty_indicator">Нет взятых книг</string>
+  <string name="profile_picture_description">Аватарка</string>
+  <string name="book_released_book_message">Книга успешно освобождена</string>
+  <string name="book_acquired_success_message">Вы успешно взяли книгу. Приятного чтения!</string>
   <string-array name="cover_chooser_dialog_items">
     <item>Из галереи</item>
     <item>Сделать фото</item>

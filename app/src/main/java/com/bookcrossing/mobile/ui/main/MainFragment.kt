@@ -16,6 +16,7 @@
 package com.bookcrossing.mobile.ui.main
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -29,6 +30,7 @@ import butterknife.BindView
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.layout
 import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.MainPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.RC_SIGN_IN
@@ -43,8 +45,10 @@ import com.google.android.gms.ads.AdView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding3.view.clicks
-import moxy.presenter.InjectPresenter
+import moxy.ktx.moxyPresenter
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Provider
 
 class MainFragment : BaseFragment(), MainView {
 
@@ -57,10 +61,17 @@ class MainFragment : BaseFragment(), MainView {
   @BindView(R.id.adView)
   lateinit var ad: AdView
 
-  @InjectPresenter
-  lateinit var presenter: MainPresenter
+  @Inject
+  lateinit var presenterProvider: Provider<MainPresenter>
+
+  private val presenter: MainPresenter by moxyPresenter { presenterProvider.get() }
 
   private lateinit var adapter: FirebaseRecyclerAdapter<Book, BooksViewHolder>
+
+  override fun onAttach(context: Context) {
+    injector.inject(this)
+    super.onAttach(context)
+  }
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -93,7 +104,6 @@ class MainFragment : BaseFragment(), MainView {
       val signInResult = IdpResponse.fromResultIntent(data)
 
       if (resultCode == RESULT_OK) {
-        fab.visibility = VISIBLE
         Snackbar.make(rv, R.string.sign_in_success, Snackbar.LENGTH_LONG).show()
       } else {
         if (signInResult == null) {
@@ -138,12 +148,17 @@ class MainFragment : BaseFragment(), MainView {
   private fun setupBookList() {
     rv.layoutManager = LinearLayoutManager(requireContext())
     adapter = BooksAdapter(
+      presenter.bookCoverResolver,
       Builder<Book>().setQuery(presenter.books, Book::class.java)
         .setLifecycleOwner(viewLifecycleOwner)
         .build()
     )
 
     rv.adapter = adapter
+  }
+
+  override fun showReleaseBookButton() {
+    fab.visibility = VISIBLE
   }
 }
 

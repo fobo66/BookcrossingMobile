@@ -14,16 +14,11 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.location
+package com.bookcrossing.mobile.data
 
-import android.Manifest
-import android.location.Location
-import androidx.annotation.RequiresPermission
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.util.LocaleProvider
 import com.bookcrossing.mobile.util.ResourceProvider
-import com.bookcrossing.mobile.util.observe
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.mapbox.api.geocoding.v5.GeocodingCriteria
 import com.mapbox.api.geocoding.v5.MapboxGeocoding
 import com.mapbox.geojson.Point.fromLngLat
@@ -31,18 +26,11 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+/** Perform operations related to location */
 class LocationRepository @Inject constructor(
-  private val fusedLocationProviderClient: FusedLocationProviderClient,
   private val resourceProvider: ResourceProvider,
   private val localeProvider: LocaleProvider
 ) {
-
-  /** Load last location of the device. Throws error if location is null */
-  @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
-  fun getLastKnownUserLocation(): Single<Location> {
-    return fusedLocationProviderClient.lastLocation.observe()
-  }
-
   /** Geocode city from coordinates */
   fun resolveCity(latitude: Double, longitude: Double): Single<String> {
     val reverseGeocodeRequest = MapboxGeocoding.builder()

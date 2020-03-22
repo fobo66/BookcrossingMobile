@@ -16,15 +16,13 @@
 
 package com.bookcrossing.mobile.ui.stash
 
-import moxy.MvpView
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.StateStrategyType
+import com.google.firebase.storage.StorageReference
 
 /**
  * (c) 2019 Andrey Mukamolov <fobo66@protonmail.com>
  * Created 2019-09-16.
  */
-@StateStrategyType(AddToEndSingleStrategy::class)
-interface BookCoverView : MvpView {
-  fun loadCover()
+interface BookCoverView {
+  /** Load cover for the current book */
+  fun loadCover(coverReference: StorageReference)
 }

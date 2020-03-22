@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -17,9 +18,12 @@ package com.bookcrossing.mobile.presenters
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import com.bookcrossing.mobile.modules.App
+import com.bookcrossing.mobile.data.AuthRepository
+import com.bookcrossing.mobile.data.BooksReferencesRepository
 import com.bookcrossing.mobile.ui.main.MainView
+import com.bookcrossing.mobile.util.BookCoverResolver
 import com.bookcrossing.mobile.util.KEY_CONSENT_STATUS
+import com.bookcrossing.mobile.util.UNKNOWN_CONSENT_STATUS
 import com.google.ads.consent.ConsentStatus
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.AdRequest
@@ -30,18 +34,27 @@ import javax.inject.Inject
 /**
  * Presenter for main screen
  */
-
 @InjectViewState
-class MainPresenter : BasePresenter<MainView>() {
-
-  @Inject
-  lateinit var preferences: SharedPreferences
+class MainPresenter @Inject constructor(
+  private val preferences: SharedPreferences,
+  private val booksRepository: BooksReferencesRepository,
+  private val authRepository: AuthRepository,
+  val bookCoverResolver: BookCoverResolver
+) : BasePresenter<MainView>() {
 
   val books: DatabaseReference
-    get() = books()
+    get() = booksRepository.books()
 
-  init {
-    App.getComponent().inject(this)
+  val isAuthenticated: Boolean
+    get() = authRepository.isAuthenticated
+
+  override fun onFirstViewAttach() {
+    unsubscribeOnDestroy(authRepository.onAuthenticated()
+      .filter { it.currentUser != null }
+      .subscribe {
+        viewState.showReleaseBookButton()
+      }
+    )
   }
 
   fun checkForConsent(adBuilder: AdRequest.Builder) {
@@ -56,6 +69,8 @@ class MainPresenter : BasePresenter<MainView>() {
   }
 
   private fun loadConsentStatus(): ConsentStatus {
-    return ConsentStatus.valueOf(preferences.getString(KEY_CONSENT_STATUS, "UNKNOWN") ?: "UNKNOWN")
+    return ConsentStatus.valueOf(
+      preferences.getString(KEY_CONSENT_STATUS, UNKNOWN_CONSENT_STATUS) ?: UNKNOWN_CONSENT_STATUS
+    )
   }
 }

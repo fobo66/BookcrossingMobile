@@ -13,39 +13,58 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
 package com.bookcrossing.mobile.util.adapters
 
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
-import com.bookcrossing.mobile.R
+import com.bookcrossing.mobile.R.drawable
+import com.bookcrossing.mobile.R.id
+import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.modules.GlideApp
+import com.bookcrossing.mobile.ui.bookpreview.BookItemView
 import com.bookcrossing.mobile.ui.stash.BookCoverView
 import com.bookcrossing.mobile.util.listeners.BookListener
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.firebase.storage.StorageReference
 
-/** Viewholder for the stashed books list item */
-class StashedBookViewHolder(view: View) : BaseViewHolder(view), BookCoverView {
+/** Viewholder for the books list item */
+class BooksViewHolder(view: View) : BaseViewHolder(view), BookItemView, BookCoverView {
 
-  lateinit var key: String
-
-  @BindView(R.id.cover)
+  @BindView(id.cover)
   lateinit var cover: ImageView
+
+  @BindView(id.book_name)
+  lateinit var bookName: TextView
+
+  @BindView(id.author)
+  lateinit var author: TextView
+
+  @BindView(id.current_place)
+  lateinit var bookPlace: TextView
+
+  var key: String = ""
+
+  override fun bind(book: Book) {
+    bookName.text = book.name
+    bookPlace.text = book.positionName
+    author.text = book.author
+  }
 
   override fun loadCover(coverReference: StorageReference) {
     GlideApp.with(itemView.context)
       .load(coverReference)
-      .placeholder(R.drawable.ic_book_cover_placeholder)
-      .transition(withCrossFade())
+      .placeholder(drawable.ic_book_cover_placeholder)
+      .transition(DrawableTransitionOptions.withCrossFade())
       .thumbnail(0.6f)
       .into(cover)
   }
 
-  @OnClick(R.id.cover)
-  fun onCoverClick() {
+  /** Show detailed screen for the selected book */
+  @OnClick(id.card)
+  fun selectBook() {
     (itemView.context as BookListener).onBookSelected(key)
   }
 }

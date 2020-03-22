@@ -17,6 +17,7 @@
 package com.bookcrossing.mobile.ui.releasebook
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -42,7 +43,9 @@ import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.list.listItems
 import com.bookcrossing.mobile.BuildConfig
 import com.bookcrossing.mobile.R
+import com.bookcrossing.mobile.code.BookStickerSaver
 import com.bookcrossing.mobile.modules.GlideApp
+import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.BookReleasePresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.ui.map.LocationPicker
@@ -57,18 +60,22 @@ import com.jakewharton.rxbinding3.widget.textChanges
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
-import moxy.presenter.InjectPresenter
+import moxy.ktx.moxyPresenter
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit.MILLISECONDS
+import javax.inject.Inject
+import javax.inject.Provider
 
 /**
  * Screen for release new book
  */
 class BookReleaseFragment : BaseFragment(), BookReleaseView {
 
-  @InjectPresenter
-  lateinit var presenter: BookReleasePresenter
+  @Inject
+  lateinit var presenterProvider: Provider<BookReleasePresenter>
+
+  private val presenter: BookReleasePresenter by moxyPresenter { presenterProvider.get() }
 
   @BindView(R.id.cover)
   lateinit var cover: ImageView
@@ -98,6 +105,11 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
   lateinit var stickerDescription: String
 
   private lateinit var permissions: RxPermissions
+
+  override fun onAttach(context: Context) {
+    injector.inject(this)
+    super.onAttach(context)
+  }
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -346,7 +358,13 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
     val stickerBitmap = Bitmap.createBitmap(sticker.width, sticker.height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(stickerBitmap)
     sticker.draw(canvas)
-    presenter.saveSticker(stickerBitmap, stickerName, stickerDescription)
+    BookStickerSaver(
+      requireContext().contentResolver
+    ).saveSticker(
+      stickerName,
+      stickerDescription,
+      stickerBitmap
+    )
   }
 
   companion object {

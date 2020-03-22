@@ -16,17 +16,21 @@
 
 package com.bookcrossing.mobile.presenters
 
-import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.interactor.BookInteractor
 import com.bookcrossing.mobile.models.BookCode
 import com.bookcrossing.mobile.ui.acquire.BookAcquireView
-import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Completable
-import io.reactivex.Maybe
+import io.reactivex.Single
 import moxy.InjectViewState
+import javax.inject.Inject
 
+/** Presenter for acquire book screen */
 @InjectViewState
-class BookAcquirePresenter : BasePresenter<BookAcquireView>() {
+class BookAcquirePresenter @Inject constructor(
+  private val bookInteractor: BookInteractor
+) : BasePresenter<BookAcquireView>() {
 
+  /** Perform necessary actions for acquisition result, successful or not */
   fun handleAcquisitionResult(code: BookCode) {
     when (code) {
       is BookCode.CorrectCode -> viewState.onAcquired()
@@ -34,24 +38,9 @@ class BookAcquirePresenter : BasePresenter<BookAcquireView>() {
     }
   }
 
-  fun processBookAcquisition(key: String): Completable {
-    return RxFirebaseDatabase.setValue(books().child(key).child("free"), false)
-      .andThen(RxFirebaseDatabase.observeSingleValueEvent(books().child(key), Book::class.java))
-      .flatMapCompletable { book ->
-        RxFirebaseDatabase.setValue(
-          acquiredBooks().child(key), book
-        )
-      }
-  }
+  /** Perform necessary actions for acquiring book */
+  fun processBookAcquisition(key: String): Completable = bookInteractor.acquireBook(key)
 
-  fun validateCode(key: String): Maybe<BookCode> {
-    return RxFirebaseDatabase.observeSingleValueEvent(books())
-        .flatMap { dataSnapshot ->
-          if (!key.isBlank() && dataSnapshot.hasChild(key)) {
-            return@flatMap Maybe.just(BookCode.CorrectCode(key))
-          }
-
-          return@flatMap Maybe.just(BookCode.IncorrectCode)
-        }
-  }
+  /** Check if the given key is valid */
+  fun validateCode(key: String): Single<BookCode> = bookInteractor.checkBook(key)
 }

@@ -22,21 +22,23 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.annotation.IdRes
 import com.bookcrossing.mobile.R
-import com.bookcrossing.mobile.code.BookStickerSaver
 import com.bookcrossing.mobile.code.QrCodeEncoder
+import com.bookcrossing.mobile.data.AuthRepository
+import com.bookcrossing.mobile.data.LocationRepository
+import com.bookcrossing.mobile.interactor.BookInteractor
 import com.bookcrossing.mobile.models.BookBuilder
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.models.Date
 import com.bookcrossing.mobile.ui.releasebook.BookReleaseView
+import com.bookcrossing.mobile.util.BookCoverResolver
+import com.bookcrossing.mobile.util.EXTRA_KEY
 import com.bookcrossing.mobile.util.InputValidator
 import com.bookcrossing.mobile.util.LengthRule
 import com.bookcrossing.mobile.util.NotEmptyRule
+import com.bookcrossing.mobile.util.PACKAGE_NAME
 import com.bookcrossing.mobile.util.ValidationResult
-import com.crashlytics.android.Crashlytics
 import com.google.firebase.storage.StorageMetadata
 import com.google.zxing.WriterException
-import durdinapps.rxfirebase2.RxFirebaseAuth
-import durdinapps.rxfirebase2.RxFirebaseDatabase
 import durdinapps.rxfirebase2.RxFirebaseStorage
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -49,12 +51,18 @@ import java.io.File
 import java.io.IOException
 import java.util.Calendar
 import java.util.UUID
+import javax.inject.Inject
 
 /**
  * Presenter for book release view
  */
 @InjectViewState
-class BookReleasePresenter : BasePresenter<BookReleaseView>() {
+class BookReleasePresenter @Inject constructor(
+  private val bookInteractor: BookInteractor,
+  private val authRepository: AuthRepository,
+  private val locationRepository: LocationRepository,
+  private val bookCoverResolver: BookCoverResolver
+) : BasePresenter<BookReleaseView>() {
 
   private val isLocationPicked = BehaviorSubject.createDefault(false)
 
@@ -67,10 +75,10 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
     val metadata = StorageMetadata.Builder()
       .setContentType("image/jpeg")
       .build()
-    return RxFirebaseAuth.observeAuthState(firebaseWrapper.auth)
+    return authRepository.onAuthenticated()
       .filter { auth -> auth.currentUser != null }
       .switchMapSingle {
-        RxFirebaseStorage.putFile(resolveCover(key), tempCoverUri, metadata)
+        RxFirebaseStorage.putFile(bookCoverResolver.resolveCover(key), tempCoverUri, metadata)
           .map { key }
       }
       .onErrorReturn { key }
@@ -132,18 +140,9 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   fun releaseBook(): Observable<String> {
     setPublicationDate()
     val newBook = book.createBook()
-    val newBookReference = books().push()
-    val key = newBookReference.key.orEmpty()
 
-    return RxFirebaseDatabase.setValue(newBookReference, newBook)
-      .andThen(RxFirebaseDatabase.setValue(places(key), newBook.position))
-      .andThen(
-        RxFirebaseDatabase.setValue(
-          placesHistory(key).child("${newBook.city}, ${newBook.positionName}"),
-          newBook.position
-        )
-      )
-      .andThen(uploadCover(key))
+    return bookInteractor.releaseBook(newBook)
+      .flatMapObservable { uploadCover(it) }
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .doOnNext { newKey ->
@@ -151,7 +150,6 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
         viewState.onReleased(newKey)
       }
       .doOnError {
-        Crashlytics.logException(it)
         Timber.e(it, "Failed to release book")
         viewState.onFailedToRelease()
       }
@@ -180,30 +178,13 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
   }
 
   /**
-   * Save generated sticker to device's default location for pictures
-   *
-   * @param stickerName Image name
-   * @param stickerDescription Image description saved to metadata
-   * @param sticker Generated image of the sticker
-   */
-  fun saveSticker(
-    sticker: Bitmap,
-    stickerName: String,
-    stickerDescription: String
-  ) {
-    BookStickerSaver(systemServicesWrapper.context.contentResolver).saveSticker(
-      stickerName, stickerDescription, sticker
-    )
-  }
-
-  /**
    * Determine the city of the location of the book
    */
   fun resolveCity(coordinates: Coordinates): Single<String> {
-    return systemServicesWrapper.locationRepository.resolveCity(
-      coordinates.lat,
-      coordinates.lng
-    )
+    return locationRepository.resolveCity(
+        coordinates.lat,
+        coordinates.lng
+      )
       .doOnError(Timber::e)
   }
 
@@ -224,6 +205,15 @@ class BookReleasePresenter : BasePresenter<BookReleaseView>() {
       R.id.input_position -> book.setPositionName(input)
       R.id.input_description -> book.setDescription(input)
     }
+  }
+
+  private fun buildBookUri(key: String): Uri {
+    return Uri.Builder()
+      .scheme("bookcrossing")
+      .authority(PACKAGE_NAME)
+      .path("book")
+      .appendQueryParameter(EXTRA_KEY, key)
+      .build()
   }
 
   companion object {

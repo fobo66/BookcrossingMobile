@@ -25,6 +25,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bookcrossing.mobile.R
+import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.ScanPresenter
 import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView
@@ -32,7 +33,9 @@ import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.subjects.PublishSubject
-import moxy.presenter.InjectPresenter
+import moxy.ktx.moxyPresenter
+import javax.inject.Inject
+import javax.inject.Provider
 
 /**
  * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>
@@ -41,8 +44,10 @@ import moxy.presenter.InjectPresenter
 
 class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadListener {
 
-  @InjectPresenter
-  lateinit var presenter: ScanPresenter
+  @Inject
+  lateinit var presenterProvider: Provider<ScanPresenter>
+
+  private val presenter: ScanPresenter by moxyPresenter { presenterProvider.get() }
 
   @BindView(R.id.qrContainer)
   lateinit var container: CoordinatorLayout
@@ -53,6 +58,7 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
   private val retryPermissionAction: PublishSubject<Boolean> = PublishSubject.create()
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    injector.inject(this)
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_scan)
     ButterKnife.bind(this)

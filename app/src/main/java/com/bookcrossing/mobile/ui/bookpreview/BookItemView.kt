@@ -17,16 +17,10 @@ package com.bookcrossing.mobile.ui.bookpreview
 
 import com.bookcrossing.mobile.models.Book
 
-import moxy.MvpView
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.StateStrategyType
-
 /**
  * View for books list item
  */
-@StateStrategyType(AddToEndSingleStrategy::class)
-interface BookItemView : MvpView {
-
+interface BookItemView {
   /**
    * Fill view with book info
    */

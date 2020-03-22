@@ -14,30 +14,19 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.location
+package com.bookcrossing.mobile.util
 
-import io.reactivex.Single
-import org.junit.Test
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import javax.inject.Inject
+import javax.inject.Singleton
 
-/** Test hypotheses behind LocationRepository */
-class LocationRepositoryTest {
+/** Entity for providing cover images for the books */
+@Singleton
+class BookCoverResolver @Inject constructor(
+  private val storage: FirebaseStorage
+) {
 
-  @Test
-  fun testMaybeNotEmptyList() {
-    Single.just(listOf(1, 2, 3))
-      .filter { it.isNotEmpty() }
-      .map { it[0] }
-      .test()
-      .assertResult(1)
-  }
-
-  @Test
-  fun testMaybeEmptyList() {
-    Single.just(emptyList<Int>())
-      .filter { it.isNotEmpty() }
-      .map { it[0] }
-      .switchIfEmpty(Single.just(1))
-      .test()
-      .assertResult(1)
-  }
+  /** Load Firebase Cloud Storage reference to the cover image of the given book */
+  fun resolveCover(key: String): StorageReference = storage.getReference("$key.jpg")
 }

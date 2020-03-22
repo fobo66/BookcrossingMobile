@@ -16,15 +16,6 @@
 
 package com.bookcrossing.mobile.presenters
 
-import android.net.Uri
-import com.bookcrossing.mobile.modules.App
-import com.bookcrossing.mobile.util.DEFAULT_USER
-import com.bookcrossing.mobile.util.EXTRA_KEY
-import com.bookcrossing.mobile.util.FirebaseWrapper
-import com.bookcrossing.mobile.util.PACKAGE_NAME
-import com.bookcrossing.mobile.util.SystemServicesWrapper
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.storage.StorageReference
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import moxy.MvpPresenter
@@ -36,21 +27,6 @@ import moxy.MvpView
 
 open class BasePresenter<V : MvpView> : MvpPresenter<V>() {
   private val compositeSubscription = CompositeDisposable()
-  protected var firebaseWrapper: FirebaseWrapper = FirebaseWrapper()
-  protected var systemServicesWrapper: SystemServicesWrapper = SystemServicesWrapper()
-
-  private val userId: String
-    get() = firebaseWrapper.auth.currentUser?.uid ?: DEFAULT_USER
-
-  val isAuthenticated: Boolean
-    get() = firebaseWrapper.auth.currentUser != null
-
-  init {
-    App.getComponent()
-      .inject(firebaseWrapper)
-    App.getComponent()
-      .inject(systemServicesWrapper)
-  }
 
   protected fun unsubscribeOnDestroy(subscription: Disposable) {
     compositeSubscription.add(subscription)
@@ -59,56 +35,5 @@ open class BasePresenter<V : MvpView> : MvpPresenter<V>() {
   override fun onDestroy() {
     super.onDestroy()
     compositeSubscription.clear()
-  }
-
-  protected fun books(): DatabaseReference {
-    return firebaseWrapper.database.getReference("books")
-  }
-
-  protected fun stash(): DatabaseReference {
-    return firebaseWrapper.database.getReference("stash")
-      .child(userId)
-  }
-
-  protected fun acquiredBooks(): DatabaseReference {
-    return firebaseWrapper.database.getReference("acquiredBooks")
-      .child(userId)
-  }
-
-  protected fun places(): DatabaseReference {
-    return firebaseWrapper.database.getReference("places")
-  }
-
-  protected fun places(key: String): DatabaseReference {
-    return firebaseWrapper.database.getReference("places")
-      .child(key)
-  }
-
-  protected fun placesHistory(key: String): DatabaseReference {
-    return firebaseWrapper.database.getReference("placesHistory")
-      .child(key)
-  }
-
-  /**
-   * Get Firebase Storage reference to the image for the given key
-   *
-   * @param key Book key
-   */
-  fun resolveCover(key: String): StorageReference {
-    return firebaseWrapper.storage.getReference("$key.jpg")
-  }
-
-  /**
-   * Construct URI for book
-   *
-   * @param key Book key
-   */
-  fun buildBookUri(key: String): Uri {
-    return Uri.Builder()
-      .scheme("bookcrossing")
-      .authority(PACKAGE_NAME)
-      .path("book")
-      .appendQueryParameter(EXTRA_KEY, key)
-      .build()
   }
 }

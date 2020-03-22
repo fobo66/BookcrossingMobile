@@ -19,8 +19,9 @@ package com.bookcrossing.mobile.util
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.util.ValidationResult.Invalid
 import com.bookcrossing.mobile.util.ValidationResult.OK
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.instanceOf
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class LengthRuleTest {

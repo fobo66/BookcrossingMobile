@@ -18,13 +18,18 @@ package com.bookcrossing.mobile.components
 
 import android.content.Context
 import com.bookcrossing.mobile.modules.ApiModule
-import com.bookcrossing.mobile.modules.LocationModule
 import com.bookcrossing.mobile.modules.PrefModule
 import com.bookcrossing.mobile.modules.ProvidersModule
-import com.bookcrossing.mobile.presenters.MainPresenter
-import com.bookcrossing.mobile.presenters.SearchPresenter
-import com.bookcrossing.mobile.util.FirebaseWrapper
-import com.bookcrossing.mobile.util.SystemServicesWrapper
+import com.bookcrossing.mobile.ui.acquire.BookAcquireActivity
+import com.bookcrossing.mobile.ui.bookpreview.BookActivity
+import com.bookcrossing.mobile.ui.main.MainFragment
+import com.bookcrossing.mobile.ui.map.MapActivity
+import com.bookcrossing.mobile.ui.profile.ProfileFragment
+import com.bookcrossing.mobile.ui.releasebook.BookReleaseFragment
+import com.bookcrossing.mobile.ui.releasebook.ReleaseAcquiredBookFragment
+import com.bookcrossing.mobile.ui.scan.ScanActivity
+import com.bookcrossing.mobile.ui.search.SearchFragment
+import com.bookcrossing.mobile.ui.stash.StashFragment
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -34,18 +39,30 @@ import javax.inject.Singleton
  * Created by fobo66 on 15.11.2016.
  */
 @Singleton
-@Component(modules = [PrefModule::class, LocationModule::class, ApiModule::class, ProvidersModule::class])
+@Component(modules = [PrefModule::class, ApiModule::class, ProvidersModule::class])
 interface AppComponent {
   @Component.Factory
   interface Factory {
     fun create(@BindsInstance context: Context): AppComponent
   }
 
-  fun inject(firebaseWrapper: FirebaseWrapper)
+  fun inject(scanActivity: ScanActivity)
 
-  fun inject(systemServicesWrapper: SystemServicesWrapper)
+  fun inject(bookActivity: BookActivity)
 
-  fun inject(presenter: MainPresenter)
+  fun inject(mapActivity: MapActivity)
 
-  fun inject(presenter: SearchPresenter)
+  fun inject(bookAcquireActivity: BookAcquireActivity)
+
+  fun inject(mainFragment: MainFragment)
+
+  fun inject(profileFragment: ProfileFragment)
+
+  fun inject(stashFragment: StashFragment)
+
+  fun inject(searchFragment: SearchFragment)
+
+  fun inject(bookReleaseFragment: BookReleaseFragment)
+
+  fun inject(releaseAcquiredBookFragment: ReleaseAcquiredBookFragment)
 }

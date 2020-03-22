@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -13,27 +14,25 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.presenters
+package com.bookcrossing.mobile.util
 
-import com.bookcrossing.mobile.ui.stash.BookCoverView
-
-import moxy.InjectViewState
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.Marker
+import io.reactivex.Observable
 
 /**
- * Presenter for particular stashed book view
+ * Observe marker click events reactively
  */
-@InjectViewState
-class StashedBookItemPresenter : BasePresenter<BookCoverView>() {
+fun GoogleMap.onMarkerClicked(): Observable<Marker> = Observable.create { emitter ->
+  setOnMarkerClickListener {
+    if (!emitter.isDisposed) {
+      emitter.onNext(it)
+    }
 
-  /**
-   * Remove book from user's watch list
-   */
-  fun unstashCurrentBook(key: String) {
-    stash().child(key).removeValue()
-    firebaseWrapper.fcm.unsubscribeFromTopic(key)
+    true
   }
 
-  companion object {
-    const val TAG = "StashedBookItemPresenter"
+  emitter.setCancellable {
+    setOnMarkerClickListener(null)
   }
 }
