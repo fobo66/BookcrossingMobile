@@ -19,8 +19,6 @@ import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.ui.map.MvpMapView
-import durdinapps.rxfirebase2.DataSnapshotMapper
-import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Maybe
 import moxy.InjectViewState
 import timber.log.Timber
@@ -39,11 +37,7 @@ class MapPresenter @Inject constructor(
   /** Load coordinates for pins */
   fun loadBooksPositions() {
     unsubscribeOnDestroy(
-      RxFirebaseDatabase.observeValueEvent(
-          booksRepository.places(), DataSnapshotMapper.mapOf(
-            Coordinates::class.java
-          )
-        )
+        booksRepository.loadPlaces()
         .flatMapIterable<Entry<String, Coordinates>> { placesMap: LinkedHashMap<String, Coordinates> -> placesMap.entries }
         .subscribe(
           { place: Entry<String, Coordinates> ->
@@ -60,11 +54,5 @@ class MapPresenter @Inject constructor(
   }
 
   /** Load details for the given book */
-  fun loadBookDetails(key: String): Maybe<Book> {
-    return RxFirebaseDatabase.observeSingleValueEvent(
-      booksRepository.books().child(
-        key
-      ), Book::class.java
-    )
-  }
+  fun loadBookDetails(key: String): Maybe<Book> = booksRepository.loadBook(key)
 }

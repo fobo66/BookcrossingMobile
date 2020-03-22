@@ -167,7 +167,7 @@ class BookActivity : BaseActivity(), BookView,
   override fun onResume() {
     super.onResume()
 
-    presenter.subscribeToBookReference(key)
+    presenter.loadBook(key)
     presenter.checkStashingState(key)
   }
 

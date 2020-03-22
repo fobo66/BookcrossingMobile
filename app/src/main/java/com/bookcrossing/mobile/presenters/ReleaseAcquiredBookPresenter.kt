@@ -28,7 +28,6 @@ import com.bookcrossing.mobile.util.LengthRule
 import com.bookcrossing.mobile.util.NotEmptyRule
 import com.bookcrossing.mobile.util.ValidationResult
 import com.google.android.gms.maps.model.LatLng
-import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -58,10 +57,7 @@ class ReleaseAcquiredBookPresenter @Inject constructor(
   fun loadBook(key: String?) {
     if (!key.isNullOrEmpty()) {
       unsubscribeOnDestroy(
-        RxFirebaseDatabase.observeSingleValueEvent(
-            booksRepository.books().child(key),
-            Book::class.java
-          )
+        booksRepository.loadBook(key)
           .subscribe {
             book = it
             this.key = key

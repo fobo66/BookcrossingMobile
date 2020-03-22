@@ -116,7 +116,7 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
           codeInput.textChanges()
             .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         ) { _, code: CharSequence -> code.toString() }
-        .flatMapMaybe { code: String -> presenter.validateCode(code) }
+        .flatMapSingle { code: String -> presenter.validateCode(code) }
         .flatMap { code: BookCode ->
           if (code is CorrectCode) {
             presenter.processBookAcquisition(code.code)

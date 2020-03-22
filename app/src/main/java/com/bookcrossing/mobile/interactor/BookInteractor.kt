@@ -19,6 +19,7 @@ package com.bookcrossing.mobile.interactor
 import com.bookcrossing.mobile.data.AuthRepository
 import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.models.BookCode
 import com.bookcrossing.mobile.models.Coordinates
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -67,4 +68,30 @@ class BookInteractor @Inject constructor(
         booksRepository.removeAcquiredBook(authRepository.userId, key)
       )
   }
+
+  /**
+   * Performs actions needed to indicate that user has acquired given book
+   *
+   * @param key Key of the book
+   */
+  fun acquireBook(key: String): Completable {
+    val bookDataToUpdate = mapOf(
+      "free" to false
+    )
+
+    return booksRepository.updateBookFields(key, bookDataToUpdate)
+      .andThen(
+        booksRepository.loadBook(key)
+      )
+      .flatMapCompletable { book ->
+        booksRepository.saveAcquiredBook(authRepository.userId, key, book)
+      }
+  }
+
+  /**
+   * Check if given book key is correct
+   *
+   * @param key Key of the book
+   */
+  fun checkBook(key: String): Single<BookCode> = booksRepository.checkBook(key)
 }

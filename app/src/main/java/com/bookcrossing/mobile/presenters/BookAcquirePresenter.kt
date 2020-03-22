@@ -16,22 +16,18 @@
 
 package com.bookcrossing.mobile.presenters
 
-import com.bookcrossing.mobile.data.AuthRepository
-import com.bookcrossing.mobile.data.BooksRepository
-import com.bookcrossing.mobile.models.Book
+import com.bookcrossing.mobile.interactor.BookInteractor
 import com.bookcrossing.mobile.models.BookCode
 import com.bookcrossing.mobile.ui.acquire.BookAcquireView
-import com.bookcrossing.mobile.util.ignoreElement
-import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Completable
-import io.reactivex.Maybe
+import io.reactivex.Single
 import moxy.InjectViewState
 import javax.inject.Inject
 
+/** Presenter for acquire book screen */
 @InjectViewState
 class BookAcquirePresenter @Inject constructor(
-  private val booksRepository: BooksRepository,
-  private val authRepository: AuthRepository
+  private val bookInteractor: BookInteractor
 ) : BasePresenter<BookAcquireView>() {
 
   fun handleAcquisitionResult(code: BookCode) {
@@ -41,28 +37,7 @@ class BookAcquirePresenter @Inject constructor(
     }
   }
 
-  fun processBookAcquisition(key: String): Completable {
-    return booksRepository.books().child(key).child("free").setValue(false).ignoreElement()
-      .andThen(
-        RxFirebaseDatabase.observeSingleValueEvent(
-          booksRepository.books().child(key),
-          Book::class.java
-        )
-      )
-      .flatMapCompletable { book ->
-        booksRepository.acquiredBooks(authRepository.userId).child(key).setValue(book)
-          .ignoreElement()
-      }
-  }
+  fun processBookAcquisition(key: String): Completable = bookInteractor.acquireBook(key)
 
-  fun validateCode(key: String): Maybe<BookCode> {
-    return RxFirebaseDatabase.observeSingleValueEvent(booksRepository.books())
-      .flatMap { dataSnapshot ->
-        if (!key.isBlank() && dataSnapshot.hasChild(key)) {
-          return@flatMap Maybe.just(BookCode.CorrectCode(key))
-        }
-
-        return@flatMap Maybe.just(BookCode.IncorrectCode)
-      }
-  }
+  fun validateCode(key: String): Single<BookCode> = bookInteractor.checkBook(key)
 }

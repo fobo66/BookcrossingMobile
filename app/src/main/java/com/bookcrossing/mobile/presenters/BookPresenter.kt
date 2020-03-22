@@ -16,13 +16,12 @@
 
 package com.bookcrossing.mobile.presenters
 
+import com.bookcrossing.mobile.data.BooksReferencesRepository
 import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.interactor.StashInteractor
-import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.ui.bookpreview.BookView
 import com.bookcrossing.mobile.util.BookCoverResolver
 import com.google.firebase.database.DatabaseReference
-import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Observable
 import moxy.InjectViewState
 import timber.log.Timber
@@ -32,16 +31,14 @@ import javax.inject.Inject
 class BookPresenter @Inject constructor(
   private val booksRepository: BooksRepository,
   private val stashInteractor: StashInteractor,
+  private val booksReferencesRepository: BooksReferencesRepository,
   val bookCoverResolver: BookCoverResolver
 ) : BasePresenter<BookView>() {
 
   /** Load book details */
-  fun subscribeToBookReference(key: String) {
+  fun loadBook(key: String) {
     unsubscribeOnDestroy(
-      RxFirebaseDatabase.observeSingleValueEvent(
-          booksRepository.books().child(key),
-          Book::class.java
-        )
+      booksRepository.loadBook(key)
         .subscribe({ book -> viewState.onBookLoaded(book) }, { throwable ->
           Timber.e(throwable, "Failed to load book")
           viewState.onErrorToLoadBook()
@@ -57,6 +54,7 @@ class BookPresenter @Inject constructor(
       })
   }
 
+  /** Add or remove book from user's stash */
   fun handleBookStashing(key: String): Observable<Unit> {
     return stashInteractor.checkStashedState(key)
       .doOnSuccess { stashed -> updateStashButtonState(!stashed) }
@@ -78,7 +76,8 @@ class BookPresenter @Inject constructor(
   }
 
   /** Load book's travels */
-  fun getPlacesHistory(key: String): DatabaseReference = booksRepository.placesHistory(key)
+  fun getPlacesHistory(key: String): DatabaseReference =
+    booksReferencesRepository.placesHistory(key)
 
   /** Send logs for abuse */
   fun reportAbuse(key: String) {
