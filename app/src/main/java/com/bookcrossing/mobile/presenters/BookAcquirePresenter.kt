@@ -30,6 +30,7 @@ class BookAcquirePresenter @Inject constructor(
   private val bookInteractor: BookInteractor
 ) : BasePresenter<BookAcquireView>() {
 
+  /** Perform necessary actions for acquisition result, successful or not */
   fun handleAcquisitionResult(code: BookCode) {
     when (code) {
       is BookCode.CorrectCode -> viewState.onAcquired()
@@ -37,7 +38,9 @@ class BookAcquirePresenter @Inject constructor(
     }
   }
 
+  /** Perform necessary actions for acquiring book */
   fun processBookAcquisition(key: String): Completable = bookInteractor.acquireBook(key)
 
+  /** Check if the given key is valid */
   fun validateCode(key: String): Single<BookCode> = bookInteractor.checkBook(key)
 }
