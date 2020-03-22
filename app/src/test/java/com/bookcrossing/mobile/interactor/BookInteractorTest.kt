@@ -59,7 +59,7 @@ class BookInteractorTest {
 
     every {
       booksRepository.newBook(any())
-    } returns Single.just("test")
+    } returns Single.just(TEST_KEY)
 
     every {
       booksRepository.loadBook(any())
@@ -80,6 +80,10 @@ class BookInteractorTest {
       .test()
       .assertError(IllegalStateException::class.java)
       .dispose()
+
+    verify(inverse = true) {
+      booksRepository.saveBookPosition(TEST_KEY, "test", "test", any())
+    }
   }
 
   @Test
@@ -98,27 +102,41 @@ class BookInteractorTest {
       .test()
       .assertComplete()
       .dispose()
+
+    verify {
+      booksRepository.saveBookPosition(TEST_KEY, "test", "test", any())
+    }
+
   }
 
   @Test
   fun releaseAcquiredBook() {
-    bookInteractor.releaseAcquiredBook("key", "newPosition", "newCity", Coordinates())
-      .subscribeOn(Schedulers.trampoline())
-      .test()
-      .assertNoErrors()
-      .dispose()
-  }
-
-  @Test
-  fun acquireBook() {
-    bookInteractor.acquireBook("key")
+    bookInteractor.releaseAcquiredBook(TEST_KEY, "newPosition", "newCity", Coordinates())
       .subscribeOn(Schedulers.trampoline())
       .test()
       .assertNoErrors()
       .dispose()
 
     verify {
-      booksRepository.saveAcquiredBook(any(), any(), any())
+      booksRepository.removeAcquiredBook(any(), TEST_KEY)
+    }
+
+    verify {
+      booksRepository.saveBookPosition(TEST_KEY, "newCity", "newPosition", any())
+    }
+
+  }
+
+  @Test
+  fun acquireBook() {
+    bookInteractor.acquireBook(TEST_KEY)
+      .subscribeOn(Schedulers.trampoline())
+      .test()
+      .assertNoErrors()
+      .dispose()
+
+    verify {
+      booksRepository.saveAcquiredBook(any(), TEST_KEY, any())
     }
 
   }
@@ -126,13 +144,17 @@ class BookInteractorTest {
   @Test
   fun checkBook() {
     every {
-      booksRepository.checkBook("test")
-    } returns Single.just(CorrectCode("test"))
+      booksRepository.checkBook(TEST_KEY)
+    } returns Single.just(CorrectCode(TEST_KEY))
 
-    bookInteractor.checkBook("test")
+    bookInteractor.checkBook(TEST_KEY)
       .subscribeOn(Schedulers.trampoline())
       .test()
       .assertNoErrors()
       .dispose()
+  }
+
+  companion object {
+    private const val TEST_KEY = "key"
   }
 }
