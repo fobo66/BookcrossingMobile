@@ -66,6 +66,7 @@ import com.jakewharton.rxbinding3.view.clicks
 import dev.chrisbanes.insetter.ViewState
 import dev.chrisbanes.insetter.doOnApplyWindowInsets
 import moxy.ktx.moxyPresenter
+import timber.log.Timber
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 import javax.inject.Provider
@@ -144,7 +145,7 @@ class BookActivity : BaseActivity(), BookView,
       favorite.clicks()
         .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         .flatMap { presenter.handleBookStashing(key) }
-        .subscribe()
+        .subscribe({}, Timber::e)
     )
     subscriptions.add(
       acquireButton.clicks()

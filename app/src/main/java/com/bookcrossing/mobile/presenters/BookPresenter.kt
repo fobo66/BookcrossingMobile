@@ -62,13 +62,11 @@ class BookPresenter @Inject constructor(
         if (isStashed) {
           stashInteractor.unstashBook(key)
             .doOnError {
-              Timber.e(it)
               updateStashButtonState(isStashed)
             }
         } else {
           stashInteractor.stashBook(key)
             .doOnError {
-              Timber.e(it)
               updateStashButtonState(isStashed)
             }
         }
