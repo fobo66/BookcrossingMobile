@@ -42,8 +42,8 @@
     <action
       android:id="@+id/action_mainFragment_to_bookActivity"
       app:destination="@id/bookActivity"
-      app:enterAnim="@anim/fui_slide_in_right"
-      app:exitAnim="@anim/fui_slide_out_left" />
+      app:enterAnim="@anim/fragment_open_enter"
+      app:exitAnim="@anim/fragment_open_exit" />
     <action
       android:id="@+id/action_mainFragment_to_mapActivity"
       app:destination="@id/mapActivity" />
@@ -55,19 +55,27 @@
       app:destination="@id/profileFragment" />
     <action
       android:id="@+id/action_mainFragment_to_stashFragment"
-      app:destination="@id/stashFragment" />
+      app:destination="@id/stashFragment"
+      app:enterAnim="@anim/fragment_fade_enter"
+      app:exitAnim="@anim/fragment_fade_exit"
+      app:popEnterAnim="@anim/fragment_close_enter"
+      app:popExitAnim="@anim/fragment_close_exit" />
     <action
       android:id="@+id/action_mainFragment_pop"
       app:popUpTo="@id/mainFragment"
       app:popUpToInclusive="true" />
     <action
       android:id="@+id/action_mainFragment_self"
-      app:destination="@+id/mainFragment" />
+      app:destination="@+id/mainFragment"
+      app:enterAnim="@anim/fragment_fade_enter"
+      app:exitAnim="@anim/fragment_fade_exit"
+      app:popEnterAnim="@anim/fragment_fade_enter"
+      app:popExitAnim="@anim/fragment_fade_exit" />
     <action
       android:id="@+id/action_mainFragment_to_bookCreateFragment"
       app:destination="@id/bookReleaseFragment"
-      app:enterAnim="@anim/fui_slide_in_right"
-      app:exitAnim="@anim/fui_slide_out_left" />
+      app:enterAnim="@anim/fragment_fade_enter"
+      app:exitAnim="@anim/fragment_fade_exit" />
     <action
       android:id="@+id/action_mainFragment_to_searchFragment"
       app:destination="@id/searchFragment" />
@@ -93,7 +101,9 @@
     tools:layout="@layout/fragment_profile">
     <action
       android:id="@+id/action_profileFragment_to_releaseAcquiredBookFragment"
-      app:destination="@id/releaseAcquiredBookFragment" />
+      app:destination="@id/releaseAcquiredBookFragment"
+      app:enterAnim="@anim/fragment_fade_enter"
+      app:exitAnim="@anim/fragment_fade_exit" />
   </fragment>
   <fragment
     android:id="@+id/stashFragment"

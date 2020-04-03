@@ -23,9 +23,11 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.ActivityNavigatorExtras
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -197,7 +199,13 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
 
   override fun onBookSelected(bookKey: String) {
     val bookActivityArgs = bundleOf(EXTRA_KEY to bookKey)
-    findNavController(R.id.nav_host_fragment).navigate(R.id.bookActivity, bookActivityArgs)
+    val extras = ActivityNavigatorExtras(ActivityOptionsCompat.makeSceneTransitionAnimation(this))
+    findNavController(R.id.nav_host_fragment).navigate(
+      R.id.bookActivity,
+      bookActivityArgs,
+      null,
+      extras
+    )
   }
 
   override fun onBookReleased(bookKey: String) {
