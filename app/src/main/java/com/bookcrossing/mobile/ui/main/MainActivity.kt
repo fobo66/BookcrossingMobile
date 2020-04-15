@@ -161,15 +161,15 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
 
   private fun resolveNavigationToFragment(savedInstanceState: Bundle?) {
     if (intent != null) {
-      val whereToGo = intent.getStringExtra(EXTRA_TARGET_FRAGMENT)
+      val destinationFragment = intent.getStringExtra(EXTRA_TARGET_FRAGMENT)
       when {
-        whereToGo != null -> when {
+        destinationFragment != null -> when {
           "BookReleaseFragment".equals(
-            whereToGo,
+            destinationFragment,
             ignoreCase = true
           ) -> navController.navigate(R.id.bookReleaseFragment)
           "ProfileFragment".equals(
-            whereToGo,
+            destinationFragment,
             ignoreCase = true
           ) -> navController.navigate(R.id.profileFragment)
         }
