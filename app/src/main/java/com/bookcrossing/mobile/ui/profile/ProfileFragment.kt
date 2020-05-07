@@ -96,6 +96,11 @@ class ProfileFragment : BaseFragment(), ProfileView {
     }
   }
 
+  override fun onDestroyView() {
+    acquiredBooksList.adapter = null
+    super.onDestroyView()
+  }
+
   private fun loadProfileInfo() {
     adapter.startListening()
     GlideApp.with(this)
