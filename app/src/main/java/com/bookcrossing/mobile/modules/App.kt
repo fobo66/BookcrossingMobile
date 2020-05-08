@@ -17,15 +17,12 @@ package com.bookcrossing.mobile.modules
 
 import androidx.multidex.MultiDexApplication
 import com.bookcrossing.mobile.BuildConfig
-import com.bookcrossing.mobile.R.string
 import com.bookcrossing.mobile.components.AppComponent
 import com.bookcrossing.mobile.components.DaggerAppComponent
 import com.bookcrossing.mobile.util.CrashlyticsTree
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.core.CrashlyticsCore.Builder
 import com.google.android.gms.ads.MobileAds
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.FirebaseDatabase
-import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 
@@ -41,15 +38,12 @@ class App : MultiDexApplication(), DaggerComponentProvider {
   override fun onCreate() {
     super.onCreate()
     FirebaseDatabase.getInstance().setPersistenceEnabled(true)
-    MobileAds.initialize(this, resources.getString(string.admob_app_id))
+    MobileAds.initialize(this)
+
     if (BuildConfig.DEBUG) {
       Timber.plant(DebugTree())
     } else {
-      Timber.plant(CrashlyticsTree())
+      Timber.plant(CrashlyticsTree(FirebaseCrashlytics.getInstance()))
     }
-    val crashlyticsKit = Crashlytics.Builder().core(
-      Builder().disabled(BuildConfig.DEBUG).build()
-    ).build()
-    Fabric.with(this, crashlyticsKit)
   }
 }

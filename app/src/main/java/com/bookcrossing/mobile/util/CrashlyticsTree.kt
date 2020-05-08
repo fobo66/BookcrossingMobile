@@ -16,18 +16,17 @@
 
 package com.bookcrossing.mobile.util
 
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import timber.log.Timber
 
 /**
  * Log exceptions to Crashlytics
  * */
-class CrashlyticsTree : Timber.Tree() {
+class CrashlyticsTree(private val crashlytics: FirebaseCrashlytics) : Timber.Tree() {
   override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-    if (t == null) {
-      Crashlytics.log(priority, tag, message)
-    } else {
-      Crashlytics.logException(t)
+    crashlytics.log(message)
+    if (t != null) {
+      crashlytics.recordException(t)
     }
   }
 }
