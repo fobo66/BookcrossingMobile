@@ -137,9 +137,7 @@ class MapsFragment : BaseFragment(), MvpMapView, OnInfoWindowClickListener {
     MaterialDialog(requireContext()).show {
       message(string.failed_to_load_books_message)
       title(string.error_dialog_title)
-      positiveButton(
-        string.ok
-      ) { it.dismiss() }
+      positiveButton(string.ok) { it.dismiss() }
     }
   }
 
