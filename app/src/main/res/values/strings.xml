@@ -147,6 +147,7 @@
   <string name="profile_picture_description">Profile picture</string>
   <string name="book_released_book_message">Successfully released book</string>
   <string name="book_acquired_success_message">Book was succesfully acquired. Enjoy!</string>
+  <string name="book_location">Book location</string>
   <string-array name="cover_chooser_dialog_items">
     <item>From gallery</item>
     <item>From camera</item>

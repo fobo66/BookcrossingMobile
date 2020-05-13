@@ -17,11 +17,12 @@ package com.bookcrossing.mobile.util.adapters
 
 import android.view.View
 import android.widget.TextView
+import androidx.fragment.app.FragmentActivity
 import butterknife.BindView
 import butterknife.OnClick
 import com.bookcrossing.mobile.R.id
 import com.bookcrossing.mobile.models.Coordinates
-import com.bookcrossing.mobile.ui.map.MapActivity.Companion.getStartIntent
+import com.bookcrossing.mobile.ui.map.BookLocationBottomSheet
 
 /**
  * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>
@@ -33,6 +34,9 @@ class PlacesHistoryViewHolder(view: View) : BaseViewHolder(view) {
 
   private var coordinates: Coordinates? = null
 
+  /**
+   * Assign historical book position info to view
+   */
   fun bind(positionName: String?, coordinates: Coordinates) {
     this.coordinates = coordinates
     this.positionName.text = positionName
@@ -40,7 +44,10 @@ class PlacesHistoryViewHolder(view: View) : BaseViewHolder(view) {
 
   @OnClick(id.card)
   fun goToPlace() {
-    itemView.context
-      .startActivity(getStartIntent(itemView.context, coordinates))
+    BookLocationBottomSheet.newInstance(coordinates)
+      .show(
+        (itemView.context as FragmentActivity).supportFragmentManager,
+        BookLocationBottomSheet.TAG
+      )
   }
 }

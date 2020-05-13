@@ -123,6 +123,7 @@
   <string name="profile_picture_description">Аватарка</string>
   <string name="book_released_book_message">Книга успешно освобождена</string>
   <string name="book_acquired_success_message">Вы успешно взяли книгу. Приятного чтения!</string>
+  <string name="book_location">Book location</string>
   <string-array name="cover_chooser_dialog_items">
     <item>Из галереи</item>
     <item>Сделать фото</item>

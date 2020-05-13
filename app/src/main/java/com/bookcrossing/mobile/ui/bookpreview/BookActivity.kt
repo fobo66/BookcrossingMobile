@@ -49,7 +49,7 @@ import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.BookPresenter
 import com.bookcrossing.mobile.ui.acquire.BookAcquireActivity
 import com.bookcrossing.mobile.ui.base.BaseActivity
-import com.bookcrossing.mobile.ui.map.MapActivity
+import com.bookcrossing.mobile.ui.map.BookLocationBottomSheet
 import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
 import com.bookcrossing.mobile.util.EXTRA_KEY
 import com.bookcrossing.mobile.util.adapters.PlacesHistoryViewHolder
@@ -154,13 +154,10 @@ class BookActivity : BaseActivity(), BookView,
     subscriptions.add(
       position.clicks()
         .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
-        .subscribe {
-          startActivity(
-            MapActivity.getStartIntent(
-              this, currentBookPosition
-            )
-          )
-        }
+        .subscribe({
+          BookLocationBottomSheet.newInstance(currentBookPosition)
+            .show(supportFragmentManager, BookLocationBottomSheet.TAG)
+        }, Timber::e)
     )
   }
 
