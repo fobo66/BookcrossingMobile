@@ -209,7 +209,7 @@ dependencies {
 
   implementation "com.algolia:instantsearch-android:2.4.0-beta01"
 
-  debugImplementation "com.squareup.leakcanary:leakcanary-android:2.2"
+  debugImplementation "com.squareup.leakcanary:leakcanary-android:2.3"
 
   kapt "com.google.dagger:dagger-compiler:$daggerVersion"
   kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
