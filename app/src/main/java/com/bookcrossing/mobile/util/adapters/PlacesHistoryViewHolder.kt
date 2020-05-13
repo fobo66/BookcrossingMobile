@@ -13,39 +13,34 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+package com.bookcrossing.mobile.util.adapters
 
-package com.bookcrossing.mobile.util.adapters;
-
-import android.view.View;
-import android.widget.TextView;
-import butterknife.BindView;
-import butterknife.OnClick;
-import com.bookcrossing.mobile.R;
-import com.bookcrossing.mobile.models.Coordinates;
-import com.bookcrossing.mobile.ui.map.MapActivity;
+import android.view.View
+import android.widget.TextView
+import butterknife.BindView
+import butterknife.OnClick
+import com.bookcrossing.mobile.R.id
+import com.bookcrossing.mobile.models.Coordinates
+import com.bookcrossing.mobile.ui.map.MapActivity.Companion.getStartIntent
 
 /**
  * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>
  * Created 10.06.17.
  */
+class PlacesHistoryViewHolder(view: View) : BaseViewHolder(view) {
+  @BindView(id.placesHistoryItem)
+  lateinit var positionName: TextView
 
-public class PlacesHistoryViewHolder extends BaseViewHolder {
+  private var coordinates: Coordinates? = null
 
-  @BindView(R.id.placesHistoryItem) TextView positionName;
-
-  private Coordinates coordinates;
-
-  public PlacesHistoryViewHolder(View view) {
-    super(view);
+  fun bind(positionName: String?, coordinates: Coordinates) {
+    this.coordinates = coordinates
+    this.positionName.text = positionName
   }
 
-  public void bind(String positionName, Coordinates coordinates) {
-    this.coordinates = coordinates;
-    this.positionName.setText(positionName);
-  }
-
-  @OnClick(R.id.card) public void goToPlace() {
-    itemView.getContext()
-      .startActivity(MapActivity.Companion.getStartIntent(itemView.getContext(), coordinates));
+  @OnClick(id.card)
+  fun goToPlace() {
+    itemView.context
+      .startActivity(getStartIntent(itemView.context, coordinates))
   }
 }

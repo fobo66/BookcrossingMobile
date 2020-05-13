@@ -16,7 +16,6 @@
 package com.bookcrossing.mobile.ui.bookpreview
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,8 +26,6 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -39,6 +36,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.afollestad.materialdialogs.MaterialDialog
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.drawable
 import com.bookcrossing.mobile.R.id
@@ -51,7 +49,6 @@ import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.BookPresenter
 import com.bookcrossing.mobile.ui.acquire.BookAcquireActivity
 import com.bookcrossing.mobile.ui.base.BaseActivity
-import com.bookcrossing.mobile.ui.main.MainActivity
 import com.bookcrossing.mobile.ui.map.MapActivity
 import com.bookcrossing.mobile.util.DEFAULT_DEBOUNCE_TIMEOUT
 import com.bookcrossing.mobile.util.EXTRA_KEY
@@ -63,6 +60,7 @@ import com.github.curioustechizen.ago.RelativeTimeTextView
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding3.view.clicks
 import dev.chrisbanes.insetter.ViewState
 import dev.chrisbanes.insetter.doOnApplyWindowInsets
@@ -277,17 +275,15 @@ class BookActivity : BaseActivity(), BookView,
   }
 
   override fun onErrorToLoadBook() {
-    AlertDialog.Builder(this)
-      .setMessage(string.failed_to_load_book_message)
-      .setTitle(string.error_dialog_title)
-      .setPositiveButton(
+    MaterialDialog(this).show {
+      message(string.failed_to_load_book_message)
+      title(string.error_dialog_title)
+      positiveButton(
         string.ok
-      ) { _: DialogInterface?, _: Int ->
-        startActivity(
-          Intent(this@BookActivity, MainActivity::class.java)
-        )
+      ) {
+        onBackPressed()
       }
-      .show()
+    }
   }
 
   override fun onBookStashed() {
@@ -299,7 +295,7 @@ class BookActivity : BaseActivity(), BookView,
   }
 
   override fun onAbuseReported() {
-    Toast.makeText(this, string.report_abuse_success, Toast.LENGTH_SHORT).show()
+    Snackbar.make(root, string.report_abuse_success, Snackbar.LENGTH_SHORT).show()
   }
 
   companion object {

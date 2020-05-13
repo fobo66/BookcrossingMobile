@@ -102,7 +102,7 @@
                                 <LayoutPositions />
                               </value>
                             </entry>
-                            <entry key="action_mainFragment_to_mapActivity">
+                            <entry key="action_mainFragment_to_mapsFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -139,6 +139,18 @@
                           <Point>
                             <option name="x" value="276" />
                             <option name="y" value="12" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="mapsFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="267" />
+                            <option name="y" value="-325" />
                           </Point>
                         </option>
                       </LayoutPositions>
