@@ -139,7 +139,7 @@ dependencies {
   implementation "androidx.cardview:cardview:1.0.0"
   implementation "androidx.preference:preference-ktx:1.1.1"
 
-  def androidxCoreVersion = "1.3.0-beta01"
+  def androidxCoreVersion = "1.3.0-rc01"
   implementation "androidx.core:core:$androidxCoreVersion"
   implementation "androidx.core:core-ktx:$androidxCoreVersion"
 
@@ -207,7 +207,7 @@ dependencies {
   implementation "com.mapbox.mapboxsdk:mapbox-sdk-core:$mapboxSdkVersion"
   implementation "com.mapbox.mapboxsdk:mapbox-sdk-services:$mapboxSdkVersion"
 
-  implementation "com.algolia:instantsearch-android:2.3.1"
+  implementation "com.algolia:instantsearch-android:2.4.0-beta01"
 
   debugImplementation "com.squareup.leakcanary:leakcanary-android:2.2"
 
