@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2019 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -155,6 +156,12 @@ class MainFragment : BaseFragment(), MainView {
     )
 
     rv.adapter = adapter
+  }
+
+  override fun onDestroyView() {
+    rv.adapter = null
+    ad.adListener = null
+    super.onDestroyView()
   }
 
   override fun showReleaseBookButton() {

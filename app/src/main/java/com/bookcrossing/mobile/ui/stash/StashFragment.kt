@@ -78,6 +78,11 @@ class StashFragment : BaseFragment(), StashView {
     }
   }
 
+  override fun onDestroyView() {
+    rv.adapter = null
+    super.onDestroyView()
+  }
+
   private fun setupStash() {
     val gridLayoutManager: LayoutManager =
       GridLayoutManager(activity, STASH_COLUMNS)

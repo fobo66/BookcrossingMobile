@@ -92,8 +92,9 @@
       />
   </com.google.android.material.textfield.TextInputLayout>
 
-  <Button
-    style="@style/Widget.MaterialComponents.Button"
+  <com.google.android.material.button.MaterialButton
+    android:layout_marginStart="@dimen/text_input_padding"
+    android:layout_marginEnd="@dimen/text_input_padding"
     android:id="@+id/pick_book_position_button"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
