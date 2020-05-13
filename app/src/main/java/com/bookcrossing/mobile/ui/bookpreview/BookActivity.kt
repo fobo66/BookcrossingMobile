@@ -34,6 +34,7 @@ import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.NestedScrollView
+import androidx.navigation.ActivityNavigator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
@@ -170,6 +171,11 @@ class BookActivity : BaseActivity(), BookView,
 
     presenter.loadBook(key)
     presenter.checkStashingState(key)
+  }
+
+  override fun finish() {
+    super.finish()
+    ActivityNavigator.applyPopAnimationsToPendingTransition(this)
   }
 
   private fun setupToolbar() = toolbar.apply {

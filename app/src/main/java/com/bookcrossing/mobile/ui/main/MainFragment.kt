@@ -160,6 +160,7 @@ class MainFragment : BaseFragment(), MainView {
 
   override fun onDestroyView() {
     rv.adapter = null
+    ad.adListener = null
     super.onDestroyView()
   }
 
