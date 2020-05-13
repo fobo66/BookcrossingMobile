@@ -46,7 +46,7 @@ class MapPresenter @Inject constructor(
               place.value
             )
           }
-        ) { throwable: Throwable? ->
+        ) { throwable: Throwable ->
           Timber.e(throwable, "Failed to load marker")
           viewState.onErrorToLoadMarker()
         }
