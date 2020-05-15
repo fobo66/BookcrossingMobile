@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~    Copyright 2019 Andrey Mukamolov
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,45 +15,49 @@
   -->
 
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
-    <shortcut
-        android:shortcutId="scan"
-        android:enabled="true"
-        android:icon="@drawable/ic_scan_qrcode_shortcut"
-        android:shortcutShortLabel="@string/scan_shortcut_short_label"
-        android:shortcutLongLabel="@string/scan_shortcut_long_label"
-        android:shortcutDisabledMessage="@string/scan_shortcut_disabled_message">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetPackage="com.bookcrossing.mobile"
-            android:targetClass="com.bookcrossing.mobile.ui.scan.ScanActivity" />
-    </shortcut>
-    <shortcut
-        android:shortcutId="release"
-        android:enabled="true"
-        android:icon="@drawable/ic_release_shortcut"
-        android:shortcutShortLabel="@string/release_shortcut_short_label"
-        android:shortcutLongLabel="@string/release_shortcut_long_label"
-        android:shortcutDisabledMessage="@string/release_shortcut_disabled_message">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetPackage="com.bookcrossing.mobile"
-            android:targetClass="com.bookcrossing.mobile.ui.main.MainActivity">
-          <extra
-            android:name="targetFragment"
-            android:value="BookReleaseFragment" />
-        </intent>
-    </shortcut>
-    <shortcut
-        android:shortcutId="map"
-        android:enabled="true"
-        android:icon="@drawable/ic_map_shortcut"
-        android:shortcutShortLabel="@string/map_shortcut_short_label"
-        android:shortcutLongLabel="@string/map_shortcut_long_label"
-        android:shortcutDisabledMessage="@string/map_shortcut_disabled_message">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetPackage="com.bookcrossing.mobile"
-            android:targetClass="com.bookcrossing.mobile.ui.map.MapActivity" />
-    </shortcut>
+  <shortcut
+    android:enabled="true"
+    android:icon="@drawable/ic_scan_qrcode_shortcut"
+    android:shortcutDisabledMessage="@string/scan_shortcut_disabled_message"
+    android:shortcutId="scan"
+    android:shortcutLongLabel="@string/scan_shortcut_long_label"
+    android:shortcutShortLabel="@string/scan_shortcut_short_label">
+    <intent
+      android:action="android.intent.action.VIEW"
+      android:targetClass="com.bookcrossing.mobile.ui.scan.ScanActivity"
+      android:targetPackage="com.bookcrossing.mobile" />
+  </shortcut>
+  <shortcut
+    android:enabled="true"
+    android:icon="@drawable/ic_release_shortcut"
+    android:shortcutDisabledMessage="@string/release_shortcut_disabled_message"
+    android:shortcutId="release"
+    android:shortcutLongLabel="@string/release_shortcut_long_label"
+    android:shortcutShortLabel="@string/release_shortcut_short_label">
+    <intent
+      android:action="android.intent.action.VIEW"
+      android:targetClass="com.bookcrossing.mobile.ui.main.MainActivity"
+      android:targetPackage="com.bookcrossing.mobile">
+      <extra
+        android:name="targetFragment"
+        android:value="BookReleaseFragment" />
+    </intent>
+  </shortcut>
+  <shortcut
+    android:enabled="true"
+    android:icon="@drawable/ic_map_shortcut"
+    android:shortcutDisabledMessage="@string/map_shortcut_disabled_message"
+    android:shortcutId="map"
+    android:shortcutLongLabel="@string/map_shortcut_long_label"
+    android:shortcutShortLabel="@string/map_shortcut_short_label">
+    <intent
+      android:action="android.intent.action.VIEW"
+      android:targetClass="com.bookcrossing.mobile.ui.main.MainActivity"
+      android:targetPackage="com.bookcrossing.mobile">
+      <extra
+        android:name="targetFragment"
+        android:value="MapsFragment" />
+    </intent>
+  </shortcut>
 </shortcuts>
 
