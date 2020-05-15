@@ -29,11 +29,6 @@
       android:name="key"
       app:argType="string" />
   </activity>
-  <activity
-    android:id="@+id/mapActivity"
-    android:name="com.bookcrossing.mobile.ui.map.MapActivity"
-    android:label="activity_map"
-    tools:layout="@layout/activity_map" />
   <fragment
     android:id="@+id/mainFragment"
     android:name="com.bookcrossing.mobile.ui.main.MainFragment"

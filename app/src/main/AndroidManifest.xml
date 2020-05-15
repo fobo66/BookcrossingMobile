@@ -86,15 +86,6 @@
       </intent-filter>
     </activity>
     <activity
-      android:name=".ui.map.MapActivity"
-      android:label="@string/title_activity_map"
-      android:parentActivityName=".ui.main.MainActivity"
-      android:theme="@style/AppTheme">
-      <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.bookcrossing.mobile.ui.main.MainActivity" />
-    </activity>
-    <activity
       android:name=".ui.scan.ScanActivity"
       android:label="@string/title_activity_scan"
       android:parentActivityName=".ui.main.MainActivity">
