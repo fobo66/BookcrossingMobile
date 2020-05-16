@@ -42,6 +42,9 @@ class PlacesHistoryViewHolder(view: View) : BaseViewHolder(view) {
     this.positionName.text = positionName
   }
 
+  /**
+   * Show historical book position info on the map
+   */
   @OnClick(id.card)
   fun goToPlace() {
     BookLocationBottomSheet.newInstance(coordinates)

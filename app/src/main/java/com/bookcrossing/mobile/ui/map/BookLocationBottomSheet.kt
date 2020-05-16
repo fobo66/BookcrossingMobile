@@ -58,7 +58,7 @@ import kotlin.LazyThreadSafetyMode.NONE
 
 
 /**
- * A fragment that shows map for picking book's location as a modal bottom sheet.
+ * A fragment that shows map for book's location as a modal bottom sheet.
  */
 class BookLocationBottomSheet : BottomSheetDialogFragment(), OnMapReadyCallback {
 
@@ -122,17 +122,17 @@ class BookLocationBottomSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
 
     val bookCoordinates: Coordinates? = requireArguments().getParcelable(EXTRA_COORDINATES)
     if (bookCoordinates != null) {
-      val bookPosition = LatLng(
+      val bookLocation = LatLng(
         bookCoordinates.lat,
         bookCoordinates.lng
       )
 
-      googleMap.addMarker(MarkerOptions().position(bookPosition))
+      googleMap.addMarker(MarkerOptions().position(bookLocation))
 
 
       googleMap.moveCamera(
         CameraUpdateFactory.newLatLngZoom(
-          bookPosition,
+          bookLocation,
           DEFAULT_ZOOM_LEVEL
         )
       )
@@ -192,6 +192,7 @@ class BookLocationBottomSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
     const val TAG = "BookLocationBottomSheet"
     const val DEFAULT_ZOOM_LEVEL = 16.0f
 
+    /** Create new bottom sheet to display given coordinates */
     fun newInstance(bookCoordinates: Coordinates?): BookLocationBottomSheet {
       return BookLocationBottomSheet().apply {
         arguments = bundleOf(EXTRA_COORDINATES to bookCoordinates)

@@ -50,6 +50,9 @@ import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Provider
 
+/**
+ * Screen to display books' locations on map
+ */
 class MapsFragment : BaseFragment(), MvpMapView, OnInfoWindowClickListener {
 
   @BindView(R.id.books_map)
