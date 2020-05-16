@@ -37,5 +37,19 @@
     </item>
 
     <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+    <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Bookcrossing.BottomSheetDialog</item>
+  </style>
+
+  <style name="ThemeOverlay.Bookcrossing.BottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+    <item name="bottomSheetStyle">@style/Widget.Bookcrossing.BottomSheet</item>
+  </style>
+
+  <style name="Widget.Bookcrossing.BottomSheet" parent="Widget.MaterialComponents.BottomSheet">
+    <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Bookcrossing</item>
+  </style>
+
+  <style name="ShapeAppearanceOverlay.Bookcrossing">
+    <item name="cornerSize">8dp</item>
+    <item name="cornerFamily">rounded</item>
   </style>
 </resources>
