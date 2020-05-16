@@ -1,64 +1,29 @@
-package com.bookcrossing.mobile.models;
+/*
+ *    Copyright 2019 Andrey Mukamolov
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.IgnoreExtraProperties;
+package com.bookcrossing.mobile.models
 
-@IgnoreExtraProperties public class Coordinates implements Parcelable {
-  public double lat;
-  public double lng;
+import android.os.Parcelable
+import com.google.firebase.database.IgnoreExtraProperties
+import kotlinx.android.parcel.Parcelize
 
-  public Coordinates() {
-  }
-
-  public Coordinates(LatLng latLng) {
-    this.lat = latLng.latitude;
-
-    this.lng = latLng.longitude;
-  }
-
-  protected Coordinates(Parcel in) {
-    lat = in.readDouble();
-    lng = in.readDouble();
-  }
-
-  public static final Creator<Coordinates> CREATOR = new Creator<Coordinates>() {
-    @Override public Coordinates createFromParcel(Parcel in) {
-      return new Coordinates(in);
-    }
-
-    @Override public Coordinates[] newArray(int size) {
-      return new Coordinates[size];
-    }
-  };
-
-  @Override public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    Coordinates that = (Coordinates) o;
-
-    if (Double.compare(that.lat, lat) != 0) return false;
-    return Double.compare(that.lng, lng) == 0;
-  }
-
-  @Override public int hashCode() {
-    int result;
-    long temp;
-    temp = Double.doubleToLongBits(lat);
-    result = (int) (temp ^ (temp >>> 32));
-    temp = Double.doubleToLongBits(lng);
-    result = 31 * result + (int) (temp ^ (temp >>> 32));
-    return result;
-  }
-
-  @Override public int describeContents() {
-    return 0;
-  }
-
-  @Override public void writeToParcel(Parcel parcel, int i) {
-    parcel.writeDouble(lat);
-    parcel.writeDouble(lng);
-  }
-}
+/** Entity representing free book coordinates */
+@IgnoreExtraProperties
+@Parcelize
+data class Coordinates(
+  var lat: Double? = 0.0,
+  var lng: Double? = 0.0
+) : Parcelable

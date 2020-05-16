@@ -182,9 +182,9 @@ class BookReleasePresenter @Inject constructor(
    */
   fun resolveCity(coordinates: Coordinates): Single<String> {
     return locationRepository.resolveCity(
-        coordinates.lat,
-        coordinates.lng
-      )
+      coordinates.lat ?: 0.0,
+      coordinates.lng ?: 0.0
+    )
       .doOnError(Timber::e)
   }
 

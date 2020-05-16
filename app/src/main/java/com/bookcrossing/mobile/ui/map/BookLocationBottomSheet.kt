@@ -123,8 +123,8 @@ class BookLocationBottomSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
     val bookCoordinates: Coordinates? = requireArguments().getParcelable(EXTRA_COORDINATES)
     if (bookCoordinates != null) {
       val bookLocation = LatLng(
-        bookCoordinates.lat,
-        bookCoordinates.lng
+        bookCoordinates.lat ?: 0.0,
+        bookCoordinates.lng ?: 0.0
       )
 
       googleMap.addMarker(MarkerOptions().position(bookLocation))

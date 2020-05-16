@@ -127,8 +127,8 @@ class MapsFragment : BaseFragment(), MvpMapView, OnInfoWindowClickListener {
     map.addMarker(
       MarkerOptions().position(
         LatLng(
-          coordinates.lat,
-          coordinates.lng
+          coordinates.lat ?: 0.0,
+          coordinates.lng ?: 0.0
         )
       )
     ).apply {

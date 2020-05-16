@@ -70,7 +70,7 @@ public class BookBuilder {
   }
 
   @NonNull public Book createBook() {
-    return new Book(author, name, description, free, position, positionName, city, wentFreeAt);
+    return new Book(author, name, description, free, positionName, position, city, wentFreeAt);
   }
 
   public void clear() {

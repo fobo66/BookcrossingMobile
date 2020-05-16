@@ -74,9 +74,9 @@ class BooksRepository @Inject constructor(
   /** Setup new book's position in database */
   fun saveBookPosition(
     key: String,
-    city: String,
-    positionName: String,
-    position: Coordinates
+    city: String?,
+    positionName: String?,
+    position: Coordinates?
   ): Completable =
     booksDataSource.place(key).setValue(position).ignoreElement()
       .andThen(

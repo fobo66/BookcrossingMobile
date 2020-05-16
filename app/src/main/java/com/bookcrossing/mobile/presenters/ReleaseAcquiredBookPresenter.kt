@@ -69,7 +69,7 @@ class ReleaseAcquiredBookPresenter @Inject constructor(
 
   /** Save selected position of the book */
   fun savePosition(bookPosition: LatLng) {
-    book.position = Coordinates(bookPosition)
+    book.position = Coordinates(bookPosition.latitude, bookPosition.longitude)
   }
 
   /**
@@ -81,9 +81,9 @@ class ReleaseAcquiredBookPresenter @Inject constructor(
   /** Release acquired book */
   fun releaseBook(newPositionName: String): Completable {
     return locationRepository.resolveCity(
-        book.position.lat,
-        book.position.lng
-      )
+      book.position?.lat ?: 0.0,
+      book.position?.lng ?: 0.0
+    )
       .doOnSuccess { newCity ->
         book.apply {
           isFree = true

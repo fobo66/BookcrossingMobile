@@ -52,15 +52,18 @@ class BookInteractor @Inject constructor(
     key: String,
     newPositionName: String,
     newCity: String,
-    newPosition: Coordinates
+    newPosition: Coordinates?
   ): Completable {
 
-    val bookDataToUpdate = mapOf(
+    val bookDataToUpdate: MutableMap<String, Any> = mutableMapOf(
       "free" to true,
       "city" to newCity,
-      "positionName" to newPositionName,
-      "position" to newPosition
+      "positionName" to newPositionName
     )
+
+    if (newPosition != null) {
+      bookDataToUpdate["position"] = newPosition
+    }
 
     return booksRepository.updateBookFields(key, bookDataToUpdate)
       .andThen(booksRepository.saveBookPosition(key, newCity, newPositionName, newPosition))

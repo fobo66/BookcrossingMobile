@@ -260,10 +260,10 @@ class BookActivity : BaseActivity(), BookView,
       .into(cover)
     author.text = book.author
     position.text = getString(string.book_place_template, book.city, book.positionName)
-    wentFree.setReferenceTime(book.wentFreeAt.timestamp)
+    book.wentFreeAt?.timestamp?.let { wentFree.setReferenceTime(it) }
     description.text = book.description
 
-    acquireButton.visibility = if (book.isFree) {
+    acquireButton.visibility = if (book.isFree == true) {
       View.VISIBLE
     } else {
       View.GONE

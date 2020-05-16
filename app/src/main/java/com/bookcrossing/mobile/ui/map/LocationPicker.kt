@@ -133,7 +133,12 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
     subscriptions.add(
       pickLocationButton.clicks()
         .subscribe {
-          bookLocationPicked.onNext(Coordinates(bookLocation?.position))
+          bookLocationPicked.onNext(
+            Coordinates(
+              bookLocation?.position?.latitude,
+              bookLocation?.position?.longitude
+            )
+          )
           dismiss()
         }
     )
