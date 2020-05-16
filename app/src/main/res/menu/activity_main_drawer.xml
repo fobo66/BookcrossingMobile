@@ -25,9 +25,9 @@
         android:icon="@drawable/ic_turned_in_white_24dp"
         android:title="@string/stash" />
     <item
-        android:id="@id/mapActivity"
+      android:id="@id/mapsFragment"
       android:icon="@drawable/ic_place"
-        android:title="@string/books_map"/>
+      android:title="@string/books_map" />
     <item
         android:id="@id/profileFragment"
         android:icon="@drawable/ic_account_circle_black_24dp"

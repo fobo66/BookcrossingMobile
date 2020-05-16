@@ -172,6 +172,10 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
             destinationFragment,
             ignoreCase = true
           ) -> navController.navigate(R.id.profileFragment)
+          "MapsFragment".equals(
+            destinationFragment,
+            ignoreCase = true
+          ) -> navController.navigate(R.id.mapsFragment)
         }
         savedInstanceState != null -> navController.restoreState(
           savedInstanceState.getBundle(

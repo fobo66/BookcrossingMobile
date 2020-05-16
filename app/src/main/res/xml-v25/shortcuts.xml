@@ -45,16 +45,20 @@
         </intent>
     </shortcut>
     <shortcut
-        android:shortcutId="map"
-        android:enabled="true"
-        android:icon="@drawable/ic_map_shortcut"
-        android:shortcutShortLabel="@string/map_shortcut_short_label"
-        android:shortcutLongLabel="@string/map_shortcut_long_label"
-        android:shortcutDisabledMessage="@string/map_shortcut_disabled_message">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetPackage="com.bookcrossing.mobile"
-            android:targetClass="com.bookcrossing.mobile.ui.map.MapActivity" />
+      android:shortcutId="map"
+      android:enabled="true"
+      android:icon="@drawable/ic_map_shortcut"
+      android:shortcutShortLabel="@string/map_shortcut_short_label"
+      android:shortcutLongLabel="@string/map_shortcut_long_label"
+      android:shortcutDisabledMessage="@string/map_shortcut_disabled_message">
+      <intent
+        android:action="android.intent.action.VIEW"
+        android:targetClass="com.bookcrossing.mobile.ui.main.MainActivity"
+        android:targetPackage="com.bookcrossing.mobile">
+        <extra
+          android:name="targetFragment"
+          android:value="MapsFragment" />
+      </intent>
     </shortcut>
 </shortcuts>
     

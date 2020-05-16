@@ -13,49 +13,50 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+
 package com.bookcrossing.mobile.ui.map
 
 import android.Manifest.permission
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.location.Location
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import butterknife.BindView
 import com.afollestad.materialdialogs.MaterialDialog
-import com.bookcrossing.mobile.R.id
-import com.bookcrossing.mobile.R.layout
+import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.R.string
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.MapPresenter
-import com.bookcrossing.mobile.ui.base.BaseActivity
+import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity
-import com.bookcrossing.mobile.util.EXTRA_COORDINATES
+import com.bookcrossing.mobile.util.MapDelegate
 import com.bookcrossing.mobile.util.observe
 import com.bookcrossing.mobile.util.onMarkerClicked
-import com.github.florent37.runtimepermission.PermissionResult
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
+import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import io.reactivex.Observable
 import moxy.ktx.moxyPresenter
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Provider
 
 /**
- * Screen with all the free books on the map
+ * Screen to display books' locations on map
  */
-class MapActivity : BaseActivity(), MvpMapView,
-  OnMapReadyCallback, OnInfoWindowClickListener {
+class MapsFragment : BaseFragment(), MvpMapView, OnInfoWindowClickListener {
+
+  @BindView(R.id.books_map)
+  lateinit var mapView: MapView
 
   @Inject
   lateinit var presenterProvider: Provider<MapPresenter>
@@ -63,34 +64,14 @@ class MapActivity : BaseActivity(), MvpMapView,
   private val presenter: MapPresenter by moxyPresenter { presenterProvider.get() }
 
   private lateinit var map: GoogleMap
+  private lateinit var mapDelegate: MapDelegate
   private lateinit var permissions: RxPermissions
   private lateinit var locationProvider: FusedLocationProviderClient
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    injector.inject(this)
-    super.onCreate(savedInstanceState)
-    setContentView(layout.activity_map)
 
-    permissions = RxPermissions(this)
-    locationProvider =
-      LocationServices.getFusedLocationProviderClient(this)
-
-    val mapFragment =
-      supportFragmentManager.findFragmentById(id.map) as SupportMapFragment?
-    mapFragment?.getMapAsync(this)
-  }
-
-  override fun onMapReady(googleMap: GoogleMap) {
+  private val mapCallback = OnMapReadyCallback { googleMap ->
     map = googleMap
-    subscriptions.add(
-      requestLocationPermission().subscribe(
-        {
-          if (it.isAccepted) {
-            map.isMyLocationEnabled = true
-          }
-        }, Timber::e
-      )
-    )
+
     map.setOnInfoWindowClickListener(this)
 
     subscriptions.add(
@@ -112,45 +93,31 @@ class MapActivity : BaseActivity(), MvpMapView,
     )
 
     presenter.loadBooksPositions()
-
-    val requestedZoomPosition: Coordinates? = intent?.getParcelableExtra(EXTRA_COORDINATES)
-    if (requestedZoomPosition != null) {
-      map.moveCamera(
-        CameraUpdateFactory.newLatLngZoom(
-          LatLng(
-            requestedZoomPosition.lat,
-            requestedZoomPosition.lng
-          ), DEFAULT_ZOOM_LEVEL
-        )
-      )
-    } else {
-      requestUserLocation()
-    }
   }
 
-  @SuppressLint("MissingPermission") // handled via RxPermission
-  private fun requestUserLocation() {
-    subscriptions.add(
-      requestLocationPermission()
-        .flatMapSingle { locationProvider.lastLocation.observe() }
-        .subscribe(
-          { location: Location ->
-            onUserLocationReceived(
-              LatLng(
-                location.latitude,
-                location.longitude
-              )
-            )
-          }, Timber::e
-        )
-    )
+  override fun onAttach(context: Context) {
+    injector.inject(this)
+    super.onAttach(context)
   }
 
-  private fun requestLocationPermission(): Observable<PermissionResult> {
-    return permissions.request(
-      permission.ACCESS_FINE_LOCATION,
-      permission.ACCESS_COARSE_LOCATION
-    )
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
+    return inflater.inflate(R.layout.fragment_maps, container, false)
+  }
+
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    locationProvider =
+      LocationServices.getFusedLocationProviderClient(requireActivity())
+    permissions = RxPermissions(this)
+    mapDelegate = MapDelegate(mapView, viewLifecycleOwner)
+
+    setupCurrentLocation()
+
+    mapView.getMapAsync(mapCallback)
   }
 
   override fun onBookMarkerLoaded(
@@ -170,35 +137,29 @@ class MapActivity : BaseActivity(), MvpMapView,
   }
 
   override fun onErrorToLoadMarker() {
-    MaterialDialog(this).show {
+    MaterialDialog(requireContext()).show {
       message(string.failed_to_load_books_message)
       title(string.error_dialog_title)
-      positiveButton(
-        string.ok
-      ) { it.dismiss() }
+      positiveButton(string.ok) { it.dismiss() }
     }
-  }
-
-  override fun onUserLocationReceived(coordinates: LatLng) {
-    map.animateCamera(
-      CameraUpdateFactory.newLatLngZoom(
-        coordinates,
-        DEFAULT_ZOOM_LEVEL
-      )
-    )
   }
 
   override fun onInfoWindowClick(marker: Marker) {
     val key = marker.tag as String
-    startActivity(BookActivity.getStartIntent(this, key))
+    startActivity(BookActivity.getStartIntent(requireContext(), key))
   }
 
-  companion object {
-    const val DEFAULT_ZOOM_LEVEL = 16.0f
-
-    /** Create Intent to start MapActivity */
-    fun getStartIntent(context: Context, coordinates: Coordinates?): Intent =
-      Intent(context, MapActivity::class.java)
-        .putExtra(EXTRA_COORDINATES, coordinates)
+  @SuppressLint("MissingPermission") // permission is checked in RxPermission
+  private fun setupCurrentLocation() {
+    subscriptions.add(
+      permissions.request(permission.ACCESS_FINE_LOCATION)
+        .flatMapSingle {
+          locationProvider.lastLocation.observe()
+        }
+        .map { LatLng(it.latitude, it.longitude) }
+        .subscribe({
+          mapDelegate.setupCurrentLocation(it)
+        }, Timber::e)
+    )
   }
 }

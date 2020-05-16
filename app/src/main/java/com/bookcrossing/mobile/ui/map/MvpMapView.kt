@@ -16,8 +16,6 @@
 package com.bookcrossing.mobile.ui.map
 
 import com.bookcrossing.mobile.models.Coordinates
-import com.google.android.gms.maps.model.LatLng
-
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
@@ -37,9 +35,4 @@ interface MvpMapView : MvpView {
    * Error happened during loading book position
    */
   fun onErrorToLoadMarker()
-
-  /**
-   * User location was acquired to show on the map
-   */
-  fun onUserLocationReceived(coordinates: LatLng)
 }

@@ -23,7 +23,7 @@ import com.bookcrossing.mobile.modules.ProvidersModule
 import com.bookcrossing.mobile.ui.acquire.BookAcquireActivity
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity
 import com.bookcrossing.mobile.ui.main.MainFragment
-import com.bookcrossing.mobile.ui.map.MapActivity
+import com.bookcrossing.mobile.ui.map.MapsFragment
 import com.bookcrossing.mobile.ui.profile.ProfileFragment
 import com.bookcrossing.mobile.ui.releasebook.BookReleaseFragment
 import com.bookcrossing.mobile.ui.releasebook.ReleaseAcquiredBookFragment
@@ -50,8 +50,6 @@ interface AppComponent {
 
   fun inject(bookActivity: BookActivity)
 
-  fun inject(mapActivity: MapActivity)
-
   fun inject(bookAcquireActivity: BookAcquireActivity)
 
   fun inject(mainFragment: MainFragment)
@@ -65,4 +63,6 @@ interface AppComponent {
   fun inject(bookReleaseFragment: BookReleaseFragment)
 
   fun inject(releaseAcquiredBookFragment: ReleaseAcquiredBookFragment)
+
+  fun inject(mapsFragment: MapsFragment)
 }
