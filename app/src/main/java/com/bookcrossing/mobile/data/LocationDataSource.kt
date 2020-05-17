@@ -17,28 +17,33 @@
 package com.bookcrossing.mobile.data
 
 import com.bookcrossing.mobile.R
+import com.bookcrossing.mobile.util.LocaleProvider
 import com.bookcrossing.mobile.util.ResourceProvider
+import com.mapbox.api.geocoding.v5.GeocodingCriteria
+import com.mapbox.api.geocoding.v5.MapboxGeocoding
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse
+import com.mapbox.geojson.Point.fromLngLat
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
+import retrofit2.Response
 import javax.inject.Inject
 
 /** Perform operations related to location */
-class LocationRepository @Inject constructor(
+class LocationDataSource @Inject constructor(
   private val resourceProvider: ResourceProvider,
-  private val locationDataSource: LocationDataSource
+  private val localeProvider: LocaleProvider
 ) {
   /** Geocode city from coordinates */
-  fun resolveCity(latitude: Double, longitude: Double): Single<String> {
-    val defaultCity = resourceProvider.getString(R.string.default_city)
+  fun resolveCity(latitude: Double, longitude: Double): Single<Response<GeocodingResponse>> {
+    val reverseGeocodeRequest = MapboxGeocoding.builder()
+      .accessToken(resourceProvider.getString(R.string.mapbox_access_token))
+      .languages(localeProvider.currentLocale.language)
+      .limit(1)
+      .query(fromLngLat(longitude, latitude))
+      .geocodingTypes(GeocodingCriteria.TYPE_PLACE)
+      .build()
 
-    return locationDataSource.resolveCity(latitude, longitude)
-      .map { response ->
-        response.body()
-          ?.features() ?: emptyList()
-      }
-      .filter { features -> features.isNotEmpty() }
-      .map { features -> features[0] }
-      .map { feature -> feature.text() ?: defaultCity }
-      .switchIfEmpty(Single.just(defaultCity))
-      .onErrorReturnItem(defaultCity)
+    return Single.fromCallable { reverseGeocodeRequest.executeCall() }
+      .subscribeOn(Schedulers.io())
   }
 }

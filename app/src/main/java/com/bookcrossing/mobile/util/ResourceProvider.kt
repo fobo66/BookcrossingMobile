@@ -17,7 +17,8 @@
 package com.bookcrossing.mobile.util
 
 import androidx.annotation.StringRes
-
+/** Wrapper interface to work with Android resources in repositories */
 interface ResourceProvider {
-    fun getString(@StringRes stringRes: Int): String
+  /** Load string from resources by given id */
+  fun getString(@StringRes stringRes: Int): String
 }
