@@ -34,11 +34,15 @@ class BookInteractor @Inject constructor(
 ) {
 
   /** Release new book */
-  fun releaseBook(book: Book): Single<String> = booksRepository.newBook(book)
-    .flatMap { key: String ->
-      booksRepository.saveBookPosition(key, book.city, book.positionName, book.position)
-        .andThen(Single.just(key))
-    }
+  fun releaseBook(book: Book): Single<String> {
+    check(!book.isEmpty()) { "Book should not have empty fields" }
+
+    return booksRepository.newBook(book)
+      .flatMap { key: String ->
+        booksRepository.saveBookPosition(key, book.city, book.positionName, book.position)
+          .andThen(Single.just(key))
+      }
+  }
 
   /**
    * Release acquired book
@@ -97,4 +101,8 @@ class BookInteractor @Inject constructor(
    * @param key Key of the book
    */
   fun checkBook(key: String): Single<BookCode> = booksRepository.checkBook(key)
+}
+
+private fun Book.isEmpty(): Boolean {
+  return listOf(name, author, description, positionName, city).any { it.isNullOrBlank() }
 }

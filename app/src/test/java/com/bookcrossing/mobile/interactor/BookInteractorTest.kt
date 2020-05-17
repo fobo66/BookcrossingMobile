@@ -74,23 +74,11 @@ class BookInteractorTest {
   }
 
   @Test
-  fun `release book with empty fields`() {
-    bookInteractor.releaseBook(Book())
-      .subscribeOn(Schedulers.trampoline())
-      .test()
-      .assertError(IllegalStateException::class.java)
-      .dispose()
-
-    verify(inverse = true) {
-      booksRepository.saveBookPosition(TEST_KEY, "test", "test", any())
-    }
-  }
-
-  @Test
   fun `release correct book`() {
     val book = Book().apply {
       name = "test"
       author = "test"
+      description = "test"
       isFree = true
       city = "test"
       positionName = "test"
