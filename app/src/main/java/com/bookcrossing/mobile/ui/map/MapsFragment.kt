@@ -120,6 +120,11 @@ class MapsFragment : BaseFragment(), MvpMapView, OnInfoWindowClickListener {
     mapView.getMapAsync(mapCallback)
   }
 
+  override fun onLowMemory() {
+    super.onLowMemory()
+    mapDelegate.onLowMemory()
+  }
+
   override fun onBookMarkerLoaded(
     key: String,
     coordinates: Coordinates
