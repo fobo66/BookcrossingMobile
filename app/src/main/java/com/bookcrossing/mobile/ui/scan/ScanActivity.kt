@@ -31,6 +31,8 @@ import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.subjects.PublishSubject
 import moxy.ktx.moxyPresenter
@@ -96,6 +98,13 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
 
   private fun setupScannerView() {
     val scannerView = layoutInflater.inflate(R.layout.content_scan, container)
+
+    val options = FirebaseVisionBarcodeDetectorOptions.Builder()
+      .setBarcodeFormats(
+        FirebaseVisionBarcode.FORMAT_QR_CODE
+      )
+      .build()
+
     readerView = scannerView.findViewById(R.id.qrCodeView)
     pointsOverlayView = scannerView.findViewById(R.id.points)
     readerView?.setOnQRCodeReadListener(this)
