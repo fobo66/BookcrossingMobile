@@ -128,13 +128,17 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
       val cameraSelector =
         CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
 
+      imageAnalyzer = ImageAnalysis.Builder()
+        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+        .build()
+
       try {
         // Unbind use cases before rebinding
         cameraProvider.unbindAll()
 
         // Bind use cases to camera
         camera = cameraProvider.bindToLifecycle(
-          this, cameraSelector, preview
+          this, cameraSelector, preview, imageAnalyzer
         )
         preview?.setSurfaceProvider(readerView?.createSurfaceProvider(camera?.cameraInfo))
         Snackbar.make(container, R.string.scan_activity_initial_message, Snackbar.LENGTH_SHORT)
