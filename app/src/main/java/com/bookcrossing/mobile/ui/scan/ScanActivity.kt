@@ -25,7 +25,6 @@ import android.view.View
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -44,6 +43,7 @@ import io.reactivex.rxkotlin.zipWith
 import io.reactivex.subjects.PublishSubject
 import moxy.ktx.moxyPresenter
 import timber.log.Timber
+import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -66,7 +66,6 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
   private var pointsOverlayView: PointsOverlayView? = null
 
   private var preview: Preview? = null
-  private var imageCapture: ImageCapture? = null
   private var imageAnalyzer: ImageAnalysis? = null
   private var camera: Camera? = null
 
@@ -131,6 +130,9 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
       imageAnalyzer = ImageAnalysis.Builder()
         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
         .build()
+        .also {
+          it.setAnalyzer(Executors.newSingleThreadExecutor(), BookCodeAnalyzer())
+        }
 
       try {
         // Unbind use cases before rebinding
