@@ -72,8 +72,6 @@ android {
 
       ext.alwaysUpdateBuildId = false
       firebaseCrashlytics {
-        // If you don't need crash reporting for your debug build,
-        // you can speed up your build by disabling mapping file uploading.
         mappingFileUploadEnabled false
       }
     }
@@ -106,12 +104,12 @@ android {
 dependencies {
   implementation fileTree(include: ["*.jar"], dir: "libs")
   testImplementation "junit:junit:4.13"
-  testImplementation "org.mockito:mockito-core:3.3.0"
-  testImplementation "io.mockk:mockk:1.9.3"
+  testImplementation 'org.mockito:mockito-core:3.3.3'
+  testImplementation 'io.mockk:mockk:1.10.0'
   testImplementation "org.hamcrest:hamcrest:2.2"
   testImplementation "androidx.test:core:1.2.0"
   androidTestImplementation "androidx.test.ext:junit:1.1.1"
-  androidTestImplementation "org.mockito:mockito-android:3.3.0"
+  androidTestImplementation 'org.mockito:mockito-android:3.3.3'
   androidTestImplementation "androidx.test.espresso:espresso-core:3.2.0"
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -148,7 +146,7 @@ dependencies {
   implementation "androidx.appcompat:appcompat:1.1.0"
   implementation "androidx.recyclerview:recyclerview:1.1.0"
 
-  implementation "dev.chrisbanes:insetter-ktx:0.2.0"
+  implementation 'dev.chrisbanes:insetter-ktx:0.2.2'
 
   implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
   implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
@@ -163,13 +161,13 @@ dependencies {
   implementation "com.jakewharton.rxbinding3:rxbinding-recyclerview:$rxBindingsVersion"
   implementation "com.jakewharton.rxbinding3:rxbinding-appcompat:$rxBindingsVersion"
 
-  def daggerVersion = "2.26"
+  def daggerVersion = '2.27'
   implementation "com.google.dagger:dagger:$daggerVersion"
 
   def glideVersion = "4.11.0"
   implementation "com.github.bumptech.glide:glide:$glideVersion"
 
-  implementation "io.reactivex.rxjava2:rxjava:2.2.18"
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
   implementation "io.reactivex.rxjava2:rxkotlin:2.4.0"
   implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
 
@@ -203,7 +201,7 @@ dependencies {
   implementation "com.google.zxing:core:3.4.0"
   implementation "com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.3"
 
-  def mapboxSdkVersion = "5.0.0"
+  def mapboxSdkVersion = '5.1.0'
   implementation "com.mapbox.mapboxsdk:mapbox-sdk-core:$mapboxSdkVersion"
   implementation "com.mapbox.mapboxsdk:mapbox-sdk-services:$mapboxSdkVersion"
 
@@ -218,4 +216,4 @@ dependencies {
 }
 
 apply plugin: "com.google.gms.google-services"
-apply plugin: 'kotlin-android-extensions'
+apply plugin: "kotlin-android-extensions"
