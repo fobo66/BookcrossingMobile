@@ -26,6 +26,8 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import timber.log.Timber
 
+
+/** CameraX analyzer for QR codes */
 class BookCodeAnalyzer : ImageAnalysis.Analyzer {
 
   private fun degreesToFirebaseRotation(degrees: Int): Int = when (degrees) {
@@ -61,10 +63,12 @@ class BookCodeAnalyzer : ImageAnalysis.Analyzer {
             val valueType = barcode.valueType
             // See API reference for complete list of supported types
             Timber.d("Scanned barcode: %s", rawValue)
+            image.close()
           }
         }
         .addOnFailureListener {
           Timber.e(it, "Failed to scan barcode")
+          image.close()
         }
     }
   }
