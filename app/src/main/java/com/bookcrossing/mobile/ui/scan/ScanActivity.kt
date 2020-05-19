@@ -21,7 +21,16 @@ import android.content.Intent
 import android.graphics.PointF
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bookcrossing.mobile.R
@@ -31,11 +40,10 @@ import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.subjects.PublishSubject
 import moxy.ktx.moxyPresenter
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -54,8 +62,14 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
   @BindView(R.id.qrContainer)
   lateinit var container: CoordinatorLayout
 
-  private var readerView: QRCodeReaderView? = null
+  private var readerView: PreviewView? = null
   private var pointsOverlayView: PointsOverlayView? = null
+
+  private var preview: Preview? = null
+  private var imageCapture: ImageCapture? = null
+  private var imageAnalyzer: ImageAnalysis? = null
+  private var camera: Camera? = null
+
 
   private val retryPermissionAction: PublishSubject<Boolean> = PublishSubject.create()
 
@@ -64,6 +78,9 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_scan)
     ButterKnife.bind(this)
+
+    container.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+      or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
   }
 
   override fun onStart() {
@@ -77,10 +94,6 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
     )
   }
 
-  override fun onPause() {
-    super.onPause()
-    readerView?.stopCamera()
-  }
 
   override fun onBookCodeScanned(uri: Uri) {
     val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -98,18 +111,39 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
 
   private fun setupScannerView() {
     val scannerView = layoutInflater.inflate(R.layout.content_scan, container)
-
-    val options = FirebaseVisionBarcodeDetectorOptions.Builder()
-      .setBarcodeFormats(
-        FirebaseVisionBarcode.FORMAT_QR_CODE
-      )
-      .build()
-
     readerView = scannerView.findViewById(R.id.qrCodeView)
     pointsOverlayView = scannerView.findViewById(R.id.points)
-    readerView?.setOnQRCodeReadListener(this)
-    readerView?.startCamera()
-    Snackbar.make(container, R.string.scan_activity_initial_message, Snackbar.LENGTH_SHORT).show()
+
+    val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+
+    cameraProviderFuture.addListener(Runnable {
+      // Used to bind the lifecycle of cameras to the lifecycle owner
+      val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+
+      // Preview
+      preview = Preview.Builder()
+        .build()
+
+      // Select back camera
+      val cameraSelector =
+        CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
+
+      try {
+        // Unbind use cases before rebinding
+        cameraProvider.unbindAll()
+
+        // Bind use cases to camera
+        camera = cameraProvider.bindToLifecycle(
+          this, cameraSelector, preview
+        )
+        preview?.setSurfaceProvider(readerView?.createSurfaceProvider(camera?.cameraInfo))
+        Snackbar.make(container, R.string.scan_activity_initial_message, Snackbar.LENGTH_SHORT)
+          .show()
+      } catch (exc: Exception) {
+        Timber.e(exc, "Use case binding failed")
+      }
+    }, ContextCompat.getMainExecutor(this))
+
   }
 
   private fun handleError(throwable: Throwable) {
