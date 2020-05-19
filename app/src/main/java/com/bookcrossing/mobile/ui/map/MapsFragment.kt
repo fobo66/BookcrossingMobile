@@ -68,7 +68,6 @@ class MapsFragment : BaseFragment(), MvpMapView, OnInfoWindowClickListener {
   private lateinit var permissions: RxPermissions
   private lateinit var locationProvider: FusedLocationProviderClient
 
-
   private val mapCallback = OnMapReadyCallback { googleMap ->
     map = googleMap
 

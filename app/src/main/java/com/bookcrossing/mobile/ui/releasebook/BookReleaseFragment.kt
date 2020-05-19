@@ -200,13 +200,12 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
         bookPositionInput.textChanges(),
         bookDescriptionInput.textChanges(),
         presenter.onLocationPicked()
-      ) { name: CharSequence, author: CharSequence, position: CharSequence, description: CharSequence, isLocationPicked: Boolean ->
+      ) { name, author, position, description, isLocationPicked ->
         name.isNotBlank() &&
           author.isNotBlank() &&
           position.isNotBlank() &&
           description.isNotBlank() &&
           isLocationPicked
-
       }
         .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         .observeOn(AndroidSchedulers.mainThread())
@@ -276,7 +275,9 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
       takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
         // Create the File where the photo should go
         val photoFile: File? = try {
-          presenter.createImageFile(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES))
+          presenter.createImageFile(
+            requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+          )
         } catch (ex: IOException) {
           null
         }

@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,7 +39,7 @@ import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
 
-class SearchFragment : BaseFragment(), SearchView {
+class SearchBooksFragment : BaseFragment(), SearchBooksView {
   @Inject
   lateinit var presenterProvider: Provider<SearchPresenter>
 
@@ -55,7 +56,8 @@ class SearchFragment : BaseFragment(), SearchView {
   }
 
   override fun onCreateView(
-    inflater: LayoutInflater, container: ViewGroup?,
+    inflater: LayoutInflater,
+    container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
     return inflater.inflate(R.layout.fragment_search_list, container, false)
@@ -77,7 +79,8 @@ class SearchFragment : BaseFragment(), SearchView {
     }
 
     val searchBoxView =
-      SearchBoxViewAppCompat(toolbar.menu.findItem(R.id.menu_action_search).actionView as androidx.appcompat.widget.SearchView)
+      SearchBoxViewAppCompat(
+        toolbar.menu.findItem(R.id.menu_action_search).actionView as SearchView)
     connection += presenter.searchBox.connectView(searchBoxView)
   }
 

@@ -70,7 +70,8 @@ class ProfileFragment : BaseFragment(), ProfileView {
   }
 
   override fun onCreateView(
-    inflater: LayoutInflater, container: ViewGroup?,
+    inflater: LayoutInflater,
+    container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
     return inflater.inflate(layout.fragment_profile, container, false)

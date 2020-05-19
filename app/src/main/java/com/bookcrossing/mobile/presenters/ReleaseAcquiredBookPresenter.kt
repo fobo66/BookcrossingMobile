@@ -35,7 +35,6 @@ import moxy.InjectViewState
 import timber.log.Timber
 import javax.inject.Inject
 
-
 /**
  * Presenter for release acquired book screen
  */
@@ -76,7 +75,6 @@ class ReleaseAcquiredBookPresenter @Inject constructor(
    * Validate user's input
    */
   fun validateInput(input: CharSequence): ValidationResult = validator.validate(input.toString())
-
 
   /** Release acquired book */
   fun releaseBook(newPositionName: String): Completable {

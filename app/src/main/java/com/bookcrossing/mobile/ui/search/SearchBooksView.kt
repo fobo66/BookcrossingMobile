@@ -23,4 +23,4 @@ import moxy.viewstate.strategy.StateStrategyType
  * View for search screen
  */
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface SearchView : MvpView
+interface SearchBooksView : MvpView

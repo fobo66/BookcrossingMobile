@@ -133,7 +133,6 @@ class BooksRepository @Inject constructor(
         .addListenerForSingleValueEvent(listener)
     }
 
-
   /**
    * Check if given book key exists in the database
    *

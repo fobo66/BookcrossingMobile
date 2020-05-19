@@ -42,10 +42,10 @@ class ScanPresenter @Inject constructor() : BasePresenter<ScanView>() {
   }
 
   private fun isValidBookcrossingUri(uri: Uri): Boolean {
-    return (uri.authority.equals(PACKAGE_NAME, ignoreCase = true)
-      && uri.scheme
-      .equals("bookcrossing", ignoreCase = true)
-      && uri.path.equals("/book", ignoreCase = true)
-      && uri.getQueryParameter(EXTRA_KEY) != null)
+    return (uri.authority.equals(PACKAGE_NAME, ignoreCase = true) &&
+      uri.scheme
+      .equals("bookcrossing", ignoreCase = true) &&
+      uri.path.equals("/book", ignoreCase = true) &&
+      uri.getQueryParameter(EXTRA_KEY) != null)
   }
 }

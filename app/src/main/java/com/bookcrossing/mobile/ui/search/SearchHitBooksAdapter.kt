@@ -15,7 +15,6 @@
 
 package com.bookcrossing.mobile.ui.search
 
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -81,6 +80,5 @@ class SearchHitBooksAdapter : PagedListAdapter<SearchHitBook, ViewHolder>(Search
     override fun areContentsTheSame(oldItem: SearchHitBook, newItem: SearchHitBook): Boolean {
       return oldItem == newItem
     }
-
   }
 }

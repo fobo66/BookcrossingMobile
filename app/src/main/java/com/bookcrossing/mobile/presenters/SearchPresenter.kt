@@ -32,8 +32,8 @@ import com.algolia.search.model.IndexName
 import com.algolia.search.model.response.ResponseSearch
 import com.bookcrossing.mobile.R.string
 import com.bookcrossing.mobile.models.SearchHitBook
+import com.bookcrossing.mobile.ui.search.SearchBooksView
 import com.bookcrossing.mobile.ui.search.SearchHitBooksAdapter
-import com.bookcrossing.mobile.ui.search.SearchView
 import com.bookcrossing.mobile.util.ResourceProvider
 import moxy.InjectViewState
 import javax.inject.Inject
@@ -45,7 +45,7 @@ import javax.inject.Inject
 @InjectViewState
 class SearchPresenter @Inject constructor(
   resourceProvider: ResourceProvider
-) : BasePresenter<SearchView>() {
+) : BasePresenter<SearchBooksView>() {
 
   val searchableBooks: LiveData<PagedList<SearchHitBook>>
   val adapter: SearchHitBooksAdapter

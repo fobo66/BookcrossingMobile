@@ -55,8 +55,6 @@ class StashInteractorTest {
       notificationRepository.unsubscribeFromBookStashNotifications(any())
     } returns Completable.complete()
 
-
-
     stashInteractor = StashInteractor(booksRepository, authRepository, notificationRepository)
   }
 

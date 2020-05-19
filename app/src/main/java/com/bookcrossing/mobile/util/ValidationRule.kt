@@ -50,7 +50,8 @@ class ProhibitedSymbolsRule(
   private val prohibitedSymbols: Regex = "[*#\\[\\]?]".toRegex()
 ) : ValidationRule {
   override fun check(input: String): ValidationResult {
-    return if (!input.contains(prohibitedSymbols)) OK else Invalid(R.string.error_input_incorrect_symbols)
+    return if (!input.contains(prohibitedSymbols)) OK
+    else Invalid(R.string.error_input_incorrect_symbols)
   }
 }
 

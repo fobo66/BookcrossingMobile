@@ -168,4 +168,3 @@ class MainFragment : BaseFragment(), MainView {
     fab.visibility = VISIBLE
   }
 }
-

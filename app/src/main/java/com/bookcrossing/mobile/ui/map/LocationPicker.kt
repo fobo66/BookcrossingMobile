@@ -58,7 +58,6 @@ import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 import kotlin.LazyThreadSafetyMode.NONE
 
-
 /**
  * A fragment that shows map for picking book's location as a modal bottom sheet.
  */
@@ -96,7 +95,6 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
           BottomSheetBehavior.from(bottomSheet).state = STATE_COLLAPSED
         }
       }
-
     }
   }
 
@@ -104,7 +102,8 @@ class LocationPicker : BottomSheetDialogFragment(), OnMapReadyCallback {
   fun onBookLocationPicked(): Observable<Coordinates> = bookLocationPicked.hide()
 
   override fun onCreateView(
-    inflater: LayoutInflater, container: ViewGroup?,
+    inflater: LayoutInflater,
+    container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
     return inflater.inflate(R.layout.fragment_location_picker, container, false)

@@ -16,7 +16,6 @@
 
 package com.bookcrossing.mobile.ui.main
 
-
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType

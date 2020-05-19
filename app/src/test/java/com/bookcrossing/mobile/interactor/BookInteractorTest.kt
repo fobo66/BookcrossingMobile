@@ -69,7 +69,6 @@ class BookInteractorTest {
       booksRepository.saveAcquiredBook(any(), any(), any())
     } returns Completable.complete()
 
-
     bookInteractor = BookInteractor(booksRepository, authRepository)
   }
 
@@ -94,7 +93,6 @@ class BookInteractorTest {
     verify {
       booksRepository.saveBookPosition(TEST_KEY, "test", "test", any())
     }
-
   }
 
   @Test
@@ -112,7 +110,6 @@ class BookInteractorTest {
     verify {
       booksRepository.saveBookPosition(TEST_KEY, "newCity", "newPosition", any())
     }
-
   }
 
   @Test
@@ -126,7 +123,6 @@ class BookInteractorTest {
     verify {
       booksRepository.saveAcquiredBook(any(), TEST_KEY, any())
     }
-
   }
 
   @Test

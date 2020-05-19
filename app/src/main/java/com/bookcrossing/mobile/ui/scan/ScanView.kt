@@ -16,7 +16,6 @@
 package com.bookcrossing.mobile.ui.scan
 
 import android.net.Uri
-
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType

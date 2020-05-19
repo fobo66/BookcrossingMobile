@@ -15,6 +15,9 @@
  */
 package com.bookcrossing.mobile.models
 
+/**
+ * Container class to process book release process
+ */
 class BookBuilder {
   private var author: String? = null
   private var name: String? = null

@@ -64,7 +64,10 @@ class MapDelegate(private var mapView: MapView?, lifecycleOwner: LifecycleOwner)
   }
 
   /** Enable current location on the map */
-  @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
+  @RequiresPermission(anyOf = [
+    Manifest.permission.ACCESS_COARSE_LOCATION,
+    Manifest.permission.ACCESS_FINE_LOCATION
+  ])
   fun setupCurrentLocation(currentLocation: LatLng, zoom: Float = 15.0f) {
     mapView?.getMapAsync { map ->
       map.isMyLocationEnabled = true

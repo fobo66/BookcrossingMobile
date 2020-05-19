@@ -59,7 +59,8 @@ class StashFragment : BaseFragment(), StashView {
   }
 
   override fun onCreateView(
-    inflater: LayoutInflater, container: ViewGroup?,
+    inflater: LayoutInflater,
+    container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
     return inflater.inflate(layout.fragment_stash, container, false)
@@ -74,7 +75,7 @@ class StashFragment : BaseFragment(), StashView {
       setupStash()
     } else {
       authenticate()
-      //TODO setup stash after successful auth
+      // TODO setup stash after successful auth
     }
   }
 

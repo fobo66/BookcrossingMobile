@@ -34,7 +34,8 @@ class AcquiredBooksAdapter(options: FirebaseRecyclerOptions<Book>) :
   }
 
   override fun onBindViewHolder(
-    holder: AcquiredBooksViewHolder, position: Int,
+    holder: AcquiredBooksViewHolder,
+    position: Int,
     model: Book
   ) {
     holder.bind(model, getRef(position).key)

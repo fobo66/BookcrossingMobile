@@ -62,7 +62,6 @@ fun <T> Task<T>.observe(): Single<T> = Single.create { emitter ->
   }
 }
 
-
 /** Indicates that Task result is null */
 class TaskException(message: String) : Exception(message)
 

@@ -29,7 +29,6 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.NestedScrollView
 import androidx.navigation.ActivityNavigator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -62,7 +61,6 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding3.view.clicks
-import dev.chrisbanes.insetter.ViewState
 import dev.chrisbanes.insetter.doOnApplyWindowInsets
 import moxy.ktx.moxyPresenter
 import timber.log.Timber
@@ -181,26 +179,26 @@ class BookActivity : BaseActivity(), BookView,
   }
 
   private fun setupInsets() {
-    toolbarContainer.doOnApplyWindowInsets { view: View, windowInsets: WindowInsetsCompat, initial: ViewState ->
+    toolbarContainer.doOnApplyWindowInsets { view, windowInsets, initial ->
       view.setPadding(
         initial.paddings.left,
         windowInsets.systemWindowInsetTop + initial.paddings.top,
         initial.paddings.right, initial.paddings.bottom
       )
     }
-    cover.doOnApplyWindowInsets { view: View, windowInsets: WindowInsetsCompat, initial: ViewState ->
+    cover.doOnApplyWindowInsets { view, windowInsets, initial ->
       val params = view.layoutParams as MarginLayoutParams
       params.topMargin = windowInsets.systemWindowInsetTop + initial.margins.top
       view.layoutParams = params
     }
-    nestedScrollView.doOnApplyWindowInsets { view: View, windowInsets: WindowInsetsCompat, initial: ViewState ->
+    nestedScrollView.doOnApplyWindowInsets { view, windowInsets, initial ->
       view.setPadding(
         initial.paddings.left,
         initial.paddings.top, initial.paddings.right,
         windowInsets.systemWindowInsetBottom + initial.paddings.bottom
       )
     }
-    favorite.doOnApplyWindowInsets { view: View, windowInsets: WindowInsetsCompat, initialPadding: ViewState ->
+    favorite.doOnApplyWindowInsets { view, windowInsets, initialPadding ->
       view.setPadding(
         initialPadding.paddings.left, initialPadding.paddings.top,
         windowInsets.systemWindowInsetRight + initialPadding.paddings.right,
@@ -227,7 +225,8 @@ class BookActivity : BaseActivity(), BookView,
       }
 
       override fun onBindViewHolder(
-        holder: PlacesHistoryViewHolder, position: Int,
+        holder: PlacesHistoryViewHolder,
+        position: Int,
         model: Coordinates
       ) {
         holder.bind(getRef(position).key, model)

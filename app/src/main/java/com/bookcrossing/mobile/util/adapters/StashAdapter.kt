@@ -38,7 +38,8 @@ class StashAdapter(
   }
 
   override fun onBindViewHolder(
-    holder: StashedBookViewHolder, position: Int,
+    holder: StashedBookViewHolder,
+    position: Int,
     model: Boolean
   ) {
     val key = getRef(position).key.orEmpty()

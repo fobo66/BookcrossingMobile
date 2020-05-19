@@ -38,7 +38,9 @@ class MapPresenter @Inject constructor(
   fun loadBooksPositions() {
     unsubscribeOnDestroy(
         booksRepository.loadPlaces()
-        .flatMapIterable<Entry<String, Coordinates>> { placesMap: LinkedHashMap<String, Coordinates> -> placesMap.entries }
+        .flatMapIterable<Entry<String, Coordinates>> {
+            placesMap: LinkedHashMap<String, Coordinates> -> placesMap.entries
+        }
         .subscribe(
           { place: Entry<String, Coordinates> ->
             viewState.onBookMarkerLoaded(

@@ -29,7 +29,6 @@ import com.bookcrossing.mobile.ui.bookpreview.BookActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
-
 class StashService : FirebaseMessagingService() {
 
   override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -45,8 +44,16 @@ class StashService : FirebaseMessagingService() {
 
     val notificationBuilder = NotificationCompat.Builder(this, channelName)
       .setSmallIcon(R.drawable.ic_book_black_24dp)
-      .setContentTitle(resolveLocalizedNotificationText(remoteMessage.notification?.titleLocalizationKey))
-      .setContentText(resolveLocalizedNotificationText(remoteMessage.notification?.bodyLocalizationKey))
+      .setContentTitle(
+        resolveLocalizedNotificationText(
+          remoteMessage.notification?.titleLocalizationKey
+        )
+      )
+      .setContentText(
+        resolveLocalizedNotificationText(
+          remoteMessage.notification?.bodyLocalizationKey
+        )
+      )
       .setAutoCancel(true)
       .setSound(defaultSoundUri)
       .setContentIntent(pendingIntent)
@@ -59,7 +66,6 @@ class StashService : FirebaseMessagingService() {
       }
       notify(NOTIFICATION_ID, notificationBuilder.build())
     }
-
   }
 
   private fun resolveLocalizedNotificationText(localizationKey: String?): CharSequence? {
@@ -89,5 +95,4 @@ class StashService : FirebaseMessagingService() {
     private const val CHANNEL_ID: String = "stash"
     private const val NOTIFICATION_ID = 261998
   }
-
 }

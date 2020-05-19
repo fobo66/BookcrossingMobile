@@ -28,7 +28,7 @@ import com.bookcrossing.mobile.ui.profile.ProfileFragment
 import com.bookcrossing.mobile.ui.releasebook.BookReleaseFragment
 import com.bookcrossing.mobile.ui.releasebook.ReleaseAcquiredBookFragment
 import com.bookcrossing.mobile.ui.scan.ScanActivity
-import com.bookcrossing.mobile.ui.search.SearchFragment
+import com.bookcrossing.mobile.ui.search.SearchBooksFragment
 import com.bookcrossing.mobile.ui.stash.StashFragment
 import dagger.BindsInstance
 import dagger.Component
@@ -58,7 +58,7 @@ interface AppComponent {
 
   fun inject(stashFragment: StashFragment)
 
-  fun inject(searchFragment: SearchFragment)
+  fun inject(searchFragment: SearchBooksFragment)
 
   fun inject(bookReleaseFragment: BookReleaseFragment)
 

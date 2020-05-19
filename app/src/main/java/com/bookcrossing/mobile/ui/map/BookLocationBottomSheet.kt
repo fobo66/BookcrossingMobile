@@ -56,7 +56,6 @@ import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import kotlin.LazyThreadSafetyMode.NONE
 
-
 /**
  * A fragment that shows map for book's location as a modal bottom sheet.
  */
@@ -87,12 +86,12 @@ class BookLocationBottomSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
           BottomSheetBehavior.from(bottomSheet).state = STATE_COLLAPSED
         }
       }
-
     }
   }
 
   override fun onCreateView(
-    inflater: LayoutInflater, container: ViewGroup?,
+    inflater: LayoutInflater,
+    container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
     return inflater.inflate(R.layout.fragment_book_location_bottom_sheet, container, false)
@@ -128,7 +127,6 @@ class BookLocationBottomSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
       )
 
       googleMap.addMarker(MarkerOptions().position(bookLocation))
-
 
       googleMap.moveCamera(
         CameraUpdateFactory.newLatLngZoom(
