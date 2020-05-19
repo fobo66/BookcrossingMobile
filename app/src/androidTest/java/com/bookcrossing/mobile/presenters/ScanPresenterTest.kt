@@ -13,36 +13,38 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+package com.bookcrossing.mobile.presenters
 
-package com.bookcrossing.mobile.presenters;
+import com.bookcrossing.mobile.ui.scan.`ScanView$$State`
+import org.junit.Before
+import org.junit.Test
+import org.mockito.ArgumentMatchers
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.MockitoAnnotations
 
-import com.bookcrossing.mobile.ui.scan.ScanView$$State;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+class ScanPresenterTest {
+  @Mock
+  private lateinit var state: `ScanView$$State`
+  private lateinit var presenter: ScanPresenter
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-
-public class ScanPresenterTest {
-
-  @Mock ScanView$$State state;
-  private ScanPresenter presenter;
-
-  @Before public void setUp() {
-    MockitoAnnotations.initMocks(this);
-    presenter = new ScanPresenter();
-    presenter.setViewState(state);
+  @Before
+  fun setUp() {
+    MockitoAnnotations.initMocks(this)
+    presenter = ScanPresenter()
+    presenter.setViewState(state)
   }
 
-  @Test public void testValidUrl() {
-    presenter.checkBookcrossingUri("bookcrossing://com.bookcrossing.mobile/book?key=123");
-    verify(state).onBookCodeScanned(any());
+  @Test
+  fun testValidUrl() {
+    presenter.checkBookcrossingUri("bookcrossing://com.bookcrossing.mobile/book?key=123")
+    Mockito.verify(state)
+      .onBookCodeScanned(ArgumentMatchers.any())
   }
 
-  @Test public void testInvalidUrl() {
-    presenter.checkBookcrossingUri("https://example.com");
-    verify(state).onIncorrectCodeScanned();
+  @Test
+  fun testInvalidUrl() {
+    presenter.checkBookcrossingUri("https://example.com")
+    Mockito.verify(state).onIncorrectCodeScanned()
   }
 }

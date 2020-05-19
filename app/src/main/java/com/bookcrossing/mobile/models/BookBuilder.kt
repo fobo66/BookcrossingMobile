@@ -13,74 +13,78 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+package com.bookcrossing.mobile.models
 
-package com.bookcrossing.mobile.models;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-public class BookBuilder {
-  private @Nullable String author;
-  private @Nullable String name;
-  private @Nullable String description;
-  private boolean free = true;
-  private @Nullable Coordinates position;
-  private @Nullable String city;
-  private @Nullable String positionName;
-  private @Nullable Date wentFreeAt;
-
-  @NonNull public BookBuilder setAuthor(@NonNull String author) {
-    this.author = author;
-    return this;
+class BookBuilder {
+  private var author: String? = null
+  private var name: String? = null
+  private var description: String? = null
+  private var free = true
+  private var position: Coordinates? = null
+  private var city: String? = null
+  private var positionName: String? = null
+  private var wentFreeAt: Date? = null
+  fun setAuthor(author: String): BookBuilder {
+    this.author = author
+    return this
   }
 
-  @NonNull public BookBuilder setName(@NonNull String name) {
-    this.name = name;
-    return this;
+  fun setName(name: String): BookBuilder {
+    this.name = name
+    return this
   }
 
-  @NonNull public BookBuilder setDescription(@NonNull String description) {
-    this.description = description;
-    return this;
+  fun setDescription(description: String): BookBuilder {
+    this.description = description
+    return this
   }
 
-  @NonNull public BookBuilder setFree(boolean free) {
-    this.free = free;
-    return this;
+  fun setFree(free: Boolean): BookBuilder {
+    this.free = free
+    return this
   }
 
-  @NonNull public BookBuilder setPositionName(@NonNull String positionName) {
-    this.positionName = positionName;
-    return this;
+  fun setPositionName(positionName: String): BookBuilder {
+    this.positionName = positionName
+    return this
   }
 
-  @NonNull public BookBuilder setWentFreeAt(@NonNull Date wentFreeAt) {
-    this.wentFreeAt = wentFreeAt;
-    return this;
+  fun setWentFreeAt(wentFreeAt: Date): BookBuilder {
+    this.wentFreeAt = wentFreeAt
+    return this
   }
 
-  @NonNull public BookBuilder setPosition(@NonNull Coordinates coordinates) {
-    this.position = coordinates;
-    return this;
+  fun setPosition(coordinates: Coordinates): BookBuilder {
+    position = coordinates
+    return this
   }
 
-  @NonNull public BookBuilder setCity(@NonNull String city) {
-    this.city = city;
-    return this;
+  fun setCity(city: String): BookBuilder {
+    this.city = city
+    return this
   }
 
-  @NonNull public Book createBook() {
-    return new Book(author, name, description, free, positionName, position, city, wentFreeAt);
+  fun createBook(): Book {
+    return Book(
+      author,
+      name,
+      description,
+      free,
+      positionName,
+      position,
+      city,
+      wentFreeAt
+    )
   }
 
-  public void clear() {
-    author = null;
-    name = null;
-    description = null;
-    free = true;
-    position = null;
-    positionName = null;
-    city = null;
-    wentFreeAt = null;
+  fun clear() {
+    author = null
+    name = null
+    description = null
+    free = true
+    position = null
+    positionName = null
+    city = null
+    wentFreeAt = null
   }
 }
