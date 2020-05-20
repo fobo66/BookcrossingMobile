@@ -30,6 +30,15 @@ import timber.log.Timber
 /** CameraX analyzer for QR codes */
 class BookCodeAnalyzer : ImageAnalysis.Analyzer {
 
+  val options = FirebaseVisionBarcodeDetectorOptions.Builder()
+    .setBarcodeFormats(
+      FirebaseVisionBarcode.FORMAT_QR_CODE
+    )
+    .build()
+
+  val detector = FirebaseVision.getInstance()
+    .getVisionBarcodeDetector(options)
+
   private fun degreesToFirebaseRotation(degrees: Int): Int = when (degrees) {
     0 -> FirebaseVisionImageMetadata.ROTATION_0
     90 -> FirebaseVisionImageMetadata.ROTATION_90
@@ -44,13 +53,6 @@ class BookCodeAnalyzer : ImageAnalysis.Analyzer {
     val imageRotation = degreesToFirebaseRotation(image.imageInfo.rotationDegrees)
     if (mediaImage != null) {
       val detectableImage = FirebaseVisionImage.fromMediaImage(mediaImage, imageRotation)
-      val options = FirebaseVisionBarcodeDetectorOptions.Builder()
-        .setBarcodeFormats(
-          FirebaseVisionBarcode.FORMAT_QR_CODE
-        )
-        .build()
-      val detector = FirebaseVision.getInstance()
-        .getVisionBarcodeDetector(options)
 
       val result = detector.detectInImage(detectableImage)
         .addOnSuccessListener { barcodes ->
