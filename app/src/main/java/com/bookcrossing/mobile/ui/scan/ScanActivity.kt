@@ -36,6 +36,7 @@ import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.ScanPresenter
 import com.bookcrossing.mobile.ui.base.BaseActivity
+import com.bookcrossing.mobile.util.observe
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.material.snackbar.Snackbar
@@ -85,9 +86,16 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
 
     subscriptions.add(
       RxPermissions(this).request(Manifest.permission.CAMERA)
+        .switchMapSingle {
+          ProcessCameraProvider.getInstance(this).observe(ContextCompat.getMainExecutor(this))
+        }
+        .doOnNext { setupScannerView(it) }
         .doOnError { handleError(it) }
         .retryWhen { it.zipWith(retryPermissionAction) }
-        .subscribe { setupScannerView() }
+        .subscribe {
+          Snackbar.make(container, R.string.scan_activity_initial_message, Snackbar.LENGTH_SHORT)
+            .show()
+        }
     )
   }
 
@@ -106,43 +114,34 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
     presenter.checkBookcrossingUri(text)
   }
 
-  private fun setupScannerView() {
+  private fun setupScannerView(cameraProvider: ProcessCameraProvider) {
     val scannerView = layoutInflater.inflate(R.layout.content_scan, container)
     readerView = scannerView.findViewById(R.id.qrCodeView)
     pointsOverlayView = scannerView.findViewById(R.id.points)
 
-    val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+    // Preview
+    preview = Preview.Builder()
+      .build()
 
-    cameraProviderFuture.addListener(Runnable {
-      // Used to bind the lifecycle of cameras to the lifecycle owner
-      val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+    // Select back camera
+    val cameraSelector =
+      CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
 
-      // Preview
-      preview = Preview.Builder()
-        .build()
+    imageAnalyzer = ImageAnalysis.Builder()
+      .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+      .build()
+      .also {
+        it.setAnalyzer(Executors.newCachedThreadPool(), presenter.bookCodeAnalyzer)
+      }
 
-      // Select back camera
-      val cameraSelector =
-        CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
+    // Unbind use cases before rebinding
+    cameraProvider.unbindAll()
 
-      imageAnalyzer = ImageAnalysis.Builder()
-        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-        .build()
-        .also {
-          it.setAnalyzer(Executors.newSingleThreadExecutor(), presenter.bookCodeAnalyzer)
-        }
-
-      // Unbind use cases before rebinding
-      cameraProvider.unbindAll()
-
-      // Bind use cases to camera
-      camera = cameraProvider.bindToLifecycle(
-        this, cameraSelector, preview, imageAnalyzer
-      )
-      preview?.setSurfaceProvider(readerView?.createSurfaceProvider(camera?.cameraInfo))
-      Snackbar.make(container, R.string.scan_activity_initial_message, Snackbar.LENGTH_SHORT).show()
-    }, ContextCompat.getMainExecutor(this))
-
+    // Bind use cases to camera
+    camera = cameraProvider.bindToLifecycle(
+      this, cameraSelector, preview, imageAnalyzer
+    )
+    preview?.setSurfaceProvider(readerView?.createSurfaceProvider(camera?.cameraInfo))
   }
 
   private fun handleError(throwable: Throwable) {
