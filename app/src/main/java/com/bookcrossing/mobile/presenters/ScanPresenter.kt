@@ -1,5 +1,5 @@
 /*
- *    Copyright 2019 Andrey Mukamolov
+ *    Copyright 2020 Andrey Mukamolov
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.bookcrossing.mobile.presenters
 
 import android.net.Uri
+import com.bookcrossing.mobile.ui.scan.BookCodeAnalyzer
 import com.bookcrossing.mobile.ui.scan.ScanView
 import com.bookcrossing.mobile.util.EXTRA_KEY
 import com.bookcrossing.mobile.util.PACKAGE_NAME
@@ -27,7 +28,9 @@ import javax.inject.Inject
  * Created 11.06.17.
  */
 @InjectViewState
-class ScanPresenter @Inject constructor() : BasePresenter<ScanView>() {
+class ScanPresenter @Inject constructor(
+  val bookCodeAnalyzer: BookCodeAnalyzer
+) : BasePresenter<ScanView>() {
 
   /**
    * Check validity of the scanned QR code of the book

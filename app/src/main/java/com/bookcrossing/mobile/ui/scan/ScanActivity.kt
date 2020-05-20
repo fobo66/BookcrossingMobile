@@ -1,5 +1,5 @@
 /*
- *    Copyright 2019 Andrey Mukamolov
+ *    Copyright 2020 Andrey Mukamolov
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -131,7 +131,7 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
         .build()
         .also {
-          it.setAnalyzer(Executors.newSingleThreadExecutor(), BookCodeAnalyzer())
+          it.setAnalyzer(Executors.newSingleThreadExecutor(), presenter.bookCodeAnalyzer)
         }
 
       try {

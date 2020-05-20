@@ -19,25 +19,22 @@ package com.bookcrossing.mobile.ui.scan
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
+import io.reactivex.Flowable
+import io.reactivex.processors.MulticastProcessor
 import timber.log.Timber
+import javax.inject.Inject
 
 
 /** CameraX analyzer for QR codes */
-class BookCodeAnalyzer : ImageAnalysis.Analyzer {
+class BookCodeAnalyzer @Inject constructor(
+  private val detector: FirebaseVisionBarcodeDetector
+) : ImageAnalysis.Analyzer {
 
-  val options = FirebaseVisionBarcodeDetectorOptions.Builder()
-    .setBarcodeFormats(
-      FirebaseVisionBarcode.FORMAT_QR_CODE
-    )
-    .build()
-
-  val detector = FirebaseVision.getInstance()
-    .getVisionBarcodeDetector(options)
+  private val barcodesProcessor = MulticastProcessor.create<FirebaseVisionBarcode>()
 
   private fun degreesToFirebaseRotation(degrees: Int): Int = when (degrees) {
     0 -> FirebaseVisionImageMetadata.ROTATION_0
@@ -54,24 +51,19 @@ class BookCodeAnalyzer : ImageAnalysis.Analyzer {
     if (mediaImage != null) {
       val detectableImage = FirebaseVisionImage.fromMediaImage(mediaImage, imageRotation)
 
-      val result = detector.detectInImage(detectableImage)
+      detector.detectInImage(detectableImage)
         .addOnSuccessListener { barcodes ->
-          for (barcode in barcodes) {
-            val bounds = barcode.boundingBox
-            val corners = barcode.cornerPoints
-
-            val rawValue = barcode.rawValue
-
-            val valueType = barcode.valueType
-            // See API reference for complete list of supported types
-            Timber.d("Scanned barcode: %s", rawValue)
-            image.close()
+          barcodes.forEach { barcode ->
+            Timber.d("Scanned barcode: %s", barcode.rawValue)
+            barcodesProcessor.offer(barcode)
           }
         }
         .addOnFailureListener {
           Timber.e(it, "Failed to scan barcode")
-          image.close()
         }
     }
   }
+
+  /** Exposes scanned barcodes via Rx flowable stream */
+  fun onBarcodeScanned(): Flowable<FirebaseVisionBarcode> = barcodesProcessor.hide()
 }
