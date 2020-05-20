@@ -15,7 +15,6 @@
  */
 package com.bookcrossing.mobile.ui.bookpreview
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -292,13 +291,5 @@ class BookActivity : BaseActivity(), BookView,
 
   override fun onAbuseReported() {
     Snackbar.make(root, string.report_abuse_success, Snackbar.LENGTH_SHORT).show()
-  }
-
-  companion object {
-
-    /** Create Intent to start BookActivity */
-    fun getStartIntent(context: Context, key: String): Intent =
-      Intent(context, BookActivity::class.java)
-        .putExtra(EXTRA_KEY, key)
   }
 }
