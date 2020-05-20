@@ -42,16 +42,14 @@ import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.subjects.PublishSubject
 import moxy.ktx.moxyPresenter
-import timber.log.Timber
 import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Provider
 
 /**
- * (c) 2017 Andrey Mukamolov <fobo66@protonmail.com>
+ * Screen for scanning book code on the flyleaf
  * Created 11.06.17.
  */
-
 class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadListener {
 
   @Inject
@@ -134,20 +132,15 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
           it.setAnalyzer(Executors.newSingleThreadExecutor(), presenter.bookCodeAnalyzer)
         }
 
-      try {
-        // Unbind use cases before rebinding
-        cameraProvider.unbindAll()
+      // Unbind use cases before rebinding
+      cameraProvider.unbindAll()
 
-        // Bind use cases to camera
-        camera = cameraProvider.bindToLifecycle(
-          this, cameraSelector, preview, imageAnalyzer
-        )
-        preview?.setSurfaceProvider(readerView?.createSurfaceProvider(camera?.cameraInfo))
-        Snackbar.make(container, R.string.scan_activity_initial_message, Snackbar.LENGTH_SHORT)
-          .show()
-      } catch (exc: Exception) {
-        Timber.e(exc, "Use case binding failed")
-      }
+      // Bind use cases to camera
+      camera = cameraProvider.bindToLifecycle(
+        this, cameraSelector, preview, imageAnalyzer
+      )
+      preview?.setSurfaceProvider(readerView?.createSurfaceProvider(camera?.cameraInfo))
+      Snackbar.make(container, R.string.scan_activity_initial_message, Snackbar.LENGTH_SHORT).show()
     }, ContextCompat.getMainExecutor(this))
 
   }
