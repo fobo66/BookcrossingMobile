@@ -1,5 +1,5 @@
 /*
- *    Copyright 2019 Andrey Mukamolov
+ *    Copyright 2020 Andrey Mukamolov
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import android.widget.Button
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.updateLayoutParams
-import androidx.core.view.updatePadding
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bookcrossing.mobile.R.id
@@ -100,8 +99,12 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
     coordinatorLayout.systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_STABLE or
       SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
-    toolbarContainer.doOnApplyWindowInsets { view, insets, initialState ->
-      view.updatePadding(top = initialState.paddings.top + insets.systemWindowInsetTop)
+    toolbarContainer.doOnApplyWindowInsets { view, windowInsets, initialState ->
+      view.setPadding(
+        initialState.paddings.left,
+        windowInsets.systemWindowInsetTop + initialState.paddings.top,
+        initialState.paddings.right, initialState.paddings.bottom
+      )
     }
 
     acquireButton.doOnApplyWindowInsets { view, insets, initialState ->
