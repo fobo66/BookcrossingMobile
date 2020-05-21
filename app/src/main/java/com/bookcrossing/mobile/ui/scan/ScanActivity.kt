@@ -18,9 +18,9 @@ package com.bookcrossing.mobile.ui.scan
 
 import android.Manifest
 import android.content.Intent
-import android.graphics.PointF
 import android.net.Uri
 import android.os.Bundle
+import android.util.Size
 import android.view.View
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
@@ -37,9 +37,9 @@ import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.ScanPresenter
 import com.bookcrossing.mobile.ui.base.BaseActivity
 import com.bookcrossing.mobile.util.observe
-import com.dlazaro66.qrcodereaderview.QRCodeReaderView
 import com.github.florent37.runtimepermission.rx.RxPermissions
 import com.google.android.material.snackbar.Snackbar
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.subjects.PublishSubject
 import moxy.ktx.moxyPresenter
@@ -51,7 +51,7 @@ import javax.inject.Provider
  * Screen for scanning book code on the flyleaf
  * Created 11.06.17.
  */
-class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadListener {
+class ScanActivity : BaseActivity(), ScanView {
 
   @Inject
   lateinit var presenterProvider: Provider<ScanPresenter>
@@ -70,6 +70,7 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
 
 
   private val retryPermissionAction: PublishSubject<Boolean> = PublishSubject.create()
+  private val startSubscriptions = CompositeDisposable()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     injector.inject(this)
@@ -84,7 +85,7 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
   override fun onStart() {
     super.onStart()
 
-    subscriptions.add(
+    startSubscriptions.add(
       RxPermissions(this).request(Manifest.permission.CAMERA)
         .switchMapSingle {
           ProcessCameraProvider.getInstance(this).observe(ContextCompat.getMainExecutor(this))
@@ -97,8 +98,25 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
             .show()
         }
     )
+
+    startSubscriptions.add(
+      presenter.bookCodeAnalyzer.onBarcodeScanned()
+        .subscribe { barcode ->
+          barcode.cornerPoints?.let { points ->
+            pointsOverlayView?.setPoints(points)
+          }
+
+          barcode.displayValue?.let {
+            presenter.checkBookcrossingUri(it)
+          }
+        }
+    )
   }
 
+  override fun onStop() {
+    super.onStop()
+    startSubscriptions.clear()
+  }
 
   override fun onBookCodeScanned(uri: Uri) {
     val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -109,11 +127,6 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
     Snackbar.make(container, R.string.incorrect_code_scanned_message, Snackbar.LENGTH_SHORT).show()
   }
 
-  override fun onQRCodeRead(text: String, points: Array<PointF>) {
-    pointsOverlayView?.setPoints(points)
-    presenter.checkBookcrossingUri(text)
-  }
-
   private fun setupScannerView(cameraProvider: ProcessCameraProvider) {
     val scannerView = layoutInflater.inflate(R.layout.content_scan, container)
     readerView = scannerView.findViewById(R.id.qrCodeView)
@@ -121,6 +134,7 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
 
     // Preview
     preview = Preview.Builder()
+      .setTargetResolution(Size(1280, 720))
       .build()
 
     // Select back camera
@@ -128,6 +142,7 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
       CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
 
     imageAnalyzer = ImageAnalysis.Builder()
+      .setTargetResolution(Size(1280, 720))
       .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
       .build()
       .also {
@@ -139,7 +154,7 @@ class ScanActivity : BaseActivity(), ScanView, QRCodeReaderView.OnQRCodeReadList
 
     // Bind use cases to camera
     camera = cameraProvider.bindToLifecycle(
-      this, cameraSelector, preview, imageAnalyzer
+      this, cameraSelector, imageAnalyzer, preview
     )
     preview?.setSurfaceProvider(readerView?.createSurfaceProvider(camera?.cameraInfo))
   }

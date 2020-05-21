@@ -5,7 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PointF;
+import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.Nullable;
@@ -20,7 +20,7 @@ public class PointsOverlayView extends View {
 
   private static final float DEFAULT_POINT_SIZE = 10;
 
-  private PointF[] points;
+  private Point[] points;
   private Paint paint;
   private float pointSize = DEFAULT_POINT_SIZE;
 
@@ -65,7 +65,7 @@ public class PointsOverlayView extends View {
     paint.setStyle(Paint.Style.FILL);
   }
 
-  public void setPoints(PointF[] points) {
+  public void setPoints(Point[] points) {
     this.points = points;
     invalidate();
   }
@@ -73,7 +73,7 @@ public class PointsOverlayView extends View {
   @Override public void draw(Canvas canvas) {
     super.draw(canvas);
     if (points != null) {
-      for (PointF point : points) {
+      for (Point point : points) {
         canvas.drawCircle(point.x, point.y, pointSize, paint);
       }
     }

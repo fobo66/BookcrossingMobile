@@ -24,7 +24,7 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import io.reactivex.Flowable
-import io.reactivex.processors.MulticastProcessor
+import io.reactivex.processors.PublishProcessor
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -34,7 +34,7 @@ class BookCodeAnalyzer @Inject constructor(
   private val detector: FirebaseVisionBarcodeDetector
 ) : ImageAnalysis.Analyzer {
 
-  private val barcodesProcessor = MulticastProcessor.create<FirebaseVisionBarcode>()
+  private val barcodesProcessor = PublishProcessor.create<FirebaseVisionBarcode>()
 
   private fun degreesToFirebaseRotation(degrees: Int): Int = when (degrees) {
     0 -> FirebaseVisionImageMetadata.ROTATION_0
@@ -57,11 +57,14 @@ class BookCodeAnalyzer @Inject constructor(
             Timber.d("Scanned barcode: %s", barcode.rawValue)
             barcodesProcessor.offer(barcode)
           }
+          image.close()
         }
         .addOnFailureListener {
           Timber.e(it, "Failed to scan barcode")
+          image.close()
         }
-    }
+    } else
+      image.close()
   }
 
   /** Exposes scanned barcodes via Rx flowable stream */
