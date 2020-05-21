@@ -74,8 +74,12 @@ class ScanActivity : BaseActivity(), ScanView {
     Snackbar.make(container, string.incorrect_code_scanned_message, Snackbar.LENGTH_SHORT)
   }
 
+  private val cameraViewSize: Size by lazy(mode = NONE) {
+    Size(1280, 720)
+  }
 
   private val retryPermissionAction: PublishSubject<Boolean> = PublishSubject.create()
+
   private val startSubscriptions = CompositeDisposable()
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,7 +146,7 @@ class ScanActivity : BaseActivity(), ScanView {
 
     // Preview
     preview = Preview.Builder()
-      .setTargetResolution(Size(1280, 720))
+      .setTargetResolution(cameraViewSize)
       .build()
 
     // Select back camera
@@ -150,7 +154,7 @@ class ScanActivity : BaseActivity(), ScanView {
       CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
 
     imageAnalyzer = ImageAnalysis.Builder()
-      .setTargetResolution(Size(1280, 720))
+      .setTargetResolution(cameraViewSize)
       .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
       .build()
       .also {
