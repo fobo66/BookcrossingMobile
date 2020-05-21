@@ -130,7 +130,9 @@ class ScanActivity : BaseActivity(), ScanView {
   }
 
   override fun onIncorrectCodeScanned() {
-    incorrectCodeScannedSnackbar.show()
+    if (!incorrectCodeScannedSnackbar.isShown) {
+      incorrectCodeScannedSnackbar.show()
+    }
   }
 
   private fun setupScannerView(cameraProvider: ProcessCameraProvider) {
