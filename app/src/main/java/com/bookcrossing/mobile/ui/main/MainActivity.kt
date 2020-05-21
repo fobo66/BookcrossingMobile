@@ -186,8 +186,8 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
     }
   }
 
-  override fun onMenuItemClick(item: MenuItem?): Boolean {
-    return when (item?.itemId) {
+  override fun onMenuItemClick(item: MenuItem): Boolean {
+    return when (item.itemId) {
       R.id.menu_action_search -> {
         findNavController(R.id.nav_host_fragment).navigate(R.id.searchFragment)
         item.expandActionView()
