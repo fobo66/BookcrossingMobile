@@ -33,6 +33,7 @@ import androidx.core.content.ContextCompat
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bookcrossing.mobile.R
+import com.bookcrossing.mobile.R.string
 import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.ScanPresenter
 import com.bookcrossing.mobile.ui.base.BaseActivity
@@ -46,6 +47,7 @@ import moxy.ktx.moxyPresenter
 import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Provider
+import kotlin.LazyThreadSafetyMode.NONE
 
 /**
  * Screen for scanning book code on the flyleaf
@@ -68,6 +70,10 @@ class ScanActivity : BaseActivity(), ScanView {
   private var imageAnalyzer: ImageAnalysis? = null
   private var camera: Camera? = null
 
+  private val incorrectCodeScannedSnackbar: Snackbar by lazy(mode = NONE) {
+    Snackbar.make(container, string.incorrect_code_scanned_message, Snackbar.LENGTH_SHORT)
+  }
+
 
   private val retryPermissionAction: PublishSubject<Boolean> = PublishSubject.create()
   private val startSubscriptions = CompositeDisposable()
@@ -87,11 +93,11 @@ class ScanActivity : BaseActivity(), ScanView {
 
     startSubscriptions.add(
       RxPermissions(this).request(Manifest.permission.CAMERA)
+        .doOnError { handleError(it) }
         .switchMapSingle {
           ProcessCameraProvider.getInstance(this).observe(ContextCompat.getMainExecutor(this))
         }
         .doOnNext { setupScannerView(it) }
-        .doOnError { handleError(it) }
         .retryWhen { it.zipWith(retryPermissionAction) }
         .subscribe {
           Snackbar.make(container, R.string.scan_activity_initial_message, Snackbar.LENGTH_SHORT)
@@ -124,7 +130,7 @@ class ScanActivity : BaseActivity(), ScanView {
   }
 
   override fun onIncorrectCodeScanned() {
-    Snackbar.make(container, R.string.incorrect_code_scanned_message, Snackbar.LENGTH_SHORT).show()
+    incorrectCodeScannedSnackbar.show()
   }
 
   private fun setupScannerView(cameraProvider: ProcessCameraProvider) {
