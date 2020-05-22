@@ -63,8 +63,8 @@ class ScanActivity : BaseActivity(), ScanView {
   @BindView(R.id.qrContainer)
   lateinit var container: CoordinatorLayout
 
-  private var readerView: PreviewView? = null
-  private var pointsOverlayView: PointsOverlayView? = null
+  @BindView(R.id.qrCodeView)
+  lateinit var readerView: PreviewView
 
   private var preview: Preview? = null
   private var imageAnalyzer: ImageAnalysis? = null
@@ -112,10 +112,6 @@ class ScanActivity : BaseActivity(), ScanView {
     startSubscriptions.add(
       presenter.bookCodeAnalyzer.onBarcodeScanned()
         .subscribe { barcode ->
-          barcode.cornerPoints?.let { points ->
-            pointsOverlayView?.setPoints(points)
-          }
-
           barcode.displayValue?.let {
             presenter.checkBookcrossingUri(it)
           }
@@ -140,9 +136,6 @@ class ScanActivity : BaseActivity(), ScanView {
   }
 
   private fun setupScannerView(cameraProvider: ProcessCameraProvider) {
-    val scannerView = layoutInflater.inflate(R.layout.content_scan, container)
-    readerView = scannerView.findViewById(R.id.qrCodeView)
-    pointsOverlayView = scannerView.findViewById(R.id.points)
 
     // Preview
     preview = Preview.Builder()
@@ -168,7 +161,7 @@ class ScanActivity : BaseActivity(), ScanView {
     camera = cameraProvider.bindToLifecycle(
       this, cameraSelector, imageAnalyzer, preview
     )
-    preview?.setSurfaceProvider(readerView?.createSurfaceProvider(camera?.cameraInfo))
+    preview?.setSurfaceProvider(readerView.createSurfaceProvider(camera?.cameraInfo))
   }
 
   private fun handleError(throwable: Throwable) {
