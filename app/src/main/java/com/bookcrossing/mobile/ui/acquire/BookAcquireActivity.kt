@@ -23,6 +23,8 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -99,27 +101,15 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
     coordinatorLayout.systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_STABLE or
       SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
-    toolbarContainer.doOnApplyWindowInsets { view, windowInsets, initialState ->
-      view.setPadding(
-        initialState.paddings.left,
-        windowInsets.systemWindowInsetTop + initialState.paddings.top,
-        initialState.paddings.right, initialState.paddings.bottom
-      )
-    }
-
-    acquireButton.doOnApplyWindowInsets { view, insets, initialState ->
-      view.updateLayoutParams<MarginLayoutParams> {
-        bottomMargin = initialState.margins.bottom + insets.systemWindowInsetBottom
-      }
-    }
+    setupInsets()
 
     subscriptions.add(
       onAcquireButtonClicked()
         .withLatestFrom(
           codeInput.textChanges()
             .debounce(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
-        ) { _, code: CharSequence -> code.toString() }
-        .flatMapSingle { code: String -> presenter.validateCode(code) }
+        ) { _, code -> code.toString() }
+        .flatMapSingle { presenter.validateCode(it) }
         .flatMap { code: BookCode ->
           if (code is CorrectCode) {
             presenter.processBookAcquisition(code.code)
@@ -137,13 +127,17 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
 
     subscriptions.add(
       scanCodeButton.clicks()
+        .doOnNext { disableButtons() }
         .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         .subscribe {
-          startActivity(
-            Intent(this@BookAcquireActivity, ScanActivity::class.java)
-          )
+          launchCodeScanner()
         }
     )
+  }
+
+  private fun disableButtons() {
+    acquireButton.isEnabled = false
+    scanCodeButton.isEnabled = false
   }
 
   override fun onIncorrectKey() {
@@ -159,12 +153,31 @@ class BookAcquireActivity : BaseActivity(), BookAcquireView {
     onBackPressed()
   }
 
+  private fun launchCodeScanner() {
+    val intent = Intent(this, ScanActivity::class.java)
+    val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
+    ContextCompat.startActivity(this, intent, options)
+  }
+
+  private fun setupInsets() {
+    toolbarContainer.doOnApplyWindowInsets { view, windowInsets, initialState ->
+      view.setPadding(
+        initialState.paddings.left,
+        windowInsets.systemWindowInsetTop + initialState.paddings.top,
+        initialState.paddings.right, initialState.paddings.bottom
+      )
+    }
+
+    acquireButton.doOnApplyWindowInsets { view, insets, initialState ->
+      view.updateLayoutParams<MarginLayoutParams> {
+        bottomMargin = initialState.margins.bottom + insets.systemWindowInsetBottom
+      }
+    }
+  }
+
   private fun onAcquireButtonClicked(): Observable<Unit> {
     return acquireButton.clicks()
-      .doOnNext {
-        acquireButton.isEnabled = false
-        scanCodeButton.isEnabled = false
-      }
+      .doOnNext { disableButtons() }
       .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
   }
 }
