@@ -30,9 +30,7 @@ import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.StashPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.adapters.StashAdapter
-import com.bookcrossing.mobile.util.adapters.StashedBookViewHolder
-import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.firebase.ui.database.FirebaseRecyclerOptions.Builder
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
@@ -50,8 +48,6 @@ class StashFragment : BaseFragment(), StashView {
 
   @BindView(R.id.stash_rv)
   lateinit var rv: RecyclerView
-
-  private lateinit var adapter: FirebaseRecyclerAdapter<Boolean, StashedBookViewHolder>
 
   override fun onAttach(context: Context) {
     injector.inject(this)
@@ -88,15 +84,13 @@ class StashFragment : BaseFragment(), StashView {
     val gridLayoutManager: LayoutManager =
       GridLayoutManager(activity, STASH_COLUMNS)
     rv.layoutManager = gridLayoutManager
-    adapter = StashAdapter(
+    rv.adapter = StashAdapter(
       presenter.bookCoverResolver,
-      FirebaseRecyclerOptions.Builder<Boolean>().setQuery(
+      Builder<Boolean>().setQuery(
         presenter.stashedBooks,
         Boolean::class.java
       ).setLifecycleOwner(viewLifecycleOwner).build()
     )
-    rv.adapter = adapter
-    adapter.startListening()
   }
 
   companion object {

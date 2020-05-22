@@ -116,7 +116,6 @@ class BookActivity : BaseActivity(), BookView,
   lateinit var favorite: FloatingActionButton
 
   private lateinit var key: String
-  private lateinit var adapter: FirebaseRecyclerAdapter<Coordinates, PlacesHistoryViewHolder>
 
   private var currentBookPosition: Coordinates? = null
 
@@ -208,7 +207,7 @@ class BookActivity : BaseActivity(), BookView,
 
   private fun setupPlacesHistory() {
     placesHistory.layoutManager = LinearLayoutManager(this)
-    adapter = object : FirebaseRecyclerAdapter<Coordinates, PlacesHistoryViewHolder>(
+    placesHistory.adapter = object : FirebaseRecyclerAdapter<Coordinates, PlacesHistoryViewHolder>(
       Builder<Coordinates>().setQuery(
         presenter.getPlacesHistory(key),
         Coordinates::class.java
@@ -231,8 +230,6 @@ class BookActivity : BaseActivity(), BookView,
         holder.bind(getRef(position).key, model)
       }
     }
-    placesHistory.adapter = adapter
-    adapter.startListening()
   }
 
   override fun onMenuItemClick(item: MenuItem): Boolean {

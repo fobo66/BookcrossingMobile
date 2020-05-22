@@ -37,9 +37,7 @@ import com.bookcrossing.mobile.presenters.ProfilePresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.RC_SIGN_IN
 import com.bookcrossing.mobile.util.adapters.AcquiredBooksAdapter
-import com.bookcrossing.mobile.util.adapters.AcquiredBooksViewHolder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions.Builder
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -62,8 +60,6 @@ class ProfileFragment : BaseFragment(), ProfileView {
   @BindView(R.id.acquiredBooksListEmptyIndicator)
   lateinit var acquiredBooksListEmptyIndicator: AppCompatTextView
 
-  private lateinit var adapter: FirebaseRecyclerAdapter<Book, AcquiredBooksViewHolder>
-
   override fun onAttach(context: Context) {
     injector.inject(this)
     super.onAttach(context)
@@ -83,7 +79,6 @@ class ProfileFragment : BaseFragment(), ProfileView {
   ) {
     super.onViewCreated(view, savedInstanceState)
     if (presenter.isAuthenticated) {
-      setupAcquiredBookList()
       loadProfileInfo()
     } else {
       authenticate()
@@ -103,7 +98,7 @@ class ProfileFragment : BaseFragment(), ProfileView {
   }
 
   private fun loadProfileInfo() {
-    adapter.startListening()
+    setupAcquiredBookList()
     GlideApp.with(this)
       .load(presenter.photoUrl)
       .placeholder(drawable.ic_account_circle_black_24dp)
@@ -113,7 +108,7 @@ class ProfileFragment : BaseFragment(), ProfileView {
 
   private fun setupAcquiredBookList() {
     acquiredBooksList.layoutManager = LinearLayoutManager(requireContext())
-    adapter = AcquiredBooksAdapter(
+    acquiredBooksList.adapter = AcquiredBooksAdapter(
       Builder<Book>().setQuery(
         presenter.acquiredBooks,
         Book::class.java
@@ -121,6 +116,5 @@ class ProfileFragment : BaseFragment(), ProfileView {
         .setLifecycleOwner(viewLifecycleOwner)
         .build()
     )
-    acquiredBooksList.adapter = adapter
   }
 }
