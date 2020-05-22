@@ -20,7 +20,9 @@ import com.bookcrossing.mobile.ui.scan.BookCodeAnalyzer
 import com.bookcrossing.mobile.ui.scan.ScanView
 import com.bookcrossing.mobile.util.EXTRA_KEY
 import com.bookcrossing.mobile.util.PACKAGE_NAME
+import io.reactivex.Flowable
 import moxy.InjectViewState
+import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
 /**
@@ -47,8 +49,17 @@ class ScanPresenter @Inject constructor(
   private fun isValidBookcrossingUri(uri: Uri): Boolean {
     return (uri.authority.equals(PACKAGE_NAME, ignoreCase = true) &&
       uri.scheme
-      .equals("bookcrossing", ignoreCase = true) &&
+        .equals("bookcrossing", ignoreCase = true) &&
       uri.path.equals("/book", ignoreCase = true) &&
       uri.getQueryParameter(EXTRA_KEY) != null)
   }
+
+  /**
+   * Process scanned codes
+   */
+  fun onBarcodeScanned(): Flowable<String> =
+    bookCodeAnalyzer.onBarcodeScanned()
+      .throttleFirst(500, MILLISECONDS)
+      .filter { it.displayValue != null }
+      .map { it.displayValue!! }
 }

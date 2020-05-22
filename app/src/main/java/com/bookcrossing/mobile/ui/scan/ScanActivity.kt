@@ -29,6 +29,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -110,12 +111,8 @@ class ScanActivity : BaseActivity(), ScanView {
     )
 
     startSubscriptions.add(
-      presenter.bookCodeAnalyzer.onBarcodeScanned()
-        .subscribe { barcode ->
-          barcode.displayValue?.let {
-            presenter.checkBookcrossingUri(it)
-          }
-        }
+      presenter.onBarcodeScanned()
+        .subscribe { presenter.checkBookcrossingUri(it) }
     )
   }
 
@@ -126,7 +123,8 @@ class ScanActivity : BaseActivity(), ScanView {
 
   override fun onBookCodeScanned(uri: Uri) {
     val intent = Intent(Intent.ACTION_VIEW, uri)
-    startActivity(intent)
+    val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
+    ContextCompat.startActivity(this, intent, options)
   }
 
   override fun onIncorrectCodeScanned() {
