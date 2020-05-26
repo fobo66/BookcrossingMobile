@@ -22,7 +22,7 @@ import com.bookcrossing.mobile.util.EXTRA_KEY
 import com.bookcrossing.mobile.util.PACKAGE_NAME
 import io.reactivex.Flowable
 import moxy.InjectViewState
-import java.util.concurrent.TimeUnit.MILLISECONDS
+import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
 /**
@@ -59,7 +59,7 @@ class ScanPresenter @Inject constructor(
    */
   fun onBarcodeScanned(): Flowable<String> =
     bookCodeAnalyzer.onBarcodeScanned()
-      .throttleFirst(500, MILLISECONDS)
+      .throttleFirst(1, SECONDS)
       .filter { it.displayValue != null }
       .map { it.displayValue!! }
 }
