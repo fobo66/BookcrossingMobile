@@ -160,6 +160,7 @@
     android:id="@+id/toolbar_container"
     android:layout_width="match_parent"
     android:layout_height="220dp"
+    android:backgroundTint="@color/colorPrimaryDark"
     >
     <com.google.android.material.appbar.CollapsingToolbarLayout
       android:id="@+id/collapsing_toolbar_container"
