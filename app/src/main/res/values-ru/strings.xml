@@ -123,8 +123,9 @@
   <string name="profile_picture_description">Аватарка</string>
   <string name="book_released_book_message">Книга успешно освобождена</string>
   <string name="book_acquired_success_message">Вы успешно взяли книгу. Приятного чтения!</string>
-  <string name="book_location">Book location</string>
-  <string name="book_acquire_description">Book code is usually located on the flyleaf of the book. It can be present as text or as QR code on the special sticker</string>
+  <string name="book_location">Местоположение книги</string>
+  <string name="book_acquire_description">Код книги обычно расположен на форзаце книги. Это может быть написанная от руки строка с разными символами или QR-код на специальном стикере</string>
+  <string name="incorrect_book_location_message">Местоположение книги недоступно</string>
   <string-array name="cover_chooser_dialog_items">
     <item>Из галереи</item>
     <item>Сделать фото</item>

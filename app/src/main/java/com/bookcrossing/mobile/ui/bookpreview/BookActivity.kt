@@ -123,7 +123,7 @@ class BookActivity : BaseActivity(), BookView,
   private var currentBookPosition: Coordinates? = null
 
   private val unableToShowLocationSnackbar: Snackbar by lazy(mode = NONE) {
-    Snackbar.make(root, "Unable to show location for the book", Snackbar.LENGTH_SHORT)
+    Snackbar.make(root, R.string.incorrect_book_location_message, Snackbar.LENGTH_SHORT)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
