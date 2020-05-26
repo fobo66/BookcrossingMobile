@@ -28,6 +28,8 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
 import androidx.navigation.ActivityNavigator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -66,6 +68,7 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 import javax.inject.Provider
+import kotlin.LazyThreadSafetyMode.NONE
 
 /** Book details screen */
 class BookActivity : BaseActivity(), BookView,
@@ -119,6 +122,10 @@ class BookActivity : BaseActivity(), BookView,
 
   private var currentBookPosition: Coordinates? = null
 
+  private val unableToShowLocationSnackbar: Snackbar by lazy(mode = NONE) {
+    Snackbar.make(root, "Unable to show location for the book", Snackbar.LENGTH_SHORT)
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     injector.inject(this)
     super.onCreate(savedInstanceState)
@@ -151,10 +158,18 @@ class BookActivity : BaseActivity(), BookView,
       position.clicks()
         .throttleFirst(DEFAULT_DEBOUNCE_TIMEOUT.toLong(), MILLISECONDS)
         .subscribe({
-          BookLocationBottomSheet.newInstance(currentBookPosition)
-            .show(supportFragmentManager, BookLocationBottomSheet.TAG)
+          showBookLocation()
         }, Timber::e)
     )
+  }
+
+  private fun showBookLocation() {
+    if (currentBookPosition?.lat != 0.0 && currentBookPosition?.lng != 0.0) {
+      BookLocationBottomSheet.newInstance(currentBookPosition)
+        .show(supportFragmentManager, BookLocationBottomSheet.TAG)
+    } else {
+      unableToShowLocationSnackbar.show()
+    }
   }
 
   override fun onResume() {
@@ -242,8 +257,9 @@ class BookActivity : BaseActivity(), BookView,
 
   private fun handleAcquiring() {
     val acquireIntent = Intent(this, BookAcquireActivity::class.java)
-    acquireIntent.putExtra(getString(string.extra_insideAppRequest), true)
-    startActivity(acquireIntent)
+      .putExtra(getString(string.extra_insideAppRequest), true)
+    val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
+    ContextCompat.startActivity(this, acquireIntent, options)
   }
 
   override fun onBookLoaded(book: Book) {
