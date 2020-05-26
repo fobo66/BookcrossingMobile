@@ -41,4 +41,7 @@
     <item name="cornerFamily">rounded</item>
   </style>
 
+  <style name="AppTheme.Splash">
+    <item name="android:windowBackground">@drawable/splash</item>
+  </style>
 </resources>

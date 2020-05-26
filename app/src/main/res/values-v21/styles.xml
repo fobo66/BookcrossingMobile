@@ -40,6 +40,10 @@
     <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Bookcrossing.BottomSheetDialog</item>
   </style>
 
+  <style name="AppTheme.Splash">
+    <item name="android:windowBackground">@drawable/splash</item>
+  </style>
+
   <style name="ThemeOverlay.Bookcrossing.BottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
     <item name="bottomSheetStyle">@style/Widget.Bookcrossing.BottomSheet</item>
   </style>
