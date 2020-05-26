@@ -49,7 +49,9 @@ import com.google.ads.consent.ConsentFormListener
 import com.google.ads.consent.ConsentInfoUpdateListener
 import com.google.ads.consent.ConsentInformation
 import com.google.ads.consent.ConsentStatus
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
+import dev.chrisbanes.insetter.doOnApplyWindowInsets
 import timber.log.Timber
 import java.net.MalformedURLException
 import java.net.URL
@@ -61,6 +63,9 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
 
   @BindView(R.id.toolbar)
   lateinit var toolbar: Toolbar
+
+  @BindView(R.id.mainAppBarLayout)
+  lateinit var toolbarContainer: AppBarLayout
 
   @BindView(R.id.nav_view)
   lateinit var navigationView: NavigationView
@@ -81,6 +86,15 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
 
     coordinatorLayout.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
       or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+
+
+    toolbarContainer.doOnApplyWindowInsets { view, windowInsets, initial ->
+      view.setPadding(
+        initial.paddings.left,
+        windowInsets.systemWindowInsetTop + initial.paddings.top,
+        initial.paddings.right, initial.paddings.bottom
+      )
+    }
 
     setupToolbar()
     checkForConsent()
@@ -186,8 +200,8 @@ class MainActivity : BaseActivity(), BookListener, OnMenuItemClickListener {
     }
   }
 
-  override fun onMenuItemClick(item: MenuItem?): Boolean {
-    return when (item?.itemId) {
+  override fun onMenuItemClick(item: MenuItem): Boolean {
+    return when (item.itemId) {
       R.id.menu_action_search -> {
         findNavController(R.id.nav_host_fragment).navigate(R.id.searchFragment)
         item.expandActionView()

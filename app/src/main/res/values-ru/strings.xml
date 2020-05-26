@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~    Copyright 2019 Andrey Mukamolov
+  ~    Copyright 2020 Andrey Mukamolov
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -124,6 +124,7 @@
   <string name="book_released_book_message">Книга успешно освобождена</string>
   <string name="book_acquired_success_message">Вы успешно взяли книгу. Приятного чтения!</string>
   <string name="book_location">Book location</string>
+  <string name="book_acquire_description">Book code is usually located on the flyleaf of the book. It can be present as text or as QR code on the special sticker</string>
   <string-array name="cover_chooser_dialog_items">
     <item>Из галереи</item>
     <item>Сделать фото</item>

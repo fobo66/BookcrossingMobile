@@ -15,7 +15,6 @@
  */
 package com.bookcrossing.mobile.ui.bookpreview
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -117,7 +116,6 @@ class BookActivity : BaseActivity(), BookView,
   lateinit var favorite: FloatingActionButton
 
   private lateinit var key: String
-  private lateinit var adapter: FirebaseRecyclerAdapter<Coordinates, PlacesHistoryViewHolder>
 
   private var currentBookPosition: Coordinates? = null
 
@@ -209,7 +207,7 @@ class BookActivity : BaseActivity(), BookView,
 
   private fun setupPlacesHistory() {
     placesHistory.layoutManager = LinearLayoutManager(this)
-    adapter = object : FirebaseRecyclerAdapter<Coordinates, PlacesHistoryViewHolder>(
+    placesHistory.adapter = object : FirebaseRecyclerAdapter<Coordinates, PlacesHistoryViewHolder>(
       Builder<Coordinates>().setQuery(
         presenter.getPlacesHistory(key),
         Coordinates::class.java
@@ -232,8 +230,6 @@ class BookActivity : BaseActivity(), BookView,
         holder.bind(getRef(position).key, model)
       }
     }
-    placesHistory.adapter = adapter
-    adapter.startListening()
   }
 
   override fun onMenuItemClick(item: MenuItem): Boolean {
@@ -292,13 +288,5 @@ class BookActivity : BaseActivity(), BookView,
 
   override fun onAbuseReported() {
     Snackbar.make(root, string.report_abuse_success, Snackbar.LENGTH_SHORT).show()
-  }
-
-  companion object {
-
-    /** Create Intent to start BookActivity */
-    fun getStartIntent(context: Context, key: String): Intent =
-      Intent(context, BookActivity::class.java)
-        .putExtra(EXTRA_KEY, key)
   }
 }

@@ -15,36 +15,38 @@
  */
 package com.bookcrossing.mobile.presenters
 
+import com.bookcrossing.mobile.ui.scan.BookCodeAnalyzer
 import com.bookcrossing.mobile.ui.scan.`ScanView$$State`
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
 
 class ScanPresenterTest {
-  @Mock
   private lateinit var state: `ScanView$$State`
   private lateinit var presenter: ScanPresenter
 
   @Before
   fun setUp() {
-    MockitoAnnotations.initMocks(this)
-    presenter = ScanPresenter()
+    state = mockk(relaxed = true)
+    val bookCodeAnalyzer: BookCodeAnalyzer = mockk()
+    presenter = ScanPresenter(bookCodeAnalyzer)
     presenter.setViewState(state)
   }
 
   @Test
   fun testValidUrl() {
     presenter.checkBookcrossingUri("bookcrossing://com.bookcrossing.mobile/book?key=123")
-    Mockito.verify(state)
-      .onBookCodeScanned(ArgumentMatchers.any())
+    verify {
+      state.onBookCodeScanned(any())
+    }
   }
 
   @Test
   fun testInvalidUrl() {
     presenter.checkBookcrossingUri("https://example.com")
-    Mockito.verify(state).onIncorrectCodeScanned()
+    verify {
+      state.onIncorrectCodeScanned()
+    }
   }
 }

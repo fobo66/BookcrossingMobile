@@ -25,6 +25,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
@@ -36,16 +37,15 @@ import com.bookcrossing.mobile.presenters.MainPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
 import com.bookcrossing.mobile.util.RC_SIGN_IN
 import com.bookcrossing.mobile.util.adapters.BooksAdapter
-import com.bookcrossing.mobile.util.adapters.BooksViewHolder
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
-import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions.Builder
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding3.view.clicks
+import dev.chrisbanes.insetter.doOnApplyWindowInsets
 import moxy.ktx.moxyPresenter
 import timber.log.Timber
 import javax.inject.Inject
@@ -66,8 +66,6 @@ class MainFragment : BaseFragment(), MainView {
   lateinit var presenterProvider: Provider<MainPresenter>
 
   private val presenter: MainPresenter by moxyPresenter { presenterProvider.get() }
-
-  private lateinit var adapter: FirebaseRecyclerAdapter<Book, BooksViewHolder>
 
   override fun onAttach(context: Context) {
     injector.inject(this)
@@ -91,6 +89,12 @@ class MainFragment : BaseFragment(), MainView {
     if (!presenter.isAuthenticated) {
       fab.visibility = GONE
       authenticate()
+    }
+
+    fab.doOnApplyWindowInsets { fab, windowInsets, initial ->
+      val params = fab.layoutParams as MarginLayoutParams
+      params.bottomMargin = windowInsets.systemWindowInsetBottom + initial.margins.bottom
+      fab.layoutParams = params
     }
 
     setupBookList()
@@ -148,14 +152,13 @@ class MainFragment : BaseFragment(), MainView {
 
   private fun setupBookList() {
     rv.layoutManager = LinearLayoutManager(requireContext())
-    adapter = BooksAdapter(
+
+    rv.adapter = BooksAdapter(
       presenter.bookCoverResolver,
       Builder<Book>().setQuery(presenter.books, Book::class.java)
         .setLifecycleOwner(viewLifecycleOwner)
         .build()
     )
-
-    rv.adapter = adapter
   }
 
   override fun onDestroyView() {

@@ -31,7 +31,6 @@ import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.modules.injector
 import com.bookcrossing.mobile.presenters.MapPresenter
 import com.bookcrossing.mobile.ui.base.BaseFragment
-import com.bookcrossing.mobile.ui.bookpreview.BookActivity
 import com.bookcrossing.mobile.util.MapDelegate
 import com.bookcrossing.mobile.util.observe
 import com.bookcrossing.mobile.util.onMarkerClicked
@@ -150,7 +149,7 @@ class MapsFragment : BaseFragment(), MvpMapView, OnInfoWindowClickListener {
 
   override fun onInfoWindowClick(marker: Marker) {
     val key = marker.tag as String
-    startActivity(BookActivity.getStartIntent(requireContext(), key))
+    listener.onBookSelected(key)
   }
 
   @SuppressLint("MissingPermission") // permission is checked in RxPermission
