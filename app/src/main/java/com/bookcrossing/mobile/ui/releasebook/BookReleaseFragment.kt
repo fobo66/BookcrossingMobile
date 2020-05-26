@@ -54,6 +54,7 @@ import com.bookcrossing.mobile.util.ValidationResult.Invalid
 import com.bookcrossing.mobile.util.ValidationResult.OK
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.github.florent37.runtimepermission.rx.RxPermissions
+import com.google.android.material.button.MaterialButton
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.afterTextChangeEvents
 import com.jakewharton.rxbinding3.widget.textChanges
@@ -96,7 +97,7 @@ class BookReleaseFragment : BaseFragment(), BookReleaseView {
   lateinit var pickBookPositionButton: Button
 
   @BindView(R.id.release_book)
-  lateinit var releaseButton: Button
+  lateinit var releaseButton: MaterialButton
 
   @BindString(R.string.rendered_sticker_name)
   lateinit var stickerName: String

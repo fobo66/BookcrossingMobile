@@ -120,8 +120,7 @@
       android:maxLines="10"
       />
   </com.google.android.material.textfield.TextInputLayout>
-  <Button
-    style="@style/Widget.MaterialComponents.Button"
+  <com.google.android.material.button.MaterialButton
     android:id="@+id/release_book"
     android:enabled="false"
     android:layout_width="match_parent"
