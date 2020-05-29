@@ -26,7 +26,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import com.bookcrossing.mobile.R
@@ -151,8 +150,6 @@ class MainFragment : BaseFragment(), MainView {
   }
 
   private fun setupBookList() {
-    rv.layoutManager = LinearLayoutManager(requireContext())
-
     rv.adapter = BooksAdapter(
       presenter.bookCoverResolver,
       Builder<Book>().setQuery(presenter.books, Book::class.java)
