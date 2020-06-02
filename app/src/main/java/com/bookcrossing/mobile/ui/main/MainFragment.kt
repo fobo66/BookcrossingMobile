@@ -20,12 +20,14 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import com.bookcrossing.mobile.R
@@ -40,6 +42,7 @@ import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.firebase.ui.database.FirebaseRecyclerOptions.Builder
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -58,13 +61,37 @@ class MainFragment : BaseFragment(), MainView {
   @BindView(R.id.addBookButton)
   lateinit var fab: FloatingActionButton
 
-  @BindView(R.id.adView)
-  lateinit var ad: AdView
+  @BindView(R.id.adViewContainer)
+  lateinit var adContainer: FrameLayout
+
+  private lateinit var ad: AdView
+
+  private var initialLayoutComplete = false
 
   @Inject
   lateinit var presenterProvider: Provider<MainPresenter>
 
   private val presenter: MainPresenter by moxyPresenter { presenterProvider.get() }
+
+  // Determine the screen width (less decorations) to use for the ad width.
+  // If the ad hasn't been laid out, default to the full screen width.
+  private val advertisementSize: AdSize
+    get() {
+      val display = requireActivity().windowManager.defaultDisplay
+      val outMetrics = DisplayMetrics()
+      display.getMetrics(outMetrics)
+
+      val density = outMetrics.density
+
+      var adWidthPixels = adContainer.width.toFloat()
+      if (adWidthPixels == 0f) {
+        adWidthPixels = outMetrics.widthPixels.toFloat()
+      }
+
+      val adWidth = (adWidthPixels / density).toInt()
+      return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(requireContext(), adWidth)
+    }
+
 
   override fun onAttach(context: Context) {
     injector.inject(this)
@@ -100,7 +127,24 @@ class MainFragment : BaseFragment(), MainView {
 
     subscriptions.add(fab.clicks().subscribe { listener.onBookAdd() })
 
-    loadAds()
+    ad = AdView(requireContext())
+    adContainer.addView(ad)
+    adContainer.viewTreeObserver.addOnGlobalLayoutListener {
+      if (!initialLayoutComplete) {
+        initialLayoutComplete = true
+        loadAds()
+      }
+    }
+  }
+
+  override fun onResume() {
+    ad.resume()
+    super.onResume()
+  }
+
+  override fun onPause() {
+    ad.pause()
+    super.onPause()
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -143,6 +187,10 @@ class MainFragment : BaseFragment(), MainView {
   }
 
   private fun loadAds() {
+    ad.apply {
+      adUnitId = getString(R.string.admob_ad_unit_id)
+      adSize = advertisementSize
+    }
     val adBuilder = AdRequest.Builder()
     presenter.checkForConsent(adBuilder)
     val adRequest = adBuilder.build()
@@ -160,7 +208,7 @@ class MainFragment : BaseFragment(), MainView {
 
   override fun onDestroyView() {
     rv.adapter = null
-    ad.adListener = null
+    ad.destroy()
     super.onDestroyView()
   }
 

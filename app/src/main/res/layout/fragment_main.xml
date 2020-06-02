@@ -33,17 +33,15 @@
     app:layout_constraintHorizontal_bias="0.0"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/adView"
+    app:layout_constraintTop_toBottomOf="@id/adViewContainer"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     tools:listitem="@layout/book_list_item_main"
     />
 
-  <com.google.android.gms.ads.AdView
-    android:id="@+id/adView"
+  <FrameLayout
+    android:id="@+id/adViewContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:adSize="BANNER"
-    app:adUnitId="@string/admob_ad_unit_id"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
