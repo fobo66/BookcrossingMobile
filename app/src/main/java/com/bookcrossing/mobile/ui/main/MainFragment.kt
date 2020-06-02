@@ -106,6 +106,13 @@ class MainFragment : BaseFragment(), MainView {
     return inflater.inflate(layout.fragment_main, container, false)
   }
 
+  private val adGlobalLayoutListener = {
+    if (!initialLayoutComplete) {
+      initialLayoutComplete = true
+      loadAds()
+    }
+  }
+
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?
@@ -129,17 +136,12 @@ class MainFragment : BaseFragment(), MainView {
 
     ad = AdView(requireContext())
     adContainer.addView(ad)
-    adContainer.viewTreeObserver.addOnGlobalLayoutListener {
-      if (!initialLayoutComplete) {
-        initialLayoutComplete = true
-        loadAds()
-      }
-    }
+    adContainer.viewTreeObserver.addOnGlobalLayoutListener(adGlobalLayoutListener)
   }
 
   override fun onResume() {
-    ad.resume()
     super.onResume()
+    ad.resume()
   }
 
   override fun onPause() {
@@ -208,7 +210,9 @@ class MainFragment : BaseFragment(), MainView {
 
   override fun onDestroyView() {
     rv.adapter = null
+    adContainer.viewTreeObserver.removeOnGlobalLayoutListener(adGlobalLayoutListener)
     ad.destroy()
+    adContainer.removeAllViews()
     super.onDestroyView()
   }
 
