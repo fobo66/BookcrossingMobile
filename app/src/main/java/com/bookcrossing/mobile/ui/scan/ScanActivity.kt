@@ -159,7 +159,7 @@ class ScanActivity : BaseActivity(), ScanView {
     camera = cameraProvider.bindToLifecycle(
       this, cameraSelector, imageAnalyzer, preview
     )
-    preview?.setSurfaceProvider(readerView.createSurfaceProvider(camera?.cameraInfo))
+    preview?.setSurfaceProvider(readerView.createSurfaceProvider())
   }
 
   private fun handleError(throwable: Throwable) {
