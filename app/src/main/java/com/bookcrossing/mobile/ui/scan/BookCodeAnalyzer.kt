@@ -43,7 +43,7 @@ class BookCodeAnalyzer @Inject constructor(
 
       detector.process(detectableImage)
         .addOnSuccessListener { barcodes ->
-          barcodes.forEach { barcode ->
+          barcodes.asSequence().forEach { barcode ->
             Timber.d("Scanned barcode: %s", barcode.rawValue)
             barcodesProcessor.offer(barcode)
           }
