@@ -19,10 +19,9 @@ package com.bookcrossing.mobile.ui.scan
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
+import com.google.mlkit.vision.barcode.Barcode
+import com.google.mlkit.vision.barcode.BarcodeScanner
+import com.google.mlkit.vision.common.InputImage
 import io.reactivex.Flowable
 import io.reactivex.processors.PublishProcessor
 import timber.log.Timber
@@ -31,27 +30,18 @@ import javax.inject.Inject
 
 /** CameraX analyzer for QR codes */
 class BookCodeAnalyzer @Inject constructor(
-  private val detector: FirebaseVisionBarcodeDetector
+  private val detector: BarcodeScanner
 ) : ImageAnalysis.Analyzer {
 
-  private val barcodesProcessor = PublishProcessor.create<FirebaseVisionBarcode>()
-
-  private fun degreesToFirebaseRotation(degrees: Int): Int = when (degrees) {
-    0 -> FirebaseVisionImageMetadata.ROTATION_0
-    90 -> FirebaseVisionImageMetadata.ROTATION_90
-    180 -> FirebaseVisionImageMetadata.ROTATION_180
-    270 -> FirebaseVisionImageMetadata.ROTATION_270
-    else -> throw IllegalStateException("Rotation must be 0, 90, 180, or 270.")
-  }
+  private val barcodesProcessor = PublishProcessor.create<Barcode>()
 
   @ExperimentalGetImage
   override fun analyze(image: ImageProxy) {
     val mediaImage = image.image
-    val imageRotation = degreesToFirebaseRotation(image.imageInfo.rotationDegrees)
     if (mediaImage != null) {
-      val detectableImage = FirebaseVisionImage.fromMediaImage(mediaImage, imageRotation)
+      val detectableImage = InputImage.fromMediaImage(mediaImage, image.imageInfo.rotationDegrees)
 
-      detector.detectInImage(detectableImage)
+      detector.process(detectableImage)
         .addOnSuccessListener { barcodes ->
           barcodes.forEach { barcode ->
             Timber.d("Scanned barcode: %s", barcode.rawValue)
@@ -68,5 +58,5 @@ class BookCodeAnalyzer @Inject constructor(
   }
 
   /** Exposes scanned barcodes via Rx flowable stream */
-  fun onBarcodeScanned(): Flowable<FirebaseVisionBarcode> = barcodesProcessor.hide()
+  fun onBarcodeScanned(): Flowable<Barcode> = barcodesProcessor.hide()
 }
