@@ -28,7 +28,6 @@ import durdinapps.rxfirebase2.DataSnapshotMapper
 import durdinapps.rxfirebase2.RxFirebaseDatabase
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.Maybe
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -57,11 +56,31 @@ class BooksRepository @Inject constructor(
   }
 
   /** Load book from database */
-  fun loadBook(key: String): Maybe<Book> = RxFirebaseDatabase.observeSingleValueEvent(
-    booksDataSource.books().child(
-      key
-    ), Book::class.java
-  )
+  fun loadBook(key: String): Single<Book> = Single.create { emitter ->
+    val listener = object : ValueEventListener {
+      override fun onCancelled(error: DatabaseError) {
+        if (!emitter.isDisposed) {
+          emitter.onError(error.toException())
+        }
+      }
+
+      override fun onDataChange(snapshot: DataSnapshot) {
+        val result = snapshot.getValue(Book::class.java)
+
+        if (result != null && !emitter.isDisposed) {
+          emitter.onSuccess(result)
+        } else if (!emitter.isDisposed) {
+          emitter.onError(IllegalStateException("Book with key $key was not found"))
+        }
+      }
+    }
+
+    emitter.setCancellable {
+      booksDataSource.books().child(key).removeEventListener(listener)
+    }
+
+    booksDataSource.books().child(key).addListenerForSingleValueEvent(listener)
+  }
 
   /** Load books' positions from database */
   fun loadPlaces(): Flowable<LinkedHashMap<String, Coordinates>> =
