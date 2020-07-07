@@ -18,7 +18,6 @@ package com.bookcrossing.mobile.ui.scan
 
 import android.Manifest
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Size
 import android.view.View
@@ -31,6 +30,7 @@ import androidx.camera.view.PreviewView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bookcrossing.mobile.R
@@ -121,8 +121,8 @@ class ScanActivity : BaseActivity(), ScanView {
     startSubscriptions.clear()
   }
 
-  override fun onBookCodeScanned(uri: Uri) {
-    val intent = Intent(Intent.ACTION_VIEW, uri)
+  override fun onBookCodeScanned(uri: String) {
+    val intent = Intent(Intent.ACTION_VIEW, uri.toUri())
     val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
     ContextCompat.startActivity(this, intent, options)
   }

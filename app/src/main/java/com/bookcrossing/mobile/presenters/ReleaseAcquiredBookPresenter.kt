@@ -17,16 +17,15 @@
 package com.bookcrossing.mobile.presenters
 
 import com.bookcrossing.mobile.data.BooksRepository
-import com.bookcrossing.mobile.data.LocationRepository
 import com.bookcrossing.mobile.interactor.BookInteractor
+import com.bookcrossing.mobile.interactor.LocationInteractor
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
+import com.bookcrossing.mobile.modules.InputValidator
 import com.bookcrossing.mobile.ui.releasebook.ReleaseAcquiredBookView
 import com.bookcrossing.mobile.util.BookCoverResolver
-import com.bookcrossing.mobile.util.InputValidator
-import com.bookcrossing.mobile.util.LengthRule
-import com.bookcrossing.mobile.util.NotEmptyRule
 import com.bookcrossing.mobile.util.ValidationResult
+import com.bookcrossing.mobile.util.Validator
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -42,26 +41,24 @@ import javax.inject.Inject
 class ReleaseAcquiredBookPresenter @Inject constructor(
   private val bookInteractor: BookInteractor,
   private val booksRepository: BooksRepository,
-  private val locationRepository: LocationRepository,
-  private val bookCoverResolver: BookCoverResolver
+  private val locationInteractor: LocationInteractor,
+  private val bookCoverResolver: BookCoverResolver,
+  @InputValidator private val validator: Validator<String>
 ) : BasePresenter<ReleaseAcquiredBookView>() {
 
   private lateinit var book: Book
   private lateinit var key: String
-
-  private val validator =
-    InputValidator(NotEmptyRule(), LengthRule(maxLength = 100))
 
   /** Load book details */
   fun loadBook(key: String?) {
     if (!key.isNullOrEmpty()) {
       unsubscribeOnDestroy(
         booksRepository.loadBook(key)
-          .subscribe {
+          .subscribe({
             book = it
             this.key = key
             viewState.showBookDetails(it, bookCoverResolver.resolveCover(key))
-          }
+          }, Timber::e)
       )
     }
   }
@@ -78,10 +75,7 @@ class ReleaseAcquiredBookPresenter @Inject constructor(
 
   /** Release acquired book */
   fun releaseBook(newPositionName: String): Completable {
-    return locationRepository.resolveCity(
-      book.position?.lat ?: 0.0,
-      book.position?.lng ?: 0.0
-    )
+    return locationInteractor.resolveCity(book.position)
       .doOnSuccess { newCity ->
         book.apply {
           isFree = true

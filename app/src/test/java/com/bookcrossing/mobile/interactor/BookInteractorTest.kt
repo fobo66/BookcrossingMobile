@@ -26,7 +26,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import io.reactivex.Completable
-import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.junit.Before
@@ -63,7 +62,7 @@ class BookInteractorTest {
 
     every {
       booksRepository.loadBook(any())
-    } returns Maybe.just(Book())
+    } returns Single.just(Book())
 
     every {
       booksRepository.saveAcquiredBook(any(), any(), any())

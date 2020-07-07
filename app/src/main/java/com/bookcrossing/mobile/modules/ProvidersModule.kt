@@ -17,6 +17,8 @@
 package com.bookcrossing.mobile.modules
 
 import android.content.Context
+import com.bookcrossing.mobile.util.BookUriProvider
+import com.bookcrossing.mobile.util.BookUriProviderImpl
 import com.bookcrossing.mobile.util.LocaleProvider
 import com.bookcrossing.mobile.util.LocaleProviderImpl
 import com.bookcrossing.mobile.util.ResourceProvider
@@ -35,4 +37,8 @@ class ProvidersModule {
   @Singleton
   fun provideLocaleProvider(context: Context): LocaleProvider =
     LocaleProviderImpl(context.resources)
+
+  @Provides
+  @Singleton
+  fun provideBookCodeProvider(): BookUriProvider = BookUriProviderImpl()
 }

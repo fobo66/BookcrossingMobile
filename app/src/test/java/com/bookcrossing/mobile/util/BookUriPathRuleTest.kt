@@ -1,5 +1,5 @@
 /*
- *    Copyright 2019 Andrey Mukamolov
+ *    Copyright 2020 Andrey Mukamolov
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,34 +16,36 @@
 
 package com.bookcrossing.mobile.util
 
-import com.bookcrossing.mobile.R
+import com.bookcrossing.mobile.models.BookUri
 import com.bookcrossing.mobile.util.ValidationResult.Invalid
 import com.bookcrossing.mobile.util.ValidationResult.OK
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class NotEmptyRuleTest {
-  private val rule = NotEmptyRule()
+class BookUriPathRuleTest {
+  private val rule = BookUriPathRule()
 
   @Test
-  fun notEmpty_OK() {
-    assertTrue(rule.check("test") is OK)
+  fun `correct path`() {
+    val bookUri = BookUri(null, null, "/book", null)
+    assertTrue(rule.check(bookUri) is OK)
   }
 
   @Test
-  fun emptyString_Invalid() {
-    assertTrue(rule.check("") is Invalid)
+  fun `case insensitive path`() {
+    val bookUri = BookUri(null, null, "/book".toUpperCase(), null)
+    assertTrue(rule.check(bookUri) is OK)
   }
 
   @Test
-  fun blankString_Invalid() {
-    assertTrue(rule.check("   ") is Invalid)
+  fun `incorrect path`() {
+    val bookUri = BookUri(null, null, "/test", null)
+    assertTrue(rule.check(bookUri) is Invalid)
   }
 
   @Test
-  fun emptyString_Invalid_correctMessage() {
-    val invalidResult: Invalid = rule.check("") as Invalid
-    assertEquals(R.string.error_input_empty, invalidResult.messageId)
+  fun `null path`() {
+    val bookUri = BookUri(null, null, null, null)
+    assertTrue(rule.check(bookUri) is Invalid)
   }
 }

@@ -15,11 +15,10 @@
  */
 package com.bookcrossing.mobile.presenters
 
-import android.net.Uri
+import com.bookcrossing.mobile.interactor.BookCodeInteractor
 import com.bookcrossing.mobile.ui.scan.BookCodeAnalyzer
 import com.bookcrossing.mobile.ui.scan.ScanView
-import com.bookcrossing.mobile.util.EXTRA_KEY
-import com.bookcrossing.mobile.util.PACKAGE_NAME
+import com.bookcrossing.mobile.util.ValidationResult.OK
 import io.reactivex.Flowable
 import moxy.InjectViewState
 import java.util.concurrent.TimeUnit.SECONDS
@@ -31,6 +30,7 @@ import javax.inject.Inject
  */
 @InjectViewState
 class ScanPresenter @Inject constructor(
+  private val bookCodeInteractor: BookCodeInteractor,
   val bookCodeAnalyzer: BookCodeAnalyzer
 ) : BasePresenter<ScanView>() {
 
@@ -38,20 +38,12 @@ class ScanPresenter @Inject constructor(
    * Check validity of the scanned QR code of the book
    */
   fun checkBookcrossingUri(possibleBookcrossingUri: String) {
-    val uri = Uri.parse(possibleBookcrossingUri)
-    if (uri != null && isValidBookcrossingUri(uri)) {
-      viewState.onBookCodeScanned(uri)
+    val code = bookCodeInteractor.checkBookcrossingUri(possibleBookcrossingUri)
+    if (code is OK) {
+      viewState.onBookCodeScanned(possibleBookcrossingUri)
     } else {
       viewState.onIncorrectCodeScanned()
     }
-  }
-
-  private fun isValidBookcrossingUri(uri: Uri): Boolean {
-    return (uri.authority.equals(PACKAGE_NAME, ignoreCase = true) &&
-      uri.scheme
-        .equals("bookcrossing", ignoreCase = true) &&
-      uri.path.equals("/book", ignoreCase = true) &&
-      uri.getQueryParameter(EXTRA_KEY) != null)
   }
 
   /**

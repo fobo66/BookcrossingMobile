@@ -20,6 +20,7 @@ import android.content.Context
 import com.bookcrossing.mobile.modules.ApiModule
 import com.bookcrossing.mobile.modules.PrefModule
 import com.bookcrossing.mobile.modules.ProvidersModule
+import com.bookcrossing.mobile.modules.ValidatorsModule
 import com.bookcrossing.mobile.ui.acquire.BookAcquireActivity
 import com.bookcrossing.mobile.ui.bookpreview.BookActivity
 import com.bookcrossing.mobile.ui.main.MainFragment
@@ -39,7 +40,14 @@ import javax.inject.Singleton
  * Created by fobo66 on 15.11.2016.
  */
 @Singleton
-@Component(modules = [PrefModule::class, ApiModule::class, ProvidersModule::class])
+@Component(
+  modules = [
+    PrefModule::class,
+    ApiModule::class,
+    ProvidersModule::class,
+    ValidatorsModule::class
+  ]
+)
 interface AppComponent {
   @Component.Factory
   interface Factory {

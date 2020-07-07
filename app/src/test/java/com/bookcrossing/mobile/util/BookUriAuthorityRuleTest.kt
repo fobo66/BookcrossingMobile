@@ -1,5 +1,5 @@
 /*
- *    Copyright 2019 Andrey Mukamolov
+ *    Copyright 2020 Andrey Mukamolov
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,34 +16,36 @@
 
 package com.bookcrossing.mobile.util
 
-import com.bookcrossing.mobile.R
+import com.bookcrossing.mobile.models.BookUri
 import com.bookcrossing.mobile.util.ValidationResult.Invalid
 import com.bookcrossing.mobile.util.ValidationResult.OK
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class NotEmptyRuleTest {
-  private val rule = NotEmptyRule()
+class BookUriAuthorityRuleTest {
+  private val rule = BookUriAuthorityRule()
 
   @Test
-  fun notEmpty_OK() {
-    assertTrue(rule.check("test") is OK)
+  fun `correct authority`() {
+    val bookUri = BookUri(PACKAGE_NAME, null, null, null)
+    assertTrue(rule.check(bookUri) is OK)
   }
 
   @Test
-  fun emptyString_Invalid() {
-    assertTrue(rule.check("") is Invalid)
+  fun `case insensitive authority`() {
+    val bookUri = BookUri(PACKAGE_NAME.toUpperCase(), null, null, null)
+    assertTrue(rule.check(bookUri) is OK)
   }
 
   @Test
-  fun blankString_Invalid() {
-    assertTrue(rule.check("   ") is Invalid)
+  fun `incorrect authority`() {
+    val bookUri = BookUri("google.com", null, null, null)
+    assertTrue(rule.check(bookUri) is Invalid)
   }
 
   @Test
-  fun emptyString_Invalid_correctMessage() {
-    val invalidResult: Invalid = rule.check("") as Invalid
-    assertEquals(R.string.error_input_empty, invalidResult.messageId)
+  fun `null authority`() {
+    val bookUri = BookUri(null, null, null, null)
+    assertTrue(rule.check(bookUri) is Invalid)
   }
 }

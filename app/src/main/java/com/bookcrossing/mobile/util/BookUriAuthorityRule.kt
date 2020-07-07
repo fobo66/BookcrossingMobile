@@ -1,5 +1,6 @@
 /*
- *    Copyright  2019 Andrey Mukamolov
+ *    Copyright 2020 Andrey Mukamolov
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -13,25 +14,19 @@
  *    limitations under the License.
  */
 
-package com.bookcrossing.mobile.ui.scan
+package com.bookcrossing.mobile.util
 
-import moxy.MvpView
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.StateStrategyType
+import com.bookcrossing.mobile.R.string
+import com.bookcrossing.mobile.models.BookUri
+import com.bookcrossing.mobile.util.ValidationResult.Invalid
+import com.bookcrossing.mobile.util.ValidationResult.OK
 
-/**
- * View for QR code scanner screen
- */
-@StateStrategyType(AddToEndSingleStrategy::class)
-interface ScanView : MvpView {
-
-  /**
-   * Correct book's QR code was scanned
-   */
-  fun onBookCodeScanned(uri: String)
-
-  /**
-   * Scanned code was invalid
-   */
-  fun onIncorrectCodeScanned()
+class BookUriAuthorityRule :
+  ValidationRule<BookUri> {
+  override fun check(input: BookUri): ValidationResult {
+    return if (input.authority?.equals(PACKAGE_NAME, ignoreCase = true) == true)
+      OK
+    else
+      Invalid(string.incorrect_code_scanned_message)
+  }
 }

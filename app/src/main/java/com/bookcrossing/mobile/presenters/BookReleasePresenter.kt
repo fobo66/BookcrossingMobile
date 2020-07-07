@@ -21,22 +21,21 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.annotation.IdRes
+import androidx.core.net.toUri
 import com.bookcrossing.mobile.R
 import com.bookcrossing.mobile.code.QrCodeEncoder
 import com.bookcrossing.mobile.data.AuthRepository
-import com.bookcrossing.mobile.data.LocationRepository
+import com.bookcrossing.mobile.interactor.BookCodeInteractor
 import com.bookcrossing.mobile.interactor.BookInteractor
+import com.bookcrossing.mobile.interactor.LocationInteractor
 import com.bookcrossing.mobile.models.BookBuilder
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.models.Date
+import com.bookcrossing.mobile.modules.InputValidator
 import com.bookcrossing.mobile.ui.releasebook.BookReleaseView
 import com.bookcrossing.mobile.util.BookCoverResolver
-import com.bookcrossing.mobile.util.EXTRA_KEY
-import com.bookcrossing.mobile.util.InputValidator
-import com.bookcrossing.mobile.util.LengthRule
-import com.bookcrossing.mobile.util.NotEmptyRule
-import com.bookcrossing.mobile.util.PACKAGE_NAME
 import com.bookcrossing.mobile.util.ValidationResult
+import com.bookcrossing.mobile.util.Validator
 import com.google.firebase.storage.StorageMetadata
 import com.google.zxing.WriterException
 import durdinapps.rxfirebase2.RxFirebaseStorage
@@ -59,17 +58,17 @@ import javax.inject.Inject
 @InjectViewState
 class BookReleasePresenter @Inject constructor(
   private val bookInteractor: BookInteractor,
+  private val bookCodeInteractor: BookCodeInteractor,
   private val authRepository: AuthRepository,
-  private val locationRepository: LocationRepository,
-  private val bookCoverResolver: BookCoverResolver
+  private val locationInteractor: LocationInteractor,
+  private val bookCoverResolver: BookCoverResolver,
+  @InputValidator private val validator: Validator<String>
 ) : BasePresenter<BookReleaseView>() {
 
   private val isLocationPicked = BehaviorSubject.createDefault(false)
 
   private val book: BookBuilder = BookBuilder()
   private lateinit var tempCoverUri: Uri
-  private val validator =
-    InputValidator(NotEmptyRule(), LengthRule(maxLength = 100))
 
   private fun uploadCover(key: String): Observable<String> {
     val metadata = StorageMetadata.Builder()
@@ -123,7 +122,7 @@ class BookReleasePresenter @Inject constructor(
       ".jpg",
       storageDir
     ).also {
-      tempCoverUri = Uri.fromFile(it)
+      tempCoverUri = it.toUri()
     }
   }
 
@@ -167,7 +166,7 @@ class BookReleasePresenter @Inject constructor(
   /** Generate QR code for the newly released book*/
   fun generateQrCode(key: String): Bitmap? {
     return try {
-      QrCodeEncoder().encode(buildBookUri(key).toString())
+      QrCodeEncoder().encode(bookCodeInteractor.buildBookUri(key))
     } catch (e: WriterException) {
       Timber.e(e, "Failed to encode book key to QR code")
       null
@@ -181,11 +180,7 @@ class BookReleasePresenter @Inject constructor(
    * Determine the city of the location of the book
    */
   fun resolveCity(coordinates: Coordinates): Single<String> {
-    return locationRepository.resolveCity(
-      coordinates.lat ?: 0.0,
-      coordinates.lng ?: 0.0
-    )
-      .doOnError(Timber::e)
+    return locationInteractor.resolveCity(coordinates)
   }
 
   /**
@@ -205,15 +200,6 @@ class BookReleasePresenter @Inject constructor(
       R.id.input_position -> book.setPositionName(input)
       R.id.input_description -> book.setDescription(input)
     }
-  }
-
-  private fun buildBookUri(key: String): Uri {
-    return Uri.Builder()
-      .scheme("bookcrossing")
-      .authority(PACKAGE_NAME)
-      .path("book")
-      .appendQueryParameter(EXTRA_KEY, key)
-      .build()
   }
 
   companion object {

@@ -21,23 +21,23 @@ import com.bookcrossing.mobile.util.ValidationResult.Invalid
 import com.bookcrossing.mobile.util.ValidationResult.OK
 
 /**
- * Rule by which correctness of user's input is determined
+ * Rule by which correctness of the given object is determined
  */
-interface ValidationRule {
+interface ValidationRule<T> {
   /**
-   * Check if input string conforms with conditions defined in this rule
+   * Check if object conforms with conditions defined in this rule
    *
-   * @param input user's input
+   * @param input input object
    *
    * @return result which describes, is input OK or not and specifies corresponding error message
    */
-  fun check(input: String): ValidationResult
+  fun check(input: T): ValidationResult
 }
 
 /**
  * Rule for allowing only non-empty strings
  */
-class NotEmptyRule : ValidationRule {
+class NotEmptyRule : ValidationRule<String> {
   override fun check(input: String): ValidationResult {
     return if (input.isNotBlank()) OK else Invalid(R.string.error_input_empty)
   }
@@ -48,7 +48,7 @@ class NotEmptyRule : ValidationRule {
  */
 class ProhibitedSymbolsRule(
   private val prohibitedSymbols: Regex = "[*#\\[\\]?]".toRegex()
-) : ValidationRule {
+) : ValidationRule<String> {
   override fun check(input: String): ValidationResult {
     return if (!input.contains(prohibitedSymbols)) OK
     else Invalid(R.string.error_input_incorrect_symbols)
@@ -61,7 +61,7 @@ class ProhibitedSymbolsRule(
 class LengthRule(
   private val minLength: Int = 0,
   private val maxLength: Int
-) : ValidationRule {
+) : ValidationRule<String> {
   override fun check(input: String): ValidationResult {
     return when {
       input.length <= minLength -> {

@@ -74,7 +74,7 @@ class MapsFragment : BaseFragment(), MvpMapView, OnInfoWindowClickListener {
 
     subscriptions.add(
       map.onMarkerClicked()
-        .flatMapMaybe { marker ->
+        .flatMapSingle { marker ->
           val key = marker.tag as String
           presenter.loadBookDetails(key)
             .doOnSuccess { book ->

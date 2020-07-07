@@ -19,7 +19,7 @@ import com.bookcrossing.mobile.data.BooksRepository
 import com.bookcrossing.mobile.models.Book
 import com.bookcrossing.mobile.models.Coordinates
 import com.bookcrossing.mobile.ui.map.MvpMapView
-import io.reactivex.Maybe
+import io.reactivex.Single
 import moxy.InjectViewState
 import timber.log.Timber
 import java.util.LinkedHashMap
@@ -56,5 +56,5 @@ class MapPresenter @Inject constructor(
   }
 
   /** Load details for the given book */
-  fun loadBookDetails(key: String): Maybe<Book> = booksRepository.loadBook(key)
+  fun loadBookDetails(key: String): Single<Book> = booksRepository.loadBook(key)
 }

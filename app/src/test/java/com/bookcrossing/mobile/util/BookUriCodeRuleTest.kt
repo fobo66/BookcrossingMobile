@@ -1,5 +1,5 @@
 /*
- *    Copyright 2019 Andrey Mukamolov
+ *    Copyright 2020 Andrey Mukamolov
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,30 +16,24 @@
 
 package com.bookcrossing.mobile.util
 
+import com.bookcrossing.mobile.models.BookUri
+import com.bookcrossing.mobile.util.ValidationResult.Invalid
 import com.bookcrossing.mobile.util.ValidationResult.OK
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
-/**
- * Validate string input from the user by list of predefined rules
- */
-class InputValidator(
-  private val rules: List<ValidationRule>
-) {
+class BookUriCodeRuleTest {
+  private val rule = BookUriCodeRule()
 
-  constructor(vararg rulesArray: ValidationRule) : this(rulesArray.asList())
+  @Test
+  fun `correct code`() {
+    val bookUri = BookUri(null, null, null, "asdf")
+    assertTrue(rule.check(bookUri) is OK)
+  }
 
-  /**
-   * Validate string input
-   *
-   * @param input User's input from text field
-   */
-  fun validate(input: String): ValidationResult {
-    val initial: ValidationResult = OK
-    return rules.fold(initial) { acc: ValidationResult, validationRule: ValidationRule ->
-      if (acc is OK) {
-        validationRule.check(input)
-      } else {
-        acc
-      }
-    }
+  @Test
+  fun `incorrect code`() {
+    val bookUri = BookUri(null, null, null, null)
+    assertTrue(rule.check(bookUri) is Invalid)
   }
 }
