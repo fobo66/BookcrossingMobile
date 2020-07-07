@@ -1,3 +1,7 @@
+---
+layout: post
+permalink: /build
+---
 # Building Bookcrossing Mobile
 
 To build Bookcrossing Mobile application, you need to grab your API key for Google Maps

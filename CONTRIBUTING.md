@@ -1,7 +1,7 @@
 ---
-permalink: /contributing.html
+layout: post
+permalink: /contributing
 ---
-
 # Contribute to the Bookcrossing Mobile project
 
 There are several possibilities to help us develop Bookcrossing Mobile:

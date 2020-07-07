@@ -25,50 +25,50 @@ import org.junit.Test
 /**
  * Test cases for validator with different rules
  */
-class InputValidatorTest {
+class ValidatorTest {
 
   @Test
   fun validator_noRules_OK() {
-    val validator = InputValidator()
+    val validator = Validator<String>()
     assert(validator.validate("test") is OK)
   }
 
   @Test
   fun validator_listOfRules_OK() {
-    val validator = InputValidator(NotEmptyRule(), ProhibitedSymbolsRule())
+    val validator = Validator(NotEmptyRule(), ProhibitedSymbolsRule())
     assert(validator.validate("test") is OK)
   }
 
   @Test
   fun validator_listOfRules_Invalid() {
-    val validator = InputValidator(NotEmptyRule(), ProhibitedSymbolsRule())
+    val validator = Validator(NotEmptyRule(), ProhibitedSymbolsRule())
     assert(validator.validate("#") is Invalid)
   }
 
   @Test
   fun validator_listOfRules_Invalid_correctMessage() {
-    val validator = InputValidator(NotEmptyRule(), ProhibitedSymbolsRule("#".toRegex()))
+    val validator = Validator(NotEmptyRule(), ProhibitedSymbolsRule("#".toRegex()))
     val invalidResult: Invalid = validator.validate("test#") as Invalid
     assertEquals(R.string.error_input_incorrect_symbols, invalidResult.messageId)
   }
 
   @Test
   fun validator_listOfRules_emptyFirst_correctMessage() {
-    val validator = InputValidator(NotEmptyRule(), ProhibitedSymbolsRule("#".toRegex()))
+    val validator = Validator(NotEmptyRule(), ProhibitedSymbolsRule("#".toRegex()))
     val invalidResult: Invalid = validator.validate("") as Invalid
     assertEquals(R.string.error_input_empty, invalidResult.messageId)
   }
 
   @Test
   fun validator_listOfRules_prohibitedSymbolsFirst_correctMessage() {
-    val validator = InputValidator(ProhibitedSymbolsRule("#".toRegex()), NotEmptyRule())
+    val validator = Validator(ProhibitedSymbolsRule("#".toRegex()), NotEmptyRule())
     val invalidResult: Invalid = validator.validate("test#") as Invalid
     assertEquals(R.string.error_input_incorrect_symbols, invalidResult.messageId)
   }
 
   @Test
   fun validator_listOfRules_lastRuleMatches_correctMessage() {
-    val validator = InputValidator(
+    val validator = Validator(
       NotEmptyRule(),
       ProhibitedSymbolsRule("#".toRegex()),
       LengthRule(maxLength = 5)
