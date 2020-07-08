@@ -35,6 +35,8 @@ android {
       keyPassword keystoreProperties["keyPassword"]
       storeFile file(keystoreProperties["storeFile"])
       storePassword keystoreProperties["storePassword"]
+      enableV3Signing true
+      enableV4Signing true
     }
   }
   defaultConfig {
