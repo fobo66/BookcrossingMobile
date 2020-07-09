@@ -35,6 +35,8 @@ android {
       keyPassword keystoreProperties["keyPassword"]
       storeFile file(keystoreProperties["storeFile"])
       storePassword keystoreProperties["storePassword"]
+      enableV3Signing true
+      enableV4Signing true
     }
   }
   defaultConfig {
@@ -121,10 +123,10 @@ dependencies {
   implementation "com.github.moxy-community:moxy-androidx:$moxyVersion"
   implementation "com.github.moxy-community:moxy-ktx:$moxyVersion"
 
-  implementation "com.google.firebase:firebase-auth:19.3.1"
-  implementation "com.google.firebase:firebase-messaging:20.2.1"
+  implementation "com.google.firebase:firebase-auth:19.3.2"
+  implementation "com.google.firebase:firebase-messaging:20.2.2"
   implementation "com.google.firebase:firebase-ads:19.2.0"
-  implementation "com.google.firebase:firebase-crashlytics:17.1.0"
+  implementation "com.google.firebase:firebase-crashlytics:17.1.1"
   implementation "com.google.mlkit:barcode-scanning:16.0.1"
   implementation "com.google.android.ads.consent:consent-library:1.0.8"
 
@@ -143,7 +145,6 @@ dependencies {
   implementation "androidx.camera:camera-view:1.0.0-alpha13"
 
   def androidxCoreVersion = "1.5.0-alpha01"
-  implementation "androidx.core:core:$androidxCoreVersion"
   implementation "androidx.core:core-ktx:$androidxCoreVersion"
 
   implementation "androidx.fragment:fragment-ktx:1.2.5"
