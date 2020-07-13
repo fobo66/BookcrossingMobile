@@ -19,6 +19,7 @@ package com.bookcrossing.mobile.util
 import com.bookcrossing.mobile.models.BookUri
 import java.net.URI
 import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 class TestBookUriProvider : BookUriProvider {
   override fun provideBookUri(rawUri: String): BookUri {
@@ -46,8 +47,8 @@ class TestBookUriProvider : BookUriProvider {
         val key = if (index > 0) it.substring(0, index) else it
         val value = if (index > 0 && it.length > index + 1) it.substring(index + 1) else null
 
-        URLDecoder.decode(key, "UTF-8") to
-          URLDecoder.decode(value, "UTF-8")
+        URLDecoder.decode(key, StandardCharsets.UTF_8.name()) to
+          URLDecoder.decode(value, StandardCharsets.UTF_8.name())
       }
       ?.toMap()
   }
