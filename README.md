@@ -18,7 +18,7 @@ and gluing them together.
 
 Check our [contribution guide](/BookcrossingMobile/contributing) for more information.
 
-Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
+Please note that this project is released with a [Contributor Code of Conduct](/BookcrossingMobile/code_of_conduct).
 By participating in this project you agree to abide by its terms.
 
 ## License

@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: default
 permalink: /contributing
 ---
 # Contribute to the Bookcrossing Mobile project
@@ -12,7 +12,7 @@ All the bugs and feature requests filled by Github issues. There are issue templ
 
 ## Develop features
 
-To contribute directly to the code, fork the project and follow our [build instructions](BUILD.md) to make project compile. When you've done, send us a pull request. We use default Kotlin code style for Android, so before sending a pull request, make sure your changes follow our code style by either running ktlint or via Android Studio autoformatting.
+To contribute directly to the code, fork the project and follow our [build instructions](/BookcrossingMobile/build) to make project compile. When you've done, send us a pull request. We use default Kotlin code style for Android, so before sending a pull request, make sure your changes follow our code style by either running ktlint or via Android Studio autoformatting.
 
 ## Write tests
 
