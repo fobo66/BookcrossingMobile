@@ -193,7 +193,7 @@ dependencies {
   // https://stackoverflow.com/q/56639529/4606884
   implementation "com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava"
 
-  def butterknifeVersion = "10.2.1"
+  def butterknifeVersion = "10.2.2"
   implementation "com.jakewharton:butterknife:$butterknifeVersion"
 
   implementation "androidx.constraintlayout:constraintlayout:1.1.3"
