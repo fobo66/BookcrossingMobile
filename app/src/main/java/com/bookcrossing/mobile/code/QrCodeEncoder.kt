@@ -25,6 +25,7 @@ import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
+import java.nio.charset.StandardCharsets
 import java.util.EnumMap
 
 /**
@@ -37,7 +38,7 @@ class QrCodeEncoder(
     EnumMap<EncodeHintType, Any>(EncodeHintType::class.java)
 
   init {
-    hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
+    hints[EncodeHintType.CHARACTER_SET] = StandardCharsets.UTF_8.name()
   }
 
   /**
